@@ -27,6 +27,16 @@
 
 #include <network/discovery/mdns.h>
 #include <glog/logging.h>
+#include <tinythread.h>
+
+void TestThread(void * arg)
+{
+    while(1)
+    {
+        printf("test\n");
+        sleep(1);
+    }
+}
 
 int main(int argc, char const * argv[])
 {
@@ -34,6 +44,8 @@ int main(int argc, char const * argv[])
 
     MDNSRegisterService(new MDNSService("Sand", "_sand._tcp", atoi(argv[1])));
     MDNSBrowseService("_sand._tcp");
+
+    tthread::thread t(TestThread, 0);
 
     while(1)
     {

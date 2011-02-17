@@ -12,7 +12,7 @@ def configure(conf):
 
 def library_check(conf):
     libraries = (
-        ("libglog", "GLOG", None),
+        ("libglog", "glog", None),
     )
 
     for package, uselib, version in libraries:
@@ -21,7 +21,7 @@ def library_check(conf):
                        args='--cflags --libs')
 
 def build(bld):
-    bld.add_subdirs("src")
+    bld.add_subdirs("src external/tinythread")
     bld.add_group()
 
 def run(ctx):
