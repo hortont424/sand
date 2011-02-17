@@ -18,7 +18,8 @@ The game depends on a few things which must already be available on your system:
 
 It also includes various external libraries within itself:
 
-* SOIL
+* SOIL (http://www.lonesock.net/soil.html)
+* TinyThread++ (http://tinythread.sourceforge.net/)
 
 The game depends on a few other things depending on your platform:
 
