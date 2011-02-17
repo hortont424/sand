@@ -43,6 +43,6 @@ class MDNSService
 
 void MDNSResponderTick();
 void MDNSRegisterService(MDNSService * service);
-std::vector<MDNSService *> MDNSBrowseService(MDNSService * service);
+void MDNSBrowseService(const char * serviceType);
 
 #endif

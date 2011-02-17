@@ -32,7 +32,8 @@ int main(int argc, char const * argv[])
 {
     google::InitGoogleLogging(argv[0]);
 
-    MDNSRegisterService(new MDNSService("Sand", "_sand._tcp", 4250));
+    MDNSRegisterService(new MDNSService("Sand", "_sand._tcp", atoi(argv[1])));
+    MDNSBrowseService("_sand._tcp");
 
     while(1)
     {

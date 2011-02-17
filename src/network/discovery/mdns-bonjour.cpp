@@ -30,7 +30,7 @@
 #include <CoreServices/CoreServices.h>
 #include <glog/logging.h>
 
-void MDNSResponderCallback(CFNetServiceRef svc, CFStreamError * err, void * info)
+void MDNSResponderRegistrationCallback(CFNetServiceRef svc, CFStreamError * err, void * info)
 {
     if(err->error == 0)
     {
@@ -40,6 +40,12 @@ void MDNSResponderCallback(CFNetServiceRef svc, CFStreamError * err, void * info
     {
         LOG(ERROR) << "Failed to register mDNS service";
     }
+}
+
+void MDNSResponderBrowseCallback(CFNetServiceBrowserRef browser, CFOptionFlags flags,
+                                 CFTypeRef domainOrService, CFStreamError * error, void * info)
+{
+    LOG(INFO) << "MDNSResponderBrowseCallback";
 }
 
 #pragma mark Public Functions
@@ -76,7 +82,7 @@ void MDNSRegisterService(MDNSService * service)
 
     clientCtx = (CFNetServiceClientContext *)calloc(1, sizeof(CFNetServiceClientContext));
 
-    if(!CFNetServiceSetClient(svc, MDNSResponderCallback, clientCtx))
+    if(!CFNetServiceSetClient(svc, MDNSResponderRegistrationCallback, clientCtx))
     {
         LOG(ERROR) << "CFNetServiceSetClient() failed!";
 
@@ -107,7 +113,42 @@ void MDNSRegisterService(MDNSService * service)
     }
 }
 
-std::vector<MDNSService *> MDNSBrowseService(MDNSService * service)
+void MDNSBrowseService(const char * _serviceType)
 {
+    CFNetServiceBrowserRef browser;
+    CFNetServiceClientContext * clientCtx;
+    CFStringRef domain, serviceType, name;
 
+    domain = CFStringCreateWithCString(NULL, "local", CFStringGetSystemEncoding());
+    serviceType = CFStringCreateWithCString(NULL, _serviceType, CFStringGetSystemEncoding());
+
+    clientCtx = (CFNetServiceClientContext *)calloc(1, sizeof(CFNetServiceClientContext));
+
+    browser = CFNetServiceBrowserCreate(NULL, MDNSResponderBrowseCallback, clientCtx);
+
+    if(!browser)
+    {
+        LOG(ERROR) << "CFNetServiceBrowserCreate() failed!";
+
+        CFRelease(domain);
+        CFRelease(serviceType);
+
+        free(clientCtx);
+
+        return;
+    }
+
+    CFNetServiceBrowserScheduleWithRunLoop(browser, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+
+    if(!CFNetServiceBrowserSearchForServices(browser, domain, serviceType, NULL))
+    {
+        LOG(ERROR) << "CFNetServiceBrowserCreate() failed!";
+
+        CFRelease(domain);
+        CFRelease(serviceType);
+
+        free(clientCtx);
+
+        return;
+    }
 }
