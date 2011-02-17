@@ -14,5 +14,6 @@ def build(bld):
                name="game",
                target="game",
                cxxflags=["-g", "-I../src"],
-               framework="OpenGL GLUT CoreServices",
+               framework="OpenGL CoreServices",
+               uselib="GLOG",
                features="cxx cxxprogram")

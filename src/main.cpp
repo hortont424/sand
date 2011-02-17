@@ -26,9 +26,12 @@
 #include <iostream>
 
 #include <network/discovery/mdns.h>
+#include <glog/logging.h>
 
 int main(int argc, char const * argv[])
 {
+    google::InitGoogleLogging(argv[0]);
+
     MDNSRegisterService(new MDNSService("Sand", "_sand._tcp", 4250));
 
     while(1)

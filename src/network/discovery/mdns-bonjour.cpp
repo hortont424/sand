@@ -28,10 +28,18 @@
 // TODO: ifdef darwin?
 
 #include <CoreServices/CoreServices.h>
+#include <glog/logging.h>
 
 void MDNSResponderCallback(CFNetServiceRef svc, CFStreamError * err, void * info)
 {
-    printf("CB!\n");
+    if(err->error == 0)
+    {
+        LOG(INFO) << "Successfully registered mDNS service";
+    }
+    else
+    {
+        LOG(ERROR) << "Failed to register mDNS service";
+    }
 }
 
 #pragma mark Public Functions
@@ -51,11 +59,18 @@ void MDNSRegisterService(MDNSService * service)
     serviceType = CFStringCreateWithCString(NULL, service->type, CFStringGetSystemEncoding());
     name = CFStringCreateWithCString(NULL, service->name, CFStringGetSystemEncoding());
 
+    LOG(INFO) << "Registering mDNS service " << service->type << " on port " << service->port;
+
     svc = CFNetServiceCreate(NULL, domain, serviceType, name, service->port);
 
     if(!svc)
     {
-        printf("CFNetServiceCreate() failed!\n");
+        LOG(ERROR) << "CFNetServiceCreate() failed!";
+
+        CFRelease(domain);
+        CFRelease(serviceType);
+        CFRelease(name);
+
         return;
     }
 
@@ -63,7 +78,14 @@ void MDNSRegisterService(MDNSService * service)
 
     if(!CFNetServiceSetClient(svc, MDNSResponderCallback, clientCtx))
     {
-        printf("CFNetServiceSetClient() failed!\n");
+        LOG(ERROR) << "CFNetServiceSetClient() failed!";
+
+        free(clientCtx);
+
+        CFRelease(domain);
+        CFRelease(serviceType);
+        CFRelease(name);
+
         return;
     }
 
@@ -71,7 +93,16 @@ void MDNSRegisterService(MDNSService * service)
 
     if(!CFNetServiceRegisterWithOptions(svc, 0, NULL))
     {
-        printf("CFNetServiceRegisterWithOptions() failed!\n");
+        LOG(ERROR) << "CFNetServiceRegisterWithOptions() failed!";
+
+        CFNetServiceSetClient(svc, NULL, NULL);
+
+        free(clientCtx);
+
+        CFRelease(domain);
+        CFRelease(serviceType);
+        CFRelease(name);
+
         return;
     }
 }
