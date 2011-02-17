@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 
-import glob
-import os
-import fnmatch
-
-sourceFiles = []
-
-for root, dirs, files in os.walk("external/tinythread"):
-    sourceFiles += [os.path.relpath(os.path.join(root, fn), "external/tinythread") for fn in files if fnmatch.fnmatch(fn, '*.cpp')]
-
 def build(bld):
-    game = bld.stlib(source=sourceFiles,
-                     target="tinythread")
+    bld.stlib(source="tinythread.cpp",
+              target="tinythread")

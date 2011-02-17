@@ -10,10 +10,10 @@ for root, dirs, files in os.walk("src"):
     sourceFiles += [os.path.relpath(os.path.join(root, fn), "src") for fn in files if fnmatch.fnmatch(fn, '*.cpp')]
 
 def build(bld):
-    game = bld.program(source=sourceFiles,
-                       target="game",
-                       includes=[".", "../external/tinythread"],
-                       cxxflags=["-g"],
-                       framework="OpenGL CoreServices",
-                       uselib="glog",
-                       use="tinythread")
+    bld.program(source=sourceFiles,
+                target="game",
+                includes=[".", "../external/tinythread"],
+                cxxflags=["-g"],
+                framework="OpenGL CoreServices",
+                uselib="glog",
+                use="tinythread")
