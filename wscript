@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
-from os import system
+from waflib.Configure import conf
+import os
+
+APPNAME = 'sand'
+VERSION = '0.0'
+UNAME = os.uname()[0]
 
 def options(opt):
     opt.tool_options('compiler_cxx compiler_c')
@@ -8,9 +13,11 @@ def options(opt):
 def configure(conf):
     conf.check_tool('compiler_cxx compiler_c')
 
-    library_check(conf)
+    conf.pkgconfig_check()
+    conf.library_check()
 
-def library_check(conf):
+@conf
+def pkgconfig_check(conf):
     libraries = (
         ("libglog", "glog", None),
     )
@@ -20,14 +27,26 @@ def library_check(conf):
                        mandatory=True, version=version,
                        args='--cflags --libs')
 
+@conf
+def library_check(conf):
+    if UNAME == "Darwin":
+        libraries = ()
+    elif UNAME == "Windows":
+        libraries = ("GL")
+    else:
+        libraries = ("GL")
+
+    for library in libraries:
+        conf.check_cc(lib=library)
+
 def build(bld):
-    bld.add_subdirs("src external/tinythread")
+    bld.add_subdirs("src external/tinythread external/glfw")
     bld.add_group()
 
 def run(ctx):
-    if system("./waf build") is 0:
-        return system("GLOG_logtostderr=1 ./build/src/game")
+    if os.system("./waf build") is 0:
+        return os.system("GLOG_logtostderr=1 ./build/src/game")
 
 def db(ctx):
-    if system("./waf build") is 0:
-        return system("GLOG_logtostderr=1 gdb ./build/src/game")
+    if os.system("./waf build") is 0:
+        return os.system("GLOG_logtostderr=1 gdb ./build/src/game")

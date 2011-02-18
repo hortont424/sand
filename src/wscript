@@ -12,8 +12,8 @@ for root, dirs, files in os.walk("src"):
 def build(bld):
     bld.program(source=sourceFiles,
                 target="game",
-                includes=[".", "../external/tinythread"],
+                includes=[".", "../external/tinythread", "../external/glfw"],
                 cxxflags=["-g"],
-                framework="OpenGL CoreServices",
+                framework="OpenGL CoreServices Cocoa",
                 uselib="glog",
-                use="tinythread")
+                use="tinythread glfw")

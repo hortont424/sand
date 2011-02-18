@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+from waflib import TaskGen
+TaskGen.task_gen.mappings['.m'] = TaskGen.task_gen.mappings['.c']
+
+import os
+UNAME = os.uname()[0]
+
+glfw_files = ["enable.c",
+              "fullscreen.c",
+              "glext.c",
+              "image.c",
+              "init.c",
+              "input.c",
+              "joystick.c",
+              "stream.c",
+              "tga.c",
+              "thread.c",
+              "time.c",
+              "window.c"]
+
+if UNAME == "Linux":
+  glfw_files.extend(["x11/x11_enable.c",
+                     "x11/x11_fullscreen.c",
+                     "x11/x11_glext.c",
+                     "x11/x11_init.c",
+                     "x11/x11_joystick.c",
+                     "x11/x11_keysym2unicode.c",
+                     "x11/x11_thread.c",
+                     "x11/x11_time.c",
+                     "x11/x11_window.c"])
+elif UNAME == "Darwin":
+  glfw_files.extend(["cocoa/cocoa_enable.m",
+                     "cocoa/cocoa_fullscreen.m",
+                     "cocoa/cocoa_glext.m",
+                     "cocoa/cocoa_init.m",
+                     "cocoa/cocoa_joystick.m",
+                     "cocoa/cocoa_thread.c",
+                     "cocoa/cocoa_time.m",
+                     "cocoa/cocoa_window.m"])
+
+def build(bld):
+  lib = bld.stlib(source = " ".join(glfw_files),
+                  target = "glfw",
+                  name = "glfw",
+                  version = "1.0",
+                  cflags = ['-c',
+                            '-I../external/glfw',
+                            '-O2',
+                            '-w',
+                            '-fno-common',
+                            '-g'],
+                  use = "SOIL")
+
+  if UNAME == "Linux":
+    lib.cflags.append("-I./x11")
+    lib.uselib = 'GL GLU'
+  elif UNAME == "Darwin":
+    lib.cflags.append("-I../external/glfw/cocoa")

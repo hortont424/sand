@@ -28,6 +28,7 @@
 #include <network/discovery/mdns.h>
 #include <glog/logging.h>
 #include <tinythread.h>
+#include <glfw.h>
 
 void TestThread(void * arg)
 {
@@ -40,17 +41,29 @@ void TestThread(void * arg)
 
 int main(int argc, char const * argv[])
 {
+    bool running = true;
+
     google::InitGoogleLogging(argv[0]);
+
+    glfwInit();
+    glfwOpenWindow(800, 600, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
 
     MDNSRegisterService(new MDNSService("Sand", "_sand._tcp", atoi(argv[1])));
     MDNSBrowseService("_sand._tcp");
 
     tthread::thread t(TestThread, 0);
 
-    while(1)
+    while(running)
     {
+        glClear( GL_COLOR_BUFFER_BIT );
+        glfwSwapBuffers();
+
         MDNSResponderTick();
+
+        running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
     }
+
+    glfwTerminate();
 
     return 0;
 }
