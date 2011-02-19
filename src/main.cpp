@@ -38,7 +38,12 @@ int main(int argc, char const * argv[])
     glfwInit();
     //glfwOpenWindow(800, 600, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
 
-    Peer * peer = new Peer("Tim");
+    if(argc != 2)
+    {
+        LOG(FATAL) << "Need two arguments!";
+    }
+
+    Peer * peer = new Peer(argv[1]);
 
     while(running)
     {
