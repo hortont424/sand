@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include <network/discovery/mdns.h>
+#include <network/util.h>
 #include <glog/logging.h>
 #include <tinythread.h>
 #include <glfw.h>
@@ -40,38 +41,18 @@ void TestThread(void * arg)
     }
 }
 
-char * inet_sockaddr_toa(const struct sockaddr * sa, char * s, size_t maxlen)
-{
-    switch(sa->sa_family)
-    {
-        case AF_INET:
-            inet_ntop(AF_INET, &(((struct sockaddr_in *)sa)->sin_addr), s, maxlen);
-            break;
-
-        case AF_INET6:
-            inet_ntop(AF_INET6, &(((struct sockaddr_in6 *)sa)->sin6_addr), s, maxlen);
-            break;
-
-        default:
-            strncpy(s, "Unknown", maxlen);
-            return NULL;
-    }
-
-    return s;
-}
-
 void addService(MDNSService * service)
 {
     char addrString[255];
 
-    LOG(INFO) << "add: " << inet_sockaddr_toa(&service->address, addrString, sizeof(addrString));
+    LOG(INFO) << "add: " << sockaddrToString(&service->address);
 }
 
 void removeService(MDNSService * service)
 {
     char addrString[255];
 
-    LOG(INFO) << "remove: " << inet_sockaddr_toa(&service->address, addrString, sizeof(addrString));
+    LOG(INFO) << "remove: " << sockaddrToString(&service->address);
 }
 
 int main(int argc, char const * argv[])
