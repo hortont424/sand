@@ -67,7 +67,7 @@ void Peer::Listen(void * arg)
 
     // Try to find a port that we can use
 
-    for(port = 1824; port < (1824 + 10); port++)
+    for(port = 1824; port < 2000; port++)
     {
         server.sin_port = htons(port);
 
@@ -78,11 +78,23 @@ void Peer::Listen(void * arg)
         else
         {
             LOG(WARNING) << "Skipping port " << ntohs(server.sin_port) << "; already in use!";
+            server.sin_port = 0;
         }
     }
 
-    self->port = ntohs(server.sin_port);
-    LOG(INFO) << "Going to listen on port " << self->port;
+    // If we found a port, go ahead; if none were available, die
+
+    if(server.sin_port)
+    {
+        self->port = ntohs(server.sin_port);
+        LOG(INFO) << "Going to listen on port " << self->port;
+    }
+    else
+    {
+        LOG(FATAL) << "Couldn't find an available port!";
+    }
+
+    // We're about to listen for connections, so unlock the Bonjour thread
 
     self->broadcastLock.unlock();
 
