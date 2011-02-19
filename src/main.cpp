@@ -25,35 +25,9 @@
 
 #include <iostream>
 
-#include <network/discovery/mdns.h>
-#include <network/util.h>
+#include <network/peer.h>
 #include <glog/logging.h>
-#include <tinythread.h>
 #include <glfw.h>
-
-static bool runThread = true;
-
-void TestThread(void * arg)
-{
-    while(runThread)
-    {
-        sleep(1);
-    }
-}
-
-void addService(MDNSService * service)
-{
-    char addrString[255];
-
-    LOG(INFO) << "add: " << sockaddrToString(&service->address);
-}
-
-void removeService(MDNSService * service)
-{
-    char addrString[255];
-
-    LOG(INFO) << "remove: " << sockaddrToString(&service->address);
-}
 
 int main(int argc, char const * argv[])
 {
@@ -64,23 +38,15 @@ int main(int argc, char const * argv[])
     glfwInit();
     glfwOpenWindow(800, 600, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
 
-    MDNSRegister(atoi(argv[1]));
-    MDNSBrowse(addService, removeService);
-
-    tthread::thread t(TestThread, 0);
+    Peer * peer = new Peer("Tim");
 
     while(running)
     {
         glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers();
 
-        MDNSResponderTick();
-
         running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
     }
-
-    runThread = false;
-    t.join();
 
     glfwTerminate();
 

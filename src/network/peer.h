@@ -23,14 +23,30 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SAND_NETWORK_UTIL_H_
-#define _SAND_NETWORK_UTIL_H_
+#ifndef _SAND_NETWORK_PEER_H_
+#define _SAND_NETWORK_PEER_H_
 
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <cstdlib>
-#include <cstring>
+#include "util.h"
 
-char * sockaddrToString(const struct sockaddr * sa);
+#include <glog/logging.h>
+#include <tinythread.h>
+#include <fast_mutex.h>
+
+class Peer
+{
+    public:
+        Peer(const char * name);
+
+    private:
+        tthread::thread * listenThread, * broadcastThread;
+        const char * name;
+        uint16_t port;
+
+        tthread::fast_mutex broadcastLock;
+
+        Peer();
+        static void Listen(void * arg);
+        static void Broadcast(void * arg);
+};
 
 #endif

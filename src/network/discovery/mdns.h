@@ -23,8 +23,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SAND_MDNS_H_
-#define _SAND_MDNS_H_
+#ifndef _SAND_NETWORK_DISCOVERY_MDNS_H_
+#define _SAND_NETWORK_DISCOVERY_MDNS_H_
 
 #include <vector>
 #include <sys/socket.h>
