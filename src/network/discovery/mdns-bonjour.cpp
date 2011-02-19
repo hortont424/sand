@@ -30,6 +30,11 @@
 #include <CoreServices/CoreServices.h>
 #include <glog/logging.h>
 
+typedef struct
+{
+    MDNSBrowseCallback add, remove;
+} MDNSResponderCallbacks;
+
 void MDNSResponderRegistrationCallback(CFNetServiceRef svc, CFStreamError * err, void * info)
 {
     if(err->error == 0)
@@ -46,19 +51,32 @@ void MDNSResponderBrowseCallback(CFNetServiceBrowserRef browser, CFOptionFlags f
                                  CFTypeRef domainOrService, CFStreamError * error, void * info)
 {
     CFNetServiceRef svc = (CFNetServiceRef)domainOrService;
+    MDNSResponderCallbacks * cbs = (MDNSResponderCallbacks *)info;
+    MDNSService * mdnsService = new MDNSService();
+    CFDataRef saddrData;
+    sockaddr saddr;
 
     CFNetServiceResolveWithTimeout(svc, 3, NULL);
-    //char type[1024];
 
-    //CFStringGetCString(CFNetServiceGetAddressing(svc), type, sizeof(type), CFStringGetSystemEncoding());
+    mdnsService->name = CFStringGetCStringPtr(CFNetServiceGetName(svc), CFStringGetSystemEncoding());
+    mdnsService->type = CFStringGetCStringPtr(CFNetServiceGetType(svc), CFStringGetSystemEncoding());
+    mdnsService->port = CFNetServiceGetPortNumber(svc);
+
+    // TODO: multiple addresses!
+
+    saddrData = (CFDataRef)CFArrayGetValueAtIndex(CFNetServiceGetAddressing(svc), 0);
+    CFDataGetBytes(saddrData, CFRangeMake(0, CFDataGetLength(saddrData)), (UInt8*)&saddr);
+    mdnsService->address = saddr;
 
     if(flags & kCFNetServiceFlagRemove)
     {
-        LOG(INFO) << "Remove service on port: " << CFNetServiceGetPortNumber(svc);
+        if(cbs->remove)
+            cbs->remove(mdnsService);
     }
     else
     {
-        LOG(INFO) << "Add service on port: " << CFNetServiceGetPortNumber(svc);
+        if(cbs->add)
+            cbs->add(mdnsService);
     }
 }
 
@@ -69,26 +87,23 @@ void MDNSResponderTick()
     CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
 }
 
-void MDNSRegisterService(MDNSService * service)
+void MDNSRegister(uint16_t port)
 {
     CFNetServiceRef svc;
     CFNetServiceClientContext * clientCtx;
     CFStringRef domain, serviceType, name;
 
     domain = CFSTR("local");
-    serviceType = CFStringCreateWithCString(NULL, service->type, CFStringGetSystemEncoding());
-    name = CFStringCreateWithCString(NULL, service->name, CFStringGetSystemEncoding());
+    serviceType = CFSTR("_sand._tcp");
+    name = CFSTR("Sand");
 
-    LOG(INFO) << "Registering mDNS service " << service->type << " on port " << service->port;
+    LOG(INFO) << "Registering mDNS service on port " << port;
 
-    svc = CFNetServiceCreate(NULL, domain, serviceType, name, service->port);
+    svc = CFNetServiceCreate(NULL, domain, serviceType, name, port);
 
     if(!svc)
     {
         LOG(ERROR) << "CFNetServiceCreate() failed!";
-
-        CFRelease(serviceType);
-        CFRelease(name);
 
         return;
     }
@@ -100,9 +115,6 @@ void MDNSRegisterService(MDNSService * service)
         LOG(ERROR) << "CFNetServiceSetClient() failed!";
 
         free(clientCtx);
-
-        CFRelease(serviceType);
-        CFRelease(name);
 
         return;
     }
@@ -117,23 +129,26 @@ void MDNSRegisterService(MDNSService * service)
 
         free(clientCtx);
 
-        CFRelease(serviceType);
-        CFRelease(name);
-
         return;
     }
 }
 
-void MDNSBrowseService(const char * _serviceType)
+void MDNSBrowse(MDNSBrowseCallback addCb, MDNSBrowseCallback removeCb)
 {
     CFNetServiceBrowserRef browser;
     CFNetServiceClientContext * clientCtx;
     CFStringRef domain, serviceType, name;
+    MDNSResponderCallbacks * cbs;
 
     domain = CFSTR("local");
-    serviceType = CFStringCreateWithCString(NULL, _serviceType, CFStringGetSystemEncoding());
+    serviceType = CFSTR("_sand._tcp");
 
     clientCtx = (CFNetServiceClientContext *)calloc(1, sizeof(CFNetServiceClientContext));
+    cbs = (MDNSResponderCallbacks *)calloc(1, sizeof(MDNSResponderCallbacks));
+    clientCtx->info = cbs;
+
+    cbs->add = addCb;
+    cbs->remove = removeCb;
 
     browser = CFNetServiceBrowserCreate(NULL, MDNSResponderBrowseCallback, clientCtx);
 
@@ -141,9 +156,8 @@ void MDNSBrowseService(const char * _serviceType)
     {
         LOG(ERROR) << "CFNetServiceBrowserCreate() failed!";
 
-        CFRelease(serviceType);
-
         free(clientCtx);
+        free(cbs);
 
         return;
     }
@@ -154,9 +168,8 @@ void MDNSBrowseService(const char * _serviceType)
     {
         LOG(ERROR) << "CFNetServiceBrowserCreate() failed!";
 
-        CFRelease(serviceType);
-
         free(clientCtx);
+        free(cbs);
 
         return;
     }

@@ -27,6 +27,7 @@
 #define _SAND_MDNS_H_
 
 #include <vector>
+#include <sys/socket.h>
 
 class MDNSService
 {
@@ -35,14 +36,16 @@ class MDNSService
         MDNSService(const char * name, const char * type, uint16_t port);
         ~MDNSService();
 
-        char * name;
-        char * type;
+        const char * name;
+        const char * type;
         uint16_t port;
-        // something for the address!
+        sockaddr address;
 };
 
+typedef void (*MDNSBrowseCallback)(MDNSService * service);
+
 void MDNSResponderTick();
-void MDNSRegisterService(MDNSService * service);
-void MDNSBrowseService(const char * serviceType);
+void MDNSRegister(uint16_t port);
+void MDNSBrowse(MDNSBrowseCallback addCb, MDNSBrowseCallback removeCb);
 
 #endif

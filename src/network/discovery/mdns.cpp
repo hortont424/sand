@@ -46,13 +46,13 @@ MDNSService::~MDNSService()
 {
     if(this->name)
     {
-        free(this->name);
+        free((void *)this->name);
         this->name = NULL;
     }
 
     if(this->type)
     {
-        free(this->type);
+        free((void *)this->type);
         this->type = NULL;
     }
 }

@@ -39,6 +39,16 @@ void TestThread(void * arg)
     }
 }
 
+void addService(MDNSService * service)
+{
+    printf("add\n");
+}
+
+void removeService(MDNSService * service)
+{
+    printf("remove\n");
+}
+
 int main(int argc, char const * argv[])
 {
     bool running = true;
@@ -48,14 +58,14 @@ int main(int argc, char const * argv[])
     glfwInit();
     glfwOpenWindow(800, 600, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
 
-    MDNSRegisterService(new MDNSService("Sand", "_sand._tcp", atoi(argv[1])));
-    MDNSBrowseService("_sand._tcp");
+    MDNSRegister(atoi(argv[1]));
+    MDNSBrowse(addService, removeService);
 
     tthread::thread t(TestThread, 0);
 
     while(running)
     {
-        glClear( GL_COLOR_BUFFER_BIT );
+        glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers();
 
         MDNSResponderTick();
