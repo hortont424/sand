@@ -33,6 +33,7 @@
 typedef struct
 {
     MDNSBrowseCallback add, remove;
+    void * info;
 } MDNSResponderCallbacks;
 
 void MDNSResponderRegistrationCallback(CFNetServiceRef svc, CFStreamError * err, void * info)
@@ -71,12 +72,12 @@ void MDNSResponderBrowseCallback(CFNetServiceBrowserRef browser, CFOptionFlags f
     if(flags & kCFNetServiceFlagRemove)
     {
         if(cbs->remove)
-            cbs->remove(mdnsService);
+            cbs->remove(mdnsService, cbs->info);
     }
     else
     {
         if(cbs->add)
-            cbs->add(mdnsService);
+            cbs->add(mdnsService, cbs->info);
     }
 }
 
@@ -133,7 +134,7 @@ void MDNSRegister(uint16_t port)
     }
 }
 
-void MDNSBrowse(MDNSBrowseCallback addCb, MDNSBrowseCallback removeCb)
+void MDNSBrowse(MDNSBrowseCallback addCb, MDNSBrowseCallback removeCb, void * info)
 {
     CFNetServiceBrowserRef browser;
     CFNetServiceClientContext * clientCtx;
@@ -149,6 +150,7 @@ void MDNSBrowse(MDNSBrowseCallback addCb, MDNSBrowseCallback removeCb)
 
     cbs->add = addCb;
     cbs->remove = removeCb;
+    cbs->info = info;
 
     browser = CFNetServiceBrowserCreate(NULL, MDNSResponderBrowseCallback, clientCtx);
 

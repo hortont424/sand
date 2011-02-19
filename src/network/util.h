@@ -31,6 +31,5 @@
 #include <cstdlib>
 #include <cstring>
 
-char * sockaddrToString(const struct sockaddr * sa);
 
 #endif

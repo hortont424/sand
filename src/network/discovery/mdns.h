@@ -43,10 +43,10 @@ class MDNSService
         sockaddr address;
 };
 
-typedef void (*MDNSBrowseCallback)(MDNSService * service);
+typedef void (*MDNSBrowseCallback)(MDNSService * service, void * info);
 
 void MDNSResponderTick();
 void MDNSRegister(uint16_t port);
-void MDNSBrowse(MDNSBrowseCallback addCb, MDNSBrowseCallback removeCb);
+void MDNSBrowse(MDNSBrowseCallback addCb, MDNSBrowseCallback removeCb, void * info);
 
 #endif

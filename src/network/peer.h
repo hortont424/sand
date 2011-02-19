@@ -31,6 +31,8 @@
 #include <glog/logging.h>
 #include <tinythread.h>
 #include <fast_mutex.h>
+#include <network/discovery/mdns.h>
+#include <list>
 
 class Peer
 {
@@ -38,15 +40,22 @@ class Peer
         Peer(const char * name);
 
     private:
-        tthread::thread * listenThread, * broadcastThread;
+        tthread::thread * listenThread, * broadcastThread, * updateThread;
+        tthread::fast_mutex broadcastLock, updateLock;
+
         const char * name;
         uint16_t port;
-
-        tthread::fast_mutex broadcastLock;
+        bool updatePeers;
+        std::list<int> outgoingPeers;
+        std::list<int> incomingPeers;
 
         Peer();
         static void Listen(void * arg);
         static void Broadcast(void * arg);
+        static void UpdatePeers(void * arg);
+
+        static void PeerJoined(MDNSService * service, void * info);
+        static void PeerLeft(MDNSService * service, void * info);
 };
 
 #endif

@@ -36,16 +36,17 @@ int main(int argc, char const * argv[])
     google::InitGoogleLogging(argv[0]);
 
     glfwInit();
-    glfwOpenWindow(800, 600, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
+    //glfwOpenWindow(800, 600, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
 
     Peer * peer = new Peer("Tim");
 
     while(running)
     {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers();
+        //glClear(GL_COLOR_BUFFER_BIT);
+        //glfwSwapBuffers();
 
-        running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
+        //running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
+        usleep(10000);
     }
 
     glfwTerminate();
