@@ -4,13 +4,8 @@ import glob
 import os
 import fnmatch
 
-sourceFiles = []
-
-for root, dirs, files in os.walk("src"):
-    sourceFiles += [os.path.relpath(os.path.join(root, fn), "src") for fn in files if fnmatch.fnmatch(fn, '*.cpp')]
-
 def build(bld):
-    bld.program(source=sourceFiles,
+    bld.program(source=bld.path.ant_glob(["**/*cpp"]),
                 target="game",
                 includes=[".", "../external/tinythread", "../external/glfw"],
                 cxxflags=["-g"],
