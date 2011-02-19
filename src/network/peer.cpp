@@ -116,7 +116,7 @@ void Peer::Listen(void * arg)
             write(connectionSock, buffer, sizeof(buffer));
 
             self->updateLock.lock();
-            self->outgoingPeers.push_front(connectionSock);
+            self->peers.push_front(new RemotePeer(connectionSock));
             self->updatePeers = true;
             self->updateLock.unlock();
         }
@@ -133,18 +133,12 @@ void Peer::UpdatePeers(void * arg)
         {
             self->updateLock.lock();
             LOG(INFO) << "Updating peers...";
-            LOG(INFO) << "Outgoing peers: ";
 
-            for(std::list<int>::iterator it = self->outgoingPeers.begin(); it != self->outgoingPeers.end(); it++)
+            LOG(INFO) << "peers: ";
+
+            for(std::list<RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
             {
-                LOG(INFO) << *it;
-            }
-
-            LOG(INFO) << "Incoming peers: ";
-
-            for(std::list<int>::iterator it = self->incomingPeers.begin(); it != self->incomingPeers.end(); it++)
-            {
-                LOG(INFO) << *it;
+                //LOG(INFO) << *it;
             }
 
             self->updatePeers = false;
@@ -180,12 +174,10 @@ void Peer::PeerJoined(MDNSService * service, void * info)
     char buffer;
     struct sockaddr_in peerAddress = *(sockaddr_in *)&service->address;
 
-    LOG(INFO) << "Peer Joined: " << inet_ntoa(peerAddress.sin_addr);
-
     sock = socket(AF_INET, SOCK_STREAM, 0);
     peerAddress.sin_family = AF_INET;
 
-    LOG(INFO) << "Connecting to " << inet_ntoa(peerAddress.sin_addr) << " on " << ntohs(peerAddress.sin_port);
+    LOG(INFO) << "Peer Joined: " << inet_ntoa(peerAddress.sin_addr) << " on " << ntohs(peerAddress.sin_port);
 
     if(connect(sock, (struct sockaddr *)&peerAddress, sizeof(peerAddress)) < 0)
     {
@@ -196,14 +188,7 @@ void Peer::PeerJoined(MDNSService * service, void * info)
     write(sock, self->name, strlen(self->name));
     read(sock, &buffer, 1);
 
-    if(buffer == '1')
-    {
-        self->updateLock.lock();
-        self->incomingPeers.push_front(sock);
-        self->updatePeers = true;
-        self->updateLock.unlock();
-    }
-    else
+    if(buffer == '0')
     {
         close(sock);
     }

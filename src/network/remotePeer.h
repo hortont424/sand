@@ -23,38 +23,24 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SAND_NETWORK_PEER_H_
-#define _SAND_NETWORK_PEER_H_
-
-#include "remotePeer.h"
+#ifndef _SAND_NETWORK_REMOTE_PEER_H_
+#define _SAND_NETWORK_REMOTE_PEER_H_
 
 #include <glog/logging.h>
-#include <tinythread.h>
-#include <fast_mutex.h>
-#include <network/discovery/mdns.h>
 #include <list>
 
-class Peer
+class RemotePeer
 {
     public:
-        Peer(const char * name);
+        RemotePeer();
+        RemotePeer(int sock);
+
+        void UpdateName(const char * name);
+        const char * GetName();
 
     private:
-        tthread::thread * listenThread, * broadcastThread, * updateThread;
-        tthread::fast_mutex broadcastLock, updateLock;
-
         const char * name;
-        uint16_t port;
-        bool updatePeers;
-        std::list<RemotePeer *> peers;
-
-        Peer();
-        static void Listen(void * arg);
-        static void Broadcast(void * arg);
-        static void UpdatePeers(void * arg);
-
-        static void PeerJoined(MDNSService * service, void * info);
-        static void PeerLeft(MDNSService * service, void * info);
+        int sock;
 };
 
 #endif
