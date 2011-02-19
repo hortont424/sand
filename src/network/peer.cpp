@@ -90,12 +90,14 @@ void Peer::Listen(void * arg)
 
     while(1)
     {
+        int nbytes = 0;
+
         connectionSock = accept(sock, (struct sockaddr*)&client, &clientlen);
 
         LOG(INFO) << "Accepted connection from " << inet_ntoa(client.sin_addr);
 
-        read(connectionSock, buffer, sizeof(buffer) - 1);
-        buffer[sizeof(buffer)] = 0;
+        nbytes = read(connectionSock, buffer, sizeof(buffer) - 1);
+        buffer[nbytes] = 0;
 
         // TODO: bad strcmp
         if(strncmp(buffer, self->name, sizeof(buffer)) == 0)
