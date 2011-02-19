@@ -30,23 +30,48 @@
 #include <tinythread.h>
 #include <glfw.h>
 
+static bool runThread = true;
+
 void TestThread(void * arg)
 {
-    while(1)
+    while(runThread)
     {
-        printf("test\n");
         sleep(1);
     }
 }
 
+char * inet_sockaddr_toa(const struct sockaddr * sa, char * s, size_t maxlen)
+{
+    switch(sa->sa_family)
+    {
+        case AF_INET:
+            inet_ntop(AF_INET, &(((struct sockaddr_in *)sa)->sin_addr), s, maxlen);
+            break;
+
+        case AF_INET6:
+            inet_ntop(AF_INET6, &(((struct sockaddr_in6 *)sa)->sin6_addr), s, maxlen);
+            break;
+
+        default:
+            strncpy(s, "Unknown", maxlen);
+            return NULL;
+    }
+
+    return s;
+}
+
 void addService(MDNSService * service)
 {
-    printf("add\n");
+    char addrString[255];
+
+    LOG(INFO) << "add: " << inet_sockaddr_toa(&service->address, addrString, sizeof(addrString));
 }
 
 void removeService(MDNSService * service)
 {
-    printf("remove\n");
+    char addrString[255];
+
+    LOG(INFO) << "remove: " << inet_sockaddr_toa(&service->address, addrString, sizeof(addrString));
 }
 
 int main(int argc, char const * argv[])
@@ -72,6 +97,9 @@ int main(int argc, char const * argv[])
 
         running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
     }
+
+    runThread = false;
+    t.join();
 
     glfwTerminate();
 
