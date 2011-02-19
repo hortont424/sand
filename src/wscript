@@ -16,4 +16,4 @@ def build(bld):
                 cxxflags=["-g"],
                 framework="OpenGL CoreServices Cocoa",
                 uselib="glog",
-                use="tinythread glfw")
+                use="tinythread glfw gc")

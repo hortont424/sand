@@ -30,11 +30,11 @@ def pkgconfig_check(conf):
 @conf
 def library_check(conf):
     if UNAME == "Darwin":
-        libraries = ()
+        libraries = ("gc",)
     elif UNAME == "Windows":
-        libraries = ("GL")
+        libraries = ("GL", "gc")
     else:
-        libraries = ("GL")
+        libraries = ("GL", "gc")
 
     for library in libraries:
         conf.check_cc(lib=library)
