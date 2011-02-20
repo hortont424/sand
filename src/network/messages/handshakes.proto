@@ -1,0 +1,4 @@
+message NameUpdate
+{
+    required string name = 1;
+}

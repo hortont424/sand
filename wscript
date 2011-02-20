@@ -12,6 +12,7 @@ def options(opt):
 
 def configure(conf):
     conf.check_tool('compiler_cxx compiler_c')
+    conf.find_program('protoc')
 
     conf.pkgconfig_check()
     conf.library_check()
@@ -20,6 +21,7 @@ def configure(conf):
 def pkgconfig_check(conf):
     libraries = (
         ("libglog", "glog", None),
+        ("protobuf", "protobuf", None)
     )
 
     for package, uselib, version in libraries:

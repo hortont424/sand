@@ -1,14 +1,38 @@
 #!/usr/bin/env python
 
-import glob
-import os
-import fnmatch
+from waflib import TaskGen
+from waflib.Task import Task
+from waflib.TaskGen import extension
+
+TaskGen.task_gen.mappings['.cc'] = TaskGen.task_gen.mappings['.cpp']
+
+#TaskGen.declare_chain(
+#        name = 'protoc',
+#        rule = '${PROTOC} -I=../src/network/messages --cpp_out=src/network/messages ${SRC}',
+#        ext_in = '.proto',
+#        ext_out = '.pb.cc .pb.h',
+#        reentrant = False
+#)
+
+class proto(Task):
+    run_str = '${PROTOC} -I=../src/network/messages --cpp_out=src/network/messages ${SRC}'
+    color = 'BLUE'
+    ext_out = [".pb.cc", ".pb.h"]
+
+@extension(".proto")
+def process_proto(self, node):
+    cc_node = node.change_ext('.pb.cc')
+    h_node = node.change_ext('.pb.h')
+    self.create_task("proto", node, [cc_node, h_node])
+    self.source.append(cc_node)
 
 def build(bld):
-    bld.program(source=bld.path.ant_glob(["**/*cpp"]),
+    #bld(source=bld.path.ant_glob(["**/*proto"]))
+
+    bld.program(source=bld.path.ant_glob(["**/*cpp", "**/*proto"]),
                 target="game",
                 includes=[".", "../external/tinythread", "../external/glfw"],
                 cxxflags=["-g"],
                 framework="OpenGL CoreServices Cocoa",
-                uselib="glog",
+                uselib="glog protobuf",
                 use="tinythread glfw gc")
