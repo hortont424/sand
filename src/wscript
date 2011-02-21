@@ -16,7 +16,7 @@ TaskGen.task_gen.mappings['.cc'] = TaskGen.task_gen.mappings['.cpp']
 
 class proto(Task):
     run_str = '${PROTOC} -I=../src/network/messages --cpp_out=src/network/messages ${SRC}'
-    color = 'BLUE'
+    color = 'GREEN'
     ext_out = [".pb.cc", ".pb.h"]
 
 @extension(".proto")
@@ -27,11 +27,9 @@ def process_proto(self, node):
     self.source.append(cc_node)
 
 def build(bld):
-    #bld(source=bld.path.ant_glob(["**/*proto"]))
-
     bld.program(source=bld.path.ant_glob(["**/*cpp", "**/*proto"]),
                 target="game",
-                includes=[".", "../external/tinythread", "../external/glfw"],
+                includes=[".", "../external/tinythread", "../external/glfw", "../build/src/network/messages"],
                 cxxflags=["-g"],
                 framework="OpenGL CoreServices Cocoa",
                 uselib="glog protobuf",

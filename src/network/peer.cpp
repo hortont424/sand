@@ -29,6 +29,8 @@
 #include <network/util.h>
 #include <sys/socket.h>
 
+#include "handshakes.pb.h"
+
 Peer::Peer(const char * name)
 {
     this->name = name;
