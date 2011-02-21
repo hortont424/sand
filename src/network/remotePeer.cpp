@@ -3,6 +3,7 @@
 RemotePeer::RemotePeer(int sock)
 {
     this->sock = sock;
+    this->name = NULL;
 }
 
 void RemotePeer::UpdateName(const char * name)
@@ -15,4 +16,9 @@ void RemotePeer::UpdateName(const char * name)
 const char * RemotePeer::GetName()
 {
     return name;
+}
+
+int RemotePeer::GetSocket()
+{
+    return sock;
 }

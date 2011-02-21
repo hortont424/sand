@@ -36,7 +36,7 @@ int main(int argc, char const * argv[])
     google::InitGoogleLogging(argv[0]);
 
     glfwInit();
-    glfwOpenWindow(800, 600, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
+    glfwOpenWindow(200, 200, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
 
     if(argc != 2)
     {

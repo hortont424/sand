@@ -38,6 +38,8 @@ class RemotePeer
         void UpdateName(const char * name);
         const char * GetName();
 
+        int GetSocket();
+
     private:
         const char * name;
         int sock;

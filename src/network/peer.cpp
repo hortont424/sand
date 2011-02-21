@@ -30,6 +30,7 @@
 #include <sys/socket.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
+#include <sys/select.h>
 
 #include "handshakes.pb.h"
 
@@ -42,6 +43,7 @@ Peer::Peer(const char * name)
     broadcastLock.lock();
     broadcastThread = new tthread::thread(Broadcast, this);
     updateThread = new tthread::thread(UpdatePeers, this);
+    listenPeersThread = new tthread::thread(ListenPeers, this);
 }
 
 void Peer::UpdateName(const char * name)
@@ -58,7 +60,10 @@ void Peer::UpdateName(const char * name)
 
     nameUpdate.SerializeToString(&data);
 
-    globalUpdates.push_back(data);
+    updateLock.lock();
+    globalUpdates.push(data);
+    updateLock.unlock();
+
     updatePeers = true;
 }
 
@@ -165,17 +170,31 @@ void Peer::UpdatePeers(void * arg)
             self->updateLock.lock();
             LOG(INFO) << "Updating peers...";
 
-            for(std::list<RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
+            if(!self->globalUpdates.empty())
             {
-                //LOG(INFO) << *it;
+                std::string data = self->globalUpdates.front();
+                self->globalUpdates.pop();
 
-                /*SandMessage nameParsed;
-                nameParsed.ParseFromString(data);
+                for(std::list<RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
+                {
+                    RemotePeer * rp = *it;
 
-                printf("nameout: %s\n", nameParsed.nameupdate().name().c_str());*/
+                    if(rp->GetName())
+                    {
+                        LOG(INFO) << "Updating " << rp->GetName();
+                    }
+                    else
+                    {
+                        LOG(INFO) << "Updating unnamed peer";
+                    }
+
+                    write(rp->GetSocket(), data.c_str(), data.length());
+                }
             }
 
-            self->updatePeers = false;
+            if(self->globalUpdates.empty())
+                self->updatePeers = false;
+
             self->updateLock.unlock();
         }
         else
@@ -183,6 +202,46 @@ void Peer::UpdatePeers(void * arg)
             usleep(10000);
         }
     }
+}
+
+void Peer::ListenPeers(void * arg)
+{
+    Peer * self = (Peer *)arg;
+    int nfds;
+    int selected;
+    fd_set fds;
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+
+    while(1)
+    {
+        self->updateLock.lock();
+        nfds = self->peers.size();
+        FD_ZERO(&fds);
+
+        // TODO: keep this list around and update it when we get new peers, which is much less often!
+        for(std::list<RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
+        {
+            FD_SET((*it)->GetSocket(), &fds);
+        }
+
+        self->updateLock.unlock();
+
+        select(nfds, &fds, NULL, NULL, &timeout);
+
+        // TODO: as above, use the faster, cached list
+        for(std::list<RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
+        {
+            FD_SET((*it)->GetSocket(), &fds);
+
+            printf("ready to read: %d\n", FD_ISSET((*it)->GetSocket(), &fds));
+        }
+    }
+    //SandMessage nameParsed;
+    //nameParsed.ParseFromString(data);
+
+    //printf("nameout: %s\n", nameParsed.nameupdate().name().c_str());
 }
 
 void Peer::Broadcast(void * arg)

@@ -33,6 +33,7 @@
 #include <fast_mutex.h>
 #include <network/discovery/mdns.h>
 #include <list>
+#include <queue>
 
 class Peer
 {
@@ -43,17 +44,18 @@ class Peer
         const char * GetName();
 
     private:
-        tthread::thread * listenThread, * broadcastThread, * updateThread;
+        tthread::thread * listenThread, * broadcastThread, * updateThread, * listenPeersThread;
         tthread::fast_mutex broadcastLock, updateLock;
 
         const char * name;
         uint16_t port;
         bool updatePeers;
         std::list<RemotePeer *> peers;
-        std::list<std::string> globalUpdates;
+        std::queue<std::string> globalUpdates;
 
         Peer();
         static void Listen(void * arg);
+        static void ListenPeers(void * arg);
         static void Broadcast(void * arg);
         static void UpdatePeers(void * arg);
 
