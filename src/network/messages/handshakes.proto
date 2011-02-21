@@ -1,3 +1,15 @@
+message SandMessage
+{
+    enum MessageType
+    {
+        NAME_UPDATE = 0;
+    }
+
+    required MessageType type = 1;
+
+    optional NameUpdate nameUpdate = 2;
+}
+
 message NameUpdate
 {
     required string name = 1;

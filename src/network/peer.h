@@ -39,6 +39,9 @@ class Peer
     public:
         Peer(const char * name);
 
+        void UpdateName(const char * name);
+        const char * GetName();
+
     private:
         tthread::thread * listenThread, * broadcastThread, * updateThread;
         tthread::fast_mutex broadcastLock, updateLock;
@@ -47,6 +50,7 @@ class Peer
         uint16_t port;
         bool updatePeers;
         std::list<RemotePeer *> peers;
+        std::list<std::string> globalUpdates;
 
         Peer();
         static void Listen(void * arg);

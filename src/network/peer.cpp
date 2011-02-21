@@ -28,8 +28,12 @@
 #include <unistd.h>
 #include <network/util.h>
 #include <sys/socket.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 
 #include "handshakes.pb.h"
+
+using namespace google::protobuf::io;
 
 Peer::Peer(const char * name)
 {
@@ -38,6 +42,29 @@ Peer::Peer(const char * name)
     broadcastLock.lock();
     broadcastThread = new tthread::thread(Broadcast, this);
     updateThread = new tthread::thread(UpdatePeers, this);
+}
+
+void Peer::UpdateName(const char * name)
+{
+    SandMessage nameUpdate;
+    std::string data;
+
+    LOG(INFO) << "Peer::UpdateName(" << name << ")";
+
+    this->name = strdup(name);
+
+    nameUpdate.set_type(SandMessage_MessageType_NAME_UPDATE);
+    nameUpdate.mutable_nameupdate()->set_name(this->name);
+
+    nameUpdate.SerializeToString(&data);
+
+    globalUpdates.push_back(data);
+    updatePeers = true;
+}
+
+const char * Peer::GetName()
+{
+    return name;
 }
 
 void Peer::Listen(void * arg)
@@ -138,11 +165,14 @@ void Peer::UpdatePeers(void * arg)
             self->updateLock.lock();
             LOG(INFO) << "Updating peers...";
 
-            LOG(INFO) << "peers: ";
-
             for(std::list<RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
             {
                 //LOG(INFO) << *it;
+
+                /*SandMessage nameParsed;
+                nameParsed.ParseFromString(data);
+
+                printf("nameout: %s\n", nameParsed.nameupdate().name().c_str());*/
             }
 
             self->updatePeers = false;
