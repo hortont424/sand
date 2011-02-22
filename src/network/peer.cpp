@@ -301,10 +301,10 @@ void Peer::ListenPeers(void * arg)
 
                 if(nbytes)
                 {
-                    SandMessage nameParsed;
-                    nameParsed.ParseFromString(std::string(buffer, nbytes));
+                    SandMessage msg;
+                    msg.ParseFromString(std::string(buffer, nbytes));
 
-                    printf("nameout: %s\n", nameParsed.nameupdate().name().c_str());
+                    rp->ProcessMessage(msg);
                 }
 
                 free(buffer);

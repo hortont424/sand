@@ -30,6 +30,8 @@
 #include <list>
 #include <fast_mutex.h>
 
+class SandMessage;
+
 class RemotePeer
 {
     public:
@@ -38,6 +40,8 @@ class RemotePeer
 
         void UpdateName(const char * name);
         const char * GetName();
+
+        void ProcessMessage(SandMessage msg);
 
         tthread::fast_mutex commLock;
         int writeSock, readSock;
