@@ -213,13 +213,13 @@ void Peer::UpdatePeers(void * arg)
                     }
 
                     write(rp->writeSock, data.c_str(), data.length());
-
-                    LOG(INFO) << "Wrote " << data.length() << " bytes to " << rp->writeSock;
                 }
             }
 
             if(self->globalUpdates.empty())
+            {
                 self->updatePeers = false;
+            }
 
             self->updateLock.unlock();
         }
@@ -263,7 +263,7 @@ void Peer::ListenPeers(void * arg)
             }
         }
 
-        printf("select'd: %d\n", select(maxSock + 1, &fds, NULL, NULL, &timeout));
+        select(maxSock + 1, &fds, NULL, NULL, &timeout);
 
         // TODO: as above, use the faster, cached list
         for(std::map<std::string, RemotePeer *>::iterator it = peersCopy.begin(); it != peersCopy.end() && !readOne; it++)
@@ -282,19 +282,16 @@ void Peer::ListenPeers(void * arg)
                 nbytes = read(sock, buffer, sizeof(buffer) - 1);
                 buffer[nbytes] = '\0';
 
-                // TODO: do something with the message!
+                if(nbytes)
+                {
+                    SandMessage nameParsed;
+                    nameParsed.ParseFromString(std::string(buffer, nbytes));
+
+                    printf("nameout: %s\n", nameParsed.nameupdate().name().c_str());
+                }
             }
         }
-
-        if(!readOne)
-        {
-            LOG(INFO) << "Skipped select";
-        }
     }
-    //SandMessage nameParsed;
-    //nameParsed.ParseFromString(data);
-
-    //printf("nameout: %s\n", nameParsed.nameupdate().name().c_str());
 }
 
 void Peer::Broadcast(void * arg)
