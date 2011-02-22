@@ -21,6 +21,7 @@ It also includes various external libraries within itself:
 * SOIL (http://www.lonesock.net/soil.html)
 * TinyThread++ (http://tinythread.sourceforge.net/)
 * GLFW (http://www.glfw.org/)
+* ooid (http://sourceforge.net/projects/ooid/)
 
 The game depends on a few other things depending on your platform:
 

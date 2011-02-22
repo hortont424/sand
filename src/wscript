@@ -29,7 +29,7 @@ def process_proto(self, node):
 def build(bld):
     bld.program(source=bld.path.ant_glob(["**/*cpp", "**/*proto"]),
                 target="game",
-                includes=[".", "../external/tinythread", "../external/glfw", "../build/src/network/messages"],
+                includes=[".", "../external/tinythread", "../external/glfw", "../build/src/network/messages", "../external/uuid"],
                 cxxflags=["-g"],
                 framework="OpenGL CoreServices Cocoa",
                 uselib="glog protobuf",

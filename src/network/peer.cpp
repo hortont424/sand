@@ -34,6 +34,9 @@
 
 #include "handshakes.pb.h"
 
+#include "uuid.h"
+#include "devrand.h"
+
 using namespace google::protobuf::io;
 
 Peer::Peer(const char * name)
@@ -44,6 +47,17 @@ Peer::Peer(const char * name)
     broadcastThread = new tthread::thread(Broadcast, this);
     updateThread = new tthread::thread(UpdatePeers, this);
     listenPeersThread = new tthread::thread(ListenPeers, this);
+
+    kashmir::system::DevRand devrandom;
+    kashmir::system::DevRand & in = devrandom;
+    std::ostringstream ss;
+    std::ostream & out = ss;
+    kashmir::uuid_t uuid_obj;
+
+    in >> uuid_obj;
+    out << uuid_obj;
+
+    uuid = ss.str().c_str();
 }
 
 void Peer::UpdateName(const char * name)
@@ -134,7 +148,7 @@ void Peer::Listen(void * arg)
         buffer[nbytes] = 0;
 
         // TODO: bad strcmp
-        if(strncmp(buffer, self->name, sizeof(buffer)) == 0)
+        if(strncmp(buffer, self->uuid, sizeof(buffer)) == 0)
         {
             LOG(INFO) << "Tried to connect to self";
 
@@ -278,7 +292,7 @@ void Peer::PeerJoined(MDNSService * service, void * info)
         return;
     }
 
-    write(sock, self->name, strlen(self->name));
+    write(sock, self->uuid, strlen(self->uuid));
     read(sock, &buffer, 1);
 
     if(buffer == '0')

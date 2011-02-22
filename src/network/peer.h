@@ -48,6 +48,8 @@ class Peer
         tthread::fast_mutex broadcastLock, updateLock;
 
         const char * name;
+        const char * uuid;
+
         uint16_t port;
         bool updatePeers;
         std::list<RemotePeer *> peers;
