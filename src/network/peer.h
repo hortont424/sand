@@ -36,6 +36,8 @@
 #include <queue>
 #include <map>
 
+class SandMessage;
+
 class Peer
 {
     public:
@@ -43,6 +45,8 @@ class Peer
 
         void UpdateName(const char * name);
         const char * GetName();
+
+        void EnqueueMessage(SandMessage msg);
 
     private:
         tthread::thread * listenThread, * broadcastThread, * updateThread, * listenPeersThread;

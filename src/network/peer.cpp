@@ -69,22 +69,25 @@ Peer::Peer(const char * name)
 void Peer::UpdateName(const char * name)
 {
     SandMessage nameUpdate;
-    std::string data;
-
-    LOG(INFO) << "Peer::UpdateName(" << name << ")";
 
     this->name = strdup(name);
 
     nameUpdate.set_type(SandMessage_MessageType_NAME_UPDATE);
     nameUpdate.mutable_nameupdate()->set_name(this->name);
 
-    nameUpdate.SerializeToString(&data);
+    EnqueueMessage(nameUpdate);
+}
+
+void Peer::EnqueueMessage(SandMessage msg)
+{
+    std::string data;
+
+    msg.SerializeToString(&data);
 
     updateLock.lock();
     globalUpdates.push(data);
-    updateLock.unlock();
-
     updatePeers = true;
+    updateLock.unlock();
 }
 
 const char * Peer::GetName()
@@ -199,6 +202,10 @@ void Peer::UpdatePeers(void * arg)
                 std::string data = self->globalUpdates.front();
                 self->globalUpdates.pop();
 
+                const char * dataStr = data.c_str();
+                uint16_t dataLen = data.length(); // Need to use length here instead of strlen b/c there are zeroes!
+                uint16_t nDataLen = htons(dataLen);
+
                 for(std::map<std::string, RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
                 {
                     RemotePeer * rp = it->second;
@@ -212,7 +219,8 @@ void Peer::UpdatePeers(void * arg)
                         LOG(INFO) << "Updating unnamed peer";
                     }
 
-                    write(rp->writeSock, data.c_str(), data.length());
+                    write(rp->writeSock, &nDataLen, 2);
+                    write(rp->writeSock, dataStr, dataLen);
                 }
             }
 
@@ -275,12 +283,21 @@ void Peer::ListenPeers(void * arg)
             {
                 int nbytes;
                 int flags;
-                char buffer[256];
+                uint16_t nDataLen, dataLen;
+                char * buffer;
 
                 readOne = true;
 
-                nbytes = read(sock, buffer, sizeof(buffer) - 1);
-                buffer[nbytes] = '\0';
+                nbytes = read(sock, &nDataLen, 2);
+
+                if(nbytes != 2)
+                {
+                    LOG(FATAL) << "Got less than 2 bytes in message header, bailing!";
+                }
+
+                dataLen = ntohs(nDataLen);
+                buffer = (char *)calloc(dataLen, sizeof(char));
+                nbytes = read(sock, buffer, dataLen);
 
                 if(nbytes)
                 {
@@ -289,6 +306,8 @@ void Peer::ListenPeers(void * arg)
 
                     printf("nameout: %s\n", nameParsed.nameupdate().name().c_str());
                 }
+
+                free(buffer);
             }
         }
     }
