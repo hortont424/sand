@@ -28,6 +28,7 @@
 
 #include <glog/logging.h>
 #include <list>
+#include <fast_mutex.h>
 
 class RemotePeer
 {
@@ -39,6 +40,8 @@ class RemotePeer
         const char * GetName();
 
         int GetSocket();
+
+        tthread::fast_mutex commLock;
 
     private:
         const char * name;

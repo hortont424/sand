@@ -31,6 +31,8 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 #include <sys/select.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "handshakes.pb.h"
 
@@ -42,11 +44,7 @@ using namespace google::protobuf::io;
 Peer::Peer(const char * name)
 {
     this->name = name;
-    listenThread = new tthread::thread(Listen, this);
-    broadcastLock.lock();
-    broadcastThread = new tthread::thread(Broadcast, this);
-    updateThread = new tthread::thread(UpdatePeers, this);
-    listenPeersThread = new tthread::thread(ListenPeers, this);
+    updatePeers = false;
 
     kashmir::system::DevRand devrandom;
     kashmir::system::DevRand & in = devrandom;
@@ -57,7 +55,15 @@ Peer::Peer(const char * name)
     in >> uuid_obj;
     out << uuid_obj;
 
-    uuid = ss.str().c_str();
+    uuid = strdup(ss.str().c_str());
+
+    LOG(INFO) << "Created Peer: " << uuid;
+
+    broadcastLock.lock();
+    listenThread = new tthread::thread(Listen, this);
+    broadcastThread = new tthread::thread(Broadcast, this);
+    updateThread = new tthread::thread(UpdatePeers, this);
+    listenPeersThread = new tthread::thread(ListenPeers, this);
 }
 
 void Peer::UpdateName(const char * name)
@@ -167,7 +173,7 @@ void Peer::Listen(void * arg)
 
             self->updateLock.lock();
             self->peers.push_front(new RemotePeer(connectionSock));
-            self->updatePeers = true;
+            //self->updatePeers = true;
             self->updateLock.unlock();
         }
     }
@@ -203,6 +209,8 @@ void Peer::UpdatePeers(void * arg)
                     }
 
                     write(rp->GetSocket(), data.c_str(), data.length());
+
+                    LOG(INFO) << "Wrote " << data.length() << " bytes to " << rp->GetSocket();
                 }
             }
 
@@ -221,35 +229,64 @@ void Peer::UpdatePeers(void * arg)
 void Peer::ListenPeers(void * arg)
 {
     Peer * self = (Peer *)arg;
-    int nfds;
     int selected;
     fd_set fds;
     struct timeval timeout;
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
+    bool readOne = false;
+    int maxSock;
 
     while(1)
     {
+        readOne = false;
+        maxSock = 0;
+
         self->updateLock.lock();
-        nfds = self->peers.size();
+        std::list<RemotePeer *> peersCopy = self->peers;
+        self->updateLock.unlock();
+
         FD_ZERO(&fds);
 
         // TODO: keep this list around and update it when we get new peers, which is much less often!
-        for(std::list<RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
+        for(std::list<RemotePeer *>::iterator it = peersCopy.begin(); it != peersCopy.end(); it++)
         {
-            FD_SET((*it)->GetSocket(), &fds);
+            int sock = (*it)->GetSocket();
+            FD_SET(sock, &fds);
+
+            if(sock > maxSock)
+            {
+                maxSock = sock;
+            }
         }
 
-        self->updateLock.unlock();
-
-        select(nfds, &fds, NULL, NULL, &timeout);
+        select(maxSock + 1, &fds, NULL, NULL, &timeout);
 
         // TODO: as above, use the faster, cached list
-        for(std::list<RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
+        for(std::list<RemotePeer *>::iterator it = peersCopy.begin(); it != peersCopy.end() && !readOne; it++)
         {
-            FD_SET((*it)->GetSocket(), &fds);
+            RemotePeer * rp = *it;
+            int sock = rp->GetSocket();
 
-            printf("ready to read: %d\n", FD_ISSET((*it)->GetSocket(), &fds));
+            if(FD_ISSET(sock, &fds))
+            {
+                int nbytes;
+                int flags;
+                char buffer[256];
+
+                readOne = true;
+
+                nbytes = read(sock, buffer, sizeof(buffer) - 1);
+
+                LOG(INFO) << "Read " << nbytes << " bytes from " << sock;
+
+                buffer[nbytes] = 0;
+            }
+        }
+
+        if(!readOne)
+        {
+            LOG(INFO) << "Skipped select";
         }
     }
     //SandMessage nameParsed;
