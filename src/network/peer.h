@@ -34,6 +34,7 @@
 #include <network/discovery/mdns.h>
 #include <list>
 #include <queue>
+#include <map>
 
 class Peer
 {
@@ -52,7 +53,7 @@ class Peer
 
         uint16_t port;
         bool updatePeers;
-        std::list<RemotePeer *> peers;
+        std::map<std::string, RemotePeer *> peers;
         std::queue<std::string> globalUpdates;
 
         Peer();

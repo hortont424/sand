@@ -1,8 +1,9 @@
 #include "remotePeer.h"
 
-RemotePeer::RemotePeer(int sock)
+RemotePeer::RemotePeer(int writeSock, int readSock)
 {
-    this->sock = sock;
+    this->writeSock = writeSock;
+    this->readSock = readSock;
     this->name = NULL;
 }
 
@@ -16,9 +17,4 @@ void RemotePeer::UpdateName(const char * name)
 const char * RemotePeer::GetName()
 {
     return name;
-}
-
-int RemotePeer::GetSocket()
-{
-    return sock;
 }

@@ -148,8 +148,6 @@ void Peer::Listen(void * arg)
 
         connectionSock = accept(sock, (struct sockaddr*)&client, &clientlen);
 
-        LOG(INFO) << "Accepted connection from " << inet_ntoa(client.sin_addr);
-
         nbytes = read(connectionSock, buffer, sizeof(buffer) - 1);
         buffer[nbytes] = 0;
 
@@ -159,20 +157,26 @@ void Peer::Listen(void * arg)
             LOG(INFO) << "Tried to connect to self";
 
             buffer[0] = '0';
+            buffer[1] = '\0';
 
-            write(connectionSock, buffer, sizeof(buffer));
+            write(connectionSock, buffer, 2);
             close(connectionSock);
         }
         else
         {
-            LOG(INFO) << "Connected to: " << buffer;
+            LOG(INFO) << "Accepted connection from " << buffer;
 
-            buffer[0] = '1';
-
-            write(connectionSock, buffer, sizeof(buffer));
+            write(connectionSock, self->uuid, strlen(self->uuid));
 
             self->updateLock.lock();
-            self->peers.push_front(new RemotePeer(connectionSock));
+            if(self->peers.find(std::string(buffer)) == self->peers.end())
+            {
+                self->peers[std::string(buffer)] = new RemotePeer(connectionSock, 0);
+            }
+            else
+            {
+                self->peers[std::string(buffer)]->writeSock = connectionSock;
+            }
             //self->updatePeers = true;
             self->updateLock.unlock();
         }
@@ -195,9 +199,9 @@ void Peer::UpdatePeers(void * arg)
                 std::string data = self->globalUpdates.front();
                 self->globalUpdates.pop();
 
-                for(std::list<RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
+                for(std::map<std::string, RemotePeer *>::iterator it = self->peers.begin(); it != self->peers.end(); it++)
                 {
-                    RemotePeer * rp = *it;
+                    RemotePeer * rp = it->second;
 
                     if(rp->GetName())
                     {
@@ -208,9 +212,9 @@ void Peer::UpdatePeers(void * arg)
                         LOG(INFO) << "Updating unnamed peer";
                     }
 
-                    write(rp->GetSocket(), data.c_str(), data.length());
+                    write(rp->writeSock, data.c_str(), data.length());
 
-                    LOG(INFO) << "Wrote " << data.length() << " bytes to " << rp->GetSocket();
+                    LOG(INFO) << "Wrote " << data.length() << " bytes to " << rp->writeSock;
                 }
             }
 
@@ -229,7 +233,6 @@ void Peer::UpdatePeers(void * arg)
 void Peer::ListenPeers(void * arg)
 {
     Peer * self = (Peer *)arg;
-    int selected;
     fd_set fds;
     struct timeval timeout;
     timeout.tv_sec = 1;
@@ -243,15 +246,15 @@ void Peer::ListenPeers(void * arg)
         maxSock = 0;
 
         self->updateLock.lock();
-        std::list<RemotePeer *> peersCopy = self->peers;
+        std::map<std::string, RemotePeer *> peersCopy = self->peers;
         self->updateLock.unlock();
 
         FD_ZERO(&fds);
 
         // TODO: keep this list around and update it when we get new peers, which is much less often!
-        for(std::list<RemotePeer *>::iterator it = peersCopy.begin(); it != peersCopy.end(); it++)
+        for(std::map<std::string, RemotePeer *>::iterator it = peersCopy.begin(); it != peersCopy.end(); it++)
         {
-            int sock = (*it)->GetSocket();
+            int sock = it->second->readSock;
             FD_SET(sock, &fds);
 
             if(sock > maxSock)
@@ -260,13 +263,13 @@ void Peer::ListenPeers(void * arg)
             }
         }
 
-        select(maxSock + 1, &fds, NULL, NULL, &timeout);
+        printf("select'd: %d\n", select(maxSock + 1, &fds, NULL, NULL, &timeout));
 
         // TODO: as above, use the faster, cached list
-        for(std::list<RemotePeer *>::iterator it = peersCopy.begin(); it != peersCopy.end() && !readOne; it++)
+        for(std::map<std::string, RemotePeer *>::iterator it = peersCopy.begin(); it != peersCopy.end() && !readOne; it++)
         {
-            RemotePeer * rp = *it;
-            int sock = rp->GetSocket();
+            RemotePeer * rp = it->second;
+            int sock = rp->readSock;
 
             if(FD_ISSET(sock, &fds))
             {
@@ -277,10 +280,9 @@ void Peer::ListenPeers(void * arg)
                 readOne = true;
 
                 nbytes = read(sock, buffer, sizeof(buffer) - 1);
+                buffer[nbytes] = '\0';
 
-                LOG(INFO) << "Read " << nbytes << " bytes from " << sock;
-
-                buffer[nbytes] = 0;
+                // TODO: do something with the message!
             }
         }
 
@@ -315,7 +317,8 @@ void Peer::PeerJoined(MDNSService * service, void * info)
 {
     Peer * self = (Peer *)info;
     int sock;
-    char buffer;
+    char buffer[256];
+    int nbytes;
     struct sockaddr_in peerAddress = *(sockaddr_in *)&service->address;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -330,11 +333,25 @@ void Peer::PeerJoined(MDNSService * service, void * info)
     }
 
     write(sock, self->uuid, strlen(self->uuid));
-    read(sock, &buffer, 1);
+    nbytes = read(sock, buffer, sizeof(buffer) - 1);
+    buffer[nbytes] = '\0';
 
-    if(buffer == '0')
+    if(buffer[0] == '0' && buffer[1] == '\0')
     {
         close(sock);
+    }
+    else
+    {
+        LOG(INFO) << "Connected to " << buffer;
+
+        if(self->peers.find(std::string(buffer)) == self->peers.end())
+        {
+            self->peers[std::string(buffer)] = new RemotePeer(0, sock);
+        }
+        else
+        {
+            self->peers[std::string(buffer)]->readSock = sock;
+        }
     }
 }
 

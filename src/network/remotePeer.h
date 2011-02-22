@@ -34,18 +34,16 @@ class RemotePeer
 {
     public:
         RemotePeer();
-        RemotePeer(int sock);
+        RemotePeer(int writeSock, int readSock);
 
         void UpdateName(const char * name);
         const char * GetName();
 
-        int GetSocket();
-
         tthread::fast_mutex commLock;
+        int writeSock, readSock;
 
     private:
         const char * name;
-        int sock;
 };
 
 #endif
