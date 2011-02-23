@@ -29,7 +29,7 @@
 #include <glog/logging.h>
 #include <glfw.h>
 
-Group::Group()
+Group::Group() : Actor::Actor()
 {
 
 }

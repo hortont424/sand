@@ -29,7 +29,7 @@
 #include <glog/logging.h>
 #include <glfw.h>
 
-Billboard::Billboard()
+Billboard::Billboard() : Actor::Actor()
 {
 
 }

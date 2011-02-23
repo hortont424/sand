@@ -33,7 +33,7 @@
 #define BUTTON_HOVER_FILL_COLOR 0.310f, 0.525f, 0.788f, 0.4f
 #define BUTTON_BORDER_COLOR 0.310f, 0.525f, 0.788f, 1.0f
 
-Button::Button()
+Button::Button() : Actor::Actor()
 {
 
 }

@@ -43,7 +43,7 @@ void GLFWCALL _setMousePosition(int x, int y)
         _window->MouseMoved(x, y);
 }
 
-Window::Window(int width, int height)
+Window::Window(int width, int height) : Group::Group()
 {
     if(_window)
     {
