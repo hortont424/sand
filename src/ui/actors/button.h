@@ -23,28 +23,20 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SAND_UI_GROUP_H_
-#define _SAND_UI_GROUP_H_
+#ifndef _SAND_UI_ACTORS_BUTTON_H_
+#define _SAND_UI_ACTORS_BUTTON_H_
 
-#include "actor.h"
+#include <ui/actor.h>
 
-#include <set>
-
-class Group : public Actor
+class Button : public Actor
 {
     public:
-        Group();
+        Button();
 
         void Draw();
 
-        void AddActor(Actor * actor);
-        void RemoveActor(Actor * actor);
-        void ClearActors();
-
-        uint32_t ActorCount();
-
     private:
-        std::set<Actor *> actors;
+
 };
 
 #endif

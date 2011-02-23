@@ -31,26 +31,38 @@
 class Actor
 {
     public:
+        Actor * parent;
+        Actor * window;
+
         Actor();
 
         virtual void Draw() = 0;
+
+        void SetPosition(int32_t x, int32_t y);
+        void SetSize(int32_t w, int32_t h);
 
         void SetX(int32_t x);
         void SetY(int32_t y);
         void SetW(int32_t w);
         void SetH(int32_t h);
-        void SetPosition(int32_t x, int32_t y);
-        void SetSize(int32_t w, int32_t h);
         int32_t GetX();
         int32_t GetY();
         int32_t GetW();
         int32_t GetH();
 
-    private:
-        Actor * parent;
+        void SetHovering(bool hover);
+        void SetClicking(bool click);
+        bool GetHovering();
+        bool GetClicking();
 
+        int32_t GetPickingName();
+        static Actor * GetActorForPick(int pick);
+
+    private:
         int32_t x, y, w, h;
+        int32_t pickingName;
         bool dirty;
+        bool hovering, clicking;
 };
 
 #endif

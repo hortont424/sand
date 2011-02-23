@@ -23,28 +23,42 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SAND_UI_GROUP_H_
-#define _SAND_UI_GROUP_H_
+#include "button.h"
 
-#include "actor.h"
+#include <iostream>
+#include <glog/logging.h>
+#include <glfw.h>
 
-#include <set>
+#define BUTTON_FILL_COLOR 0.310f, 0.525f, 0.788f, 0.2f
+#define BUTTON_HOVER_FILL_COLOR 0.310f, 0.525f, 0.788f, 0.4f
+#define BUTTON_BORDER_COLOR 0.310f, 0.525f, 0.788f, 1.0f
 
-class Group : public Actor
+Button::Button()
 {
-    public:
-        Group();
 
-        void Draw();
+}
 
-        void AddActor(Actor * actor);
-        void RemoveActor(Actor * actor);
-        void ClearActors();
+void Button::Draw()
+{
+    if(GetHovering())
+        glColor4f(BUTTON_HOVER_FILL_COLOR);
+    else
+        glColor4f(BUTTON_FILL_COLOR);
 
-        uint32_t ActorCount();
+    glBegin(GL_QUADS);
+        glVertex2f(0.0f, 0.0f);
+        glVertex2f(0.0f, GetH());
+        glVertex2f(GetW(), GetH());
+        glVertex2f(GetW(), 0.0f);
+    glEnd();
 
-    private:
-        std::set<Actor *> actors;
-};
+    glColor4f(BUTTON_BORDER_COLOR);
 
-#endif
+    glBegin(GL_LINE_STRIP);
+        glVertex2f(0.0f, 0.0f);
+        glVertex2f(0.0f, GetH());
+        glVertex2f(GetW(), GetH());
+        glVertex2f(GetW(), 0.0f);
+        glVertex2f(0.0f, 0.0f);
+    glEnd();
+}

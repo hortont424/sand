@@ -28,10 +28,40 @@
 #include <iostream>
 #include <glog/logging.h>
 #include <glfw.h>
+#include <map>
+
+static int _maxPickingName = 0;
+static std::map<int, Actor *> _pickingMap;
 
 Actor::Actor()
 {
+    LOG(INFO) << "Actor::Actor()";
 
+    hovering = clicking = false;
+
+    pickingName = _maxPickingName;
+    _pickingMap[pickingName] = this;
+
+    _maxPickingName++;
+}
+
+Actor * Actor::GetActorForPick(int pick)
+{
+    return _pickingMap[pick];
+}
+
+void Actor::SetPosition(int32_t x, int32_t y)
+{
+    this->x = x;
+    this->y = y;
+    this->dirty = true;
+}
+
+void Actor::SetSize(int32_t w, int32_t h)
+{
+    this->w = w;
+    this->h = h;
+    this->dirty = true;
 }
 
 void Actor::SetX(int32_t x)
@@ -58,20 +88,6 @@ void Actor::SetH(int32_t h)
     this->dirty = true;
 }
 
-void Actor::SetPosition(int32_t x, int32_t y)
-{
-    this->x = x;
-    this->y = y;
-    this->dirty = true;
-}
-
-void Actor::SetSize(int32_t w, int32_t h)
-{
-    this->w = w;
-    this->h = h;
-    this->dirty = true;
-}
-
 int32_t Actor::GetX()
 {
     return x;
@@ -90,4 +106,29 @@ int32_t Actor::GetW()
 int32_t Actor::GetH()
 {
     return h;
+}
+
+void Actor::SetHovering(bool hover)
+{
+    hovering = hover;
+}
+
+void Actor::SetClicking(bool click)
+{
+    clicking = click;
+}
+
+bool Actor::GetHovering()
+{
+    return hovering;
+}
+
+bool Actor::GetClicking()
+{
+    return clicking;
+}
+
+int32_t Actor::GetPickingName()
+{
+    return pickingName;
 }

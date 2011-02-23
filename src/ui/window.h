@@ -30,6 +30,7 @@
 
 #include <tinythread.h>
 #include <fast_mutex.h>
+#include <list>
 
 class Window : public Group
 {
@@ -39,8 +40,10 @@ class Window : public Group
         void MainLoop();
 
         void SetWindowSize(int width, int height);
+        void MouseMoved(int x, int y);
 
     private:
+        std::list<Actor *> hoveredActors;
 };
 
 #endif

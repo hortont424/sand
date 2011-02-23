@@ -42,24 +42,37 @@ void Group::Draw()
     {
         Actor * actor = *it;
 
+        glPushName(actor->GetPickingName());
         glPushMatrix();
         glTranslatef(actor->GetX(), actor->GetY(), 0.0);
         actor->Draw();
         glPopMatrix();
+        glPopName();
     }
 }
 
 void Group::AddActor(Actor * actor)
 {
     actors.insert(actor);
+    actor->parent = this;
+    actor->window = window;
 }
 
 void Group::RemoveActor(Actor * actor)
 {
     actors.erase(actor);
+
+    actor->parent = actor->window = NULL;
 }
 
 void Group::ClearActors()
 {
     actors.clear();
+
+    // TODO: clear all parents and windows
+}
+
+uint32_t Group::ActorCount()
+{
+    return actors.size();
 }

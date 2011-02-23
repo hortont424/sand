@@ -37,6 +37,12 @@ void GLFWCALL _setWindowSize(int width, int height)
         _window->SetWindowSize(width, height);
 }
 
+void GLFWCALL _setMousePosition(int x, int y)
+{
+    if(_window)
+        _window->MouseMoved(x, y);
+}
+
 Window::Window(int width, int height)
 {
     if(_window)
@@ -46,9 +52,23 @@ Window::Window(int width, int height)
 
     _window = this;
 
+    window = this;
+    parent = NULL;
+
     glfwInit();
     glfwOpenWindow(width, height, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
     glfwSetWindowSizeCallback(_setWindowSize);
+    glfwSetMousePosCallback(_setMousePosition);
+
+    glShadeModel(GL_SMOOTH);
+    //glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
+    glEnable(GL_POLYGON_SMOOTH);
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void Window::MainLoop()
@@ -82,4 +102,55 @@ void Window::SetWindowSize(int width, int height)
     glLoadIdentity();
     glOrtho(0.0, width, 0.0, height, -100.0, 100.0);
     glMatrixMode(GL_MODELVIEW);
+}
+
+void Window::MouseMoved(int x, int y)
+{
+    GLuint selectBuffer[64];
+    GLint viewport[4];
+    GLint selectedCount;
+
+    if(x < 0 || x > GetW() || y < 0 || y > GetH())
+        return;
+
+    if(ActorCount() == 0)
+        return;
+
+    glSelectBuffer(64, selectBuffer);
+    glRenderMode(GL_SELECT);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    gluPickMatrix(x, y, 2, 2, viewport);
+    glOrtho(0, GetW(), 0, GetH(), -100.0, 100.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glInitNames();
+
+    Draw();
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glFlush();
+
+    selectedCount = glRenderMode(GL_RENDER);
+
+    for(std::list<Actor *>::iterator it = hoveredActors.begin(); it != hoveredActors.end(); it++)
+    {
+        (*it)->SetHovering(false);
+    }
+
+    hoveredActors.clear();
+
+    for(int i = 0; i < selectedCount; i++)
+    {
+        Actor * actor = Actor::GetActorForPick(selectBuffer[i]);
+
+        actor->SetHovering(true);
+        hoveredActors.push_front(actor);
+    }
 }

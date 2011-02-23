@@ -27,7 +27,7 @@
 
 #include <network/peer.h>
 #include <glog/logging.h>
-#include <ui/actors/billboard.h>
+#include <ui/actors/button.h>
 #include <ui/window.h>
 
 int main(int argc, char const * argv[])
@@ -36,12 +36,12 @@ int main(int argc, char const * argv[])
 
     Peer * peer = new Peer("Unnamed");
     Window * win = new Window(800, 600);
-    Billboard * bill = new Billboard();
+    Button * button = new Button();
 
-    bill->SetPosition(0, 0);
-    bill->SetSize(20, 20);
+    button->SetPosition(400 - 50, 300 - 20);
+    button->SetSize(100, 40);
 
-    win->AddActor(bill);
+    win->AddActor(button);
 
     win->MainLoop();
 
