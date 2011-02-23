@@ -36,12 +36,16 @@ int main(int argc, char const * argv[])
 
     Peer * peer = new Peer("Unnamed");
     Window * win = new Window(800, 600);
+
     Button * button = new Button();
-
-    button->SetPosition(400 - 50, 300 - 20);
+    button->SetPosition(0, 0);
     button->SetSize(100, 40);
-
     win->AddActor(button);
+    button = new Button();
+    button->SetPosition(400 - 50, 300 - 80);
+    button->SetSize(100, 40);
+    win->AddActor(button);
+
 
     win->MainLoop();
 

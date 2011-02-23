@@ -120,7 +120,7 @@ std::list<Actor *> * Window::Pick(int x, int y)
     glLoadIdentity();
     glGetIntegerv(GL_VIEWPORT, viewport);
     gluPickMatrix(x, y, 1, 1, viewport);
-    glOrtho(0, GetW(), 0, GetH(), -100.0, 100.0);
+    glOrtho(0, GetW(), GetH(), 0, -100.0, 100.0); // flipped coords
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glInitNames();
@@ -136,7 +136,7 @@ std::list<Actor *> * Window::Pick(int x, int y)
 
     for(int i = 0; i < selectedCount; i++)
     {
-        Actor * actor = Actor::GetActorForPick(selectBuffer[i]);
+        Actor * actor = Actor::GetActorForPick(selectBuffer[i * 4 + 3]);
 
         selectedActors->push_front(actor);
     }
