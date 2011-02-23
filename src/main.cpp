@@ -38,11 +38,11 @@ int main(int argc, char const * argv[])
     Window * win = new Window(800, 600);
 
     Button * button = new Button();
-    button->SetPosition(0, 0);
+    button->SetPosition(400 - 50, 300);
     button->SetSize(100, 40);
     win->AddActor(button);
     button = new Button();
-    button->SetPosition(400 - 50, 300 - 80);
+    button->SetPosition(400 - 50, 300 - 60);
     button->SetSize(100, 40);
     win->AddActor(button);
 

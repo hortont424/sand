@@ -32,5 +32,5 @@ def build(bld):
                 includes=[".", "../external/tinythread", "../external/glfw", "../build/src/network/messages", "../external/uuid"],
                 cxxflags=["-g"],
                 framework="OpenGL CoreServices Cocoa",
-                uselib="glog protobuf",
+                uselib="glog protobuf cogl",
                 use="tinythread glfw gc")
