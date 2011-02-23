@@ -27,13 +27,59 @@
 
 #include <iostream>
 #include <glog/logging.h>
+#include <glfw.h>
 
-Window::Window()
+static Window * _window = NULL;
+
+void GLFWCALL _setWindowSize(int width, int height)
 {
-
+    if(_window)
+        _window->SetWindowSize(width, height);
 }
 
-void Window::Draw()
+Window::Window(int width, int height)
 {
-    LOG(INFO) << "Window::Draw()";
+    if(_window)
+    {
+        LOG(FATAL) << "Can only create one window at a time!";
+    }
+
+    _window = this;
+
+    glfwInit();
+    glfwOpenWindow(width, height, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
+    glfwSetWindowSizeCallback(_setWindowSize);
+}
+
+void Window::MainLoop()
+{
+    bool running = true;
+
+    while(running)
+    {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glLoadIdentity();
+        Draw();
+
+        glfwSwapBuffers();
+
+        running = glfwGetWindowParam(GLFW_OPENED);
+
+        usleep(1000);
+    }
+
+    glfwTerminate();
+}
+
+void Window::SetWindowSize(int width, int height)
+{
+    SetSize(width, height);
+
+    glViewport(0.0, 0.0, width, height);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0, width, 0.0, height, -100.0, 100.0);
+    glMatrixMode(GL_MODELVIEW);
 }

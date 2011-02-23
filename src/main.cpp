@@ -27,40 +27,23 @@
 
 #include <network/peer.h>
 #include <glog/logging.h>
-#include <glfw.h>
 #include <ui/actors/billboard.h>
+#include <ui/window.h>
 
 int main(int argc, char const * argv[])
 {
-    bool running = true;
-
     google::InitGoogleLogging(argv[0]);
 
-    glfwInit();
-    glfwOpenWindow(200, 200, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
-
     Peer * peer = new Peer("Unnamed");
+    Window * win = new Window(800, 600);
     Billboard * bill = new Billboard();
 
-    while(running)
-    {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers();
+    bill->SetPosition(0, 0);
+    bill->SetSize(20, 20);
 
-        bill->Draw();
+    win->AddActor(bill);
 
-        if(glfwGetKey(GLFW_KEY_ESC))
-        {
-            peer->UpdateName("Asdf");
-            usleep(1000000);
-        }
-
-        running = glfwGetWindowParam(GLFW_OPENED);
-
-        usleep(10000);
-    }
-
-    glfwTerminate();
+    win->MainLoop();
 
     return 0;
 }

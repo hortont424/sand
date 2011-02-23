@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <glog/logging.h>
+#include <glfw.h>
 
 Billboard::Billboard()
 {
@@ -35,5 +36,12 @@ Billboard::Billboard()
 
 void Billboard::Draw()
 {
-    LOG(INFO) << "Billboard::Draw()";
+    glColor3f(1.0f, 0.0f, 0.0f);
+
+    glBegin(GL_QUADS);
+        glVertex2f(0.0f, 0.0f);
+        glVertex2f(0.0f, GetH());
+        glVertex2f(GetW(), GetH());
+        glVertex2f(GetW(), 0.0f);
+    glEnd();
 }

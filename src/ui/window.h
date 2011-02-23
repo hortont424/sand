@@ -28,15 +28,19 @@
 
 #include "group.h"
 
-class Window : Group
+#include <tinythread.h>
+#include <fast_mutex.h>
+
+class Window : public Group
 {
     public:
-        Window();
+        Window(int width, int height);
 
-        void Draw();
+        void MainLoop();
+
+        void SetWindowSize(int width, int height);
 
     private:
-
 };
 
 #endif

@@ -27,8 +27,67 @@
 
 #include <iostream>
 #include <glog/logging.h>
+#include <glfw.h>
 
 Actor::Actor()
 {
 
+}
+
+void Actor::SetX(int32_t x)
+{
+    this->x = x;
+    this->dirty = true;
+}
+
+void Actor::SetY(int32_t y)
+{
+    this->y = y;
+    this->dirty = true;
+}
+
+void Actor::SetW(int32_t w)
+{
+    this->w = w;
+    this->dirty = true;
+}
+
+void Actor::SetH(int32_t h)
+{
+    this->h = h;
+    this->dirty = true;
+}
+
+void Actor::SetPosition(int32_t x, int32_t y)
+{
+    this->x = x;
+    this->y = y;
+    this->dirty = true;
+}
+
+void Actor::SetSize(int32_t w, int32_t h)
+{
+    this->w = w;
+    this->h = h;
+    this->dirty = true;
+}
+
+int32_t Actor::GetX()
+{
+    return x;
+}
+
+int32_t Actor::GetY()
+{
+    return y;
+}
+
+int32_t Actor::GetW()
+{
+    return w;
+}
+
+int32_t Actor::GetH()
+{
+    return h;
 }

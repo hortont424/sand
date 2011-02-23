@@ -26,6 +26,8 @@
 #ifndef _SAND_UI_ACTOR_H_
 #define _SAND_UI_ACTOR_H_
 
+#include <inttypes.h>
+
 class Actor
 {
     public:
@@ -33,8 +35,22 @@ class Actor
 
         virtual void Draw() = 0;
 
-    private:
+        void SetX(int32_t x);
+        void SetY(int32_t y);
+        void SetW(int32_t w);
+        void SetH(int32_t h);
+        void SetPosition(int32_t x, int32_t y);
+        void SetSize(int32_t w, int32_t h);
+        int32_t GetX();
+        int32_t GetY();
+        int32_t GetW();
+        int32_t GetH();
 
+    private:
+        Actor * parent;
+
+        int32_t x, y, w, h;
+        bool dirty;
 };
 
 #endif

@@ -28,15 +28,21 @@
 
 #include "actor.h"
 
-class Group : Actor
+#include <set>
+
+class Group : public Actor
 {
     public:
         Group();
 
         void Draw();
 
-    private:
+        void AddActor(Actor * actor);
+        void RemoveActor(Actor * actor);
+        void ClearActors();
 
+    private:
+        std::set<Actor *> actors;
 };
 
 #endif

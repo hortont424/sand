@@ -28,7 +28,7 @@
 
 #include <ui/actor.h>
 
-class Billboard : Actor
+class Billboard : public Actor
 {
     public:
         Billboard();

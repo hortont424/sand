@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <glog/logging.h>
+#include <glfw.h>
 
 Group::Group()
 {
@@ -35,5 +36,30 @@ Group::Group()
 
 void Group::Draw()
 {
-    LOG(INFO) << "Group::Draw()";
+    // transform by group coords
+
+    for(std::set<Actor *>::iterator it = actors.begin(); it != actors.end(); it++)
+    {
+        Actor * actor = *it;
+
+        glPushMatrix();
+        glTranslatef(actor->GetX(), actor->GetY(), 0.0);
+        actor->Draw();
+        glPopMatrix();
+    }
+}
+
+void Group::AddActor(Actor * actor)
+{
+    actors.insert(actor);
+}
+
+void Group::RemoveActor(Actor * actor)
+{
+    actors.erase(actor);
+}
+
+void Group::ClearActors()
+{
+    actors.clear();
 }
