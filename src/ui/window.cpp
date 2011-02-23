@@ -104,17 +104,12 @@ void Window::SetWindowSize(int width, int height)
     glMatrixMode(GL_MODELVIEW);
 }
 
-void Window::MouseMoved(int x, int y)
+std::list<Actor *> * Window::Pick(int x, int y)
 {
     GLuint selectBuffer[64];
     GLint viewport[4];
     GLint selectedCount;
-
-    if(x < 0 || x > GetW() || y < 0 || y > GetH())
-        return;
-
-    if(ActorCount() == 0)
-        return;
+    std::list<Actor *> * selectedActors = new std::list<Actor *>();
 
     glSelectBuffer(64, selectBuffer);
     glRenderMode(GL_SELECT);
@@ -124,7 +119,7 @@ void Window::MouseMoved(int x, int y)
     glPushMatrix();
     glLoadIdentity();
     glGetIntegerv(GL_VIEWPORT, viewport);
-    gluPickMatrix(x, y, 2, 2, viewport);
+    gluPickMatrix(x, y, 1, 1, viewport);
     glOrtho(0, GetW(), 0, GetH(), -100.0, 100.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -139,6 +134,24 @@ void Window::MouseMoved(int x, int y)
 
     selectedCount = glRenderMode(GL_RENDER);
 
+    for(int i = 0; i < selectedCount; i++)
+    {
+        Actor * actor = Actor::GetActorForPick(selectBuffer[i]);
+
+        selectedActors->push_front(actor);
+    }
+
+    return selectedActors;
+}
+
+void Window::MouseMoved(int x, int y)
+{
+    if(x < 0 || x > GetW() || y < 0 || y > GetH())
+        return;
+
+    if(ActorCount() == 0)
+        return;
+
     for(std::list<Actor *>::iterator it = hoveredActors.begin(); it != hoveredActors.end(); it++)
     {
         (*it)->SetHovering(false);
@@ -146,9 +159,11 @@ void Window::MouseMoved(int x, int y)
 
     hoveredActors.clear();
 
-    for(int i = 0; i < selectedCount; i++)
+    std::list<Actor *> * selectedActors = Pick(x, y);
+
+    for(std::list<Actor *>::iterator it = selectedActors->begin(); it != selectedActors->end(); it++)
     {
-        Actor * actor = Actor::GetActorForPick(selectBuffer[i]);
+        Actor * actor = *it;
 
         actor->SetHovering(true);
         hoveredActors.push_front(actor);

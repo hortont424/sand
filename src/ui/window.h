@@ -42,6 +42,8 @@ class Window : public Group
         void SetWindowSize(int width, int height);
         void MouseMoved(int x, int y);
 
+        std::list<Actor *> * Pick(int x, int y);
+
     private:
         std::list<Actor *> hoveredActors;
 };
