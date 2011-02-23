@@ -1,3 +1,6 @@
+Something about Sand Design Document
+====================================
+
 Philosophy
 ==========
 
@@ -133,8 +136,14 @@ Overview
 Max Players
 -----------
 
+The maximum number of players in a single game of NEED-A-NAME is 6, as each game is comprised of two teams of three players each.
+
 Servers
 -------
+
+The game is initially peer-to-peer; as players start the game, Bonjour is used for discovery, and all players become interconnected. This peer-to-peer mesh is used as a side-channel throughout the game, but is primarily used for game setup so that no one needs to be conscious of networking or the addresses of their teammates.
+
+Once all players have connected, the player with the most powerful machine will silently spawn a server, and the game will proceed in an ordinary client-server manner.
 
 Customization
 -------------
@@ -142,14 +151,17 @@ Customization
 Internet
 --------
 
-Gaming Sites
-------------
+This game will not work over the internet. For simplicity, it will be limited to LAN games.
 
 Persistence
 -----------
 
+The world is not persistent. Each match will use either a predefined or procedurally generated level which will persist only for the duration of the match.
+
 Saving and Loading
 ------------------
+
+Players will not be able to save or load multiplayer games; matches are relatively short; as such, being able to do so makes little sense.
 
 Character Rendering
 ===================
