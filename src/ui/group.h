@@ -33,6 +33,8 @@ class Group : Actor
     public:
         Group();
 
+        void Draw();
+
     private:
 
 };

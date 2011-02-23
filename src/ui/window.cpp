@@ -24,3 +24,16 @@
  */
 
 #include "window.h"
+
+#include <iostream>
+#include <glog/logging.h>
+
+Window::Window()
+{
+
+}
+
+void Window::Draw()
+{
+    LOG(INFO) << "Window::Draw()";
+}

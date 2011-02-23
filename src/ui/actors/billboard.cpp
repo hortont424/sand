@@ -23,17 +23,17 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "group.h"
+#include "billboard.h"
 
 #include <iostream>
 #include <glog/logging.h>
 
-Group::Group()
+Billboard::Billboard()
 {
 
 }
 
-void Group::Draw()
+void Billboard::Draw()
 {
-    LOG(INFO) << "Group::Draw()";
+    LOG(INFO) << "Billboard::Draw()";
 }

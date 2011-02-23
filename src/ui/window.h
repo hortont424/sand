@@ -33,6 +33,8 @@ class Window : Group
     public:
         Window();
 
+        void Draw();
+
     private:
 
 };

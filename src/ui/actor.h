@@ -31,6 +31,8 @@ class Actor
     public:
         Actor();
 
+        virtual void Draw() = 0;
+
     private:
 
 };

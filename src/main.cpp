@@ -28,6 +28,7 @@
 #include <network/peer.h>
 #include <glog/logging.h>
 #include <glfw.h>
+#include <ui/actors/billboard.h>
 
 int main(int argc, char const * argv[])
 {
@@ -38,17 +39,15 @@ int main(int argc, char const * argv[])
     glfwInit();
     glfwOpenWindow(200, 200, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
 
-    if(argc != 2)
-    {
-        LOG(FATAL) << "Need two arguments!";
-    }
-
-    Peer * peer = new Peer(argv[1]);
+    Peer * peer = new Peer("Unnamed");
+    Billboard * bill = new Billboard();
 
     while(running)
     {
         glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers();
+
+        bill->Draw();
 
         if(glfwGetKey(GLFW_KEY_ESC))
         {

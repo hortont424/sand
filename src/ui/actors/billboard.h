@@ -23,17 +23,20 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "group.h"
+#ifndef _SAND_UI_ACTORS_BILLBOARD_H_
+#define _SAND_UI_ACTORS_BILLBOARD_H_
 
-#include <iostream>
-#include <glog/logging.h>
+#include <ui/actor.h>
 
-Group::Group()
+class Billboard : Actor
 {
+    public:
+        Billboard();
 
-}
+        void Draw();
 
-void Group::Draw()
-{
-    LOG(INFO) << "Group::Draw()";
-}
+    private:
+
+};
+
+#endif

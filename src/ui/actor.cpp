@@ -24,3 +24,11 @@
  */
 
 #include "actor.h"
+
+#include <iostream>
+#include <glog/logging.h>
+
+Actor::Actor()
+{
+
+}
