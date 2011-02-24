@@ -27,13 +27,14 @@
 #define _SAND_UI_ACTORS_BUTTON_H_
 
 #include <ui/actor.h>
+#include <ui/actors/text.h>
 
 typedef void (*ButtonAction)(void * sender, void * info);
 
 class Button : public Actor
 {
     public:
-        Button();
+        Button(const char * label);
 
         void Draw();
 
@@ -46,6 +47,7 @@ class Button : public Actor
     private:
         ButtonAction action;
         void * actionInfo;
+        Text * label;
 };
 
 #endif

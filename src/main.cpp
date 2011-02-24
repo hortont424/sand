@@ -28,6 +28,7 @@
 #include <network/peer.h>
 #include <glog/logging.h>
 #include <ui/actors/button.h>
+#include <ui/actors/text.h>
 #include <ui/window.h>
 
 void DoSomething(void * sender, void * info)
@@ -38,19 +39,22 @@ void DoSomething(void * sender, void * info)
 int main(int argc, char const * argv[])
 {
     google::InitGoogleLogging(argv[0]);
+    glfwInit();
 
     Peer * peer = new Peer("Unnamed");
     Window * win = new Window(800, 600);
 
-    Button * button = new Button();
+    Button * button = new Button("OK");
     button->SetPosition(400 - 50, 300);
-    button->SetSize(100, 40);
     button->SetAction(DoSomething, NULL);
     win->AddActor(button);
-    button = new Button();
+    /*button = new Button();
     button->SetPosition(400 - 50, 300 - 60);
     button->SetSize(100, 40);
     win->AddActor(button);
+    Text * text = new Text("Hello, world!", 200, 200);
+    text->SetPosition(400 - 50, 300 - 60);
+    win->AddActor(text);*/
 
     win->MainLoop();
 

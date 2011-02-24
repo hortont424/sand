@@ -23,17 +23,25 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SAND_UI_TEXT_H_
-#define _SAND_UI_TEXT_H_
+#ifndef _SAND_UI_ACTORS_TEXT_H_
+#define _SAND_UI_ACTORS_TEXT_H_
+
+#include <ui/actor.h>
 
 #include <cairo/cairo.h>
+#include <glfw.h>
 
-class Text
+class Text : public Actor
 {
     public:
-        Text();
+        Text(const char * text);
+
+        void Draw();
 
     private:
+        const char * text;
+
+        GLuint texture_id;
 };
 
 #endif

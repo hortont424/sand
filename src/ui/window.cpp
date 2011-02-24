@@ -66,15 +66,15 @@ Window::Window(int width, int height) : Group::Group()
     window = this;
     parent = NULL;
 
-    glfwInit();
     glfwOpenWindow(width, height, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
     glfwSetWindowSizeCallback(_setWindowSize);
     glfwSetMousePosCallback(_setMousePosition);
     glfwSetMouseButtonCallback(_setMouseClick);
 
     glShadeModel(GL_SMOOTH);
-    //glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
 
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_POINT_SMOOTH);

@@ -34,8 +34,13 @@
 #define BUTTON_CLICK_FILL_COLOR 0.310f, 0.525f, 0.788f, 0.6f
 #define BUTTON_BORDER_COLOR 0.310f, 0.525f, 0.788f, 1.0f
 
-Button::Button() : Actor::Actor()
+Button::Button(const char * label) : Actor::Actor()
 {
+    this->label = new Text(label);
+
+    SetW(this->label->GetW() + 12);
+    SetH(this->label->GetH() + 6);
+
     action = (ButtonAction)NULL;
     actionInfo = NULL;
 }
@@ -58,6 +63,8 @@ void Button::Draw()
         glColor4f(BUTTON_FILL_COLOR);
     }
 
+    // TODO: opengl1.1ify
+
     glBegin(GL_QUADS);
         glVertex2f(0.0f, 0.0f);
         glVertex2f(0.0f, GetH());
@@ -74,6 +81,11 @@ void Button::Draw()
         glVertex2f(GetW(), 0.0f);
         glVertex2f(0.0f, 0.0f);
     glEnd();
+
+    glPushMatrix();
+    glTranslatef(6.0f, 3.0f, 0.0f);
+    this->label->Draw();
+    glPopMatrix();
 }
 
 void Button::SetAction(ButtonAction cb, void * info)
