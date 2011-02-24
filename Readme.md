@@ -15,7 +15,6 @@ The game depends on a few things which must already be available on your system:
 * protobuf (http://code.google.com/p/protobuf/)
 * glog (http://code.google.com/p/google-glog/)
 * boehmgc (http://www.hpl.hp.com/personal/Hans_Boehm/gc/)
-* COGL (http://www.clutter-project.org/)
 * Pango (http://www.pango.org/)
 
 It also includes various external libraries within itself:

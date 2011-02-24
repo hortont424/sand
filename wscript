@@ -22,7 +22,7 @@ def pkgconfig_check(conf):
     libraries = (
         ("libglog", "glog", None),
         ("protobuf", "protobuf", None),
-        ("cogl-1.0", "cogl", None)
+        ("pango", "pango", None)
     )
 
     for package, uselib, version in libraries:
