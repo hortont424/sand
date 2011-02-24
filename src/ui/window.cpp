@@ -43,6 +43,17 @@ void GLFWCALL _setMousePosition(int x, int y)
         _window->MouseMoved(x, y);
 }
 
+void GLFWCALL _setMouseClick(int button, int action)
+{
+    if(_window)
+    {
+        if(action == GLFW_PRESS)
+            _window->MouseDown(button);
+        else
+            _window->MouseUp(button);
+    }
+}
+
 Window::Window(int width, int height) : Group::Group()
 {
     if(_window)
@@ -59,6 +70,7 @@ Window::Window(int width, int height) : Group::Group()
     glfwOpenWindow(width, height, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
     glfwSetWindowSizeCallback(_setWindowSize);
     glfwSetMousePosCallback(_setMousePosition);
+    glfwSetMouseButtonCallback(_setMouseClick);
 
     glShadeModel(GL_SMOOTH);
     //glEnable(GL_TEXTURE_2D);
@@ -154,7 +166,14 @@ void Window::MouseMoved(int x, int y)
 
     for(std::list<Actor *>::iterator it = hoveredActors.begin(); it != hoveredActors.end(); it++)
     {
-        (*it)->SetHovering(false);
+        Actor * actor = *it;
+
+        actor->SetHovering(false);
+
+        if(actor->GetClicking())
+        {
+            actor->MouseCancelled();
+        }
     }
 
     hoveredActors.clear();
@@ -167,5 +186,21 @@ void Window::MouseMoved(int x, int y)
 
         actor->SetHovering(true);
         hoveredActors.push_front(actor);
+    }
+}
+
+void Window::MouseDown(int button)
+{
+    for(std::list<Actor *>::iterator it = hoveredActors.begin(); it != hoveredActors.end(); it++)
+    {
+        (*it)->MouseDown(button);
+    }
+}
+
+void Window::MouseUp(int button)
+{
+    for(std::list<Actor *>::iterator it = hoveredActors.begin(); it != hoveredActors.end(); it++)
+    {
+        (*it)->MouseUp(button);
     }
 }

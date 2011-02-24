@@ -38,6 +38,8 @@ class Actor
 
         virtual void Draw() = 0;
 
+        virtual bool AcceptsFocus();
+
         void SetPosition(int32_t x, int32_t y);
         void SetSize(int32_t w, int32_t h);
 
@@ -52,17 +54,24 @@ class Actor
 
         void SetHovering(bool hover);
         void SetClicking(bool click);
+        void SetFocused(bool focused);
         bool GetHovering();
         bool GetClicking();
+        bool GetFocused();
 
         int32_t GetPickingName();
         static Actor * GetActorForPick(int pick);
+
+        virtual void MouseMoved(int x, int y);
+        virtual void MouseDown(int button);
+        virtual void MouseUp(int button);
+        virtual void MouseCancelled();
 
     private:
         int32_t x, y, w, h;
         int32_t pickingName;
         bool dirty;
-        bool hovering, clicking;
+        bool hovering, clicking, focused;
 };
 
 #endif

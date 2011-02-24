@@ -30,6 +30,11 @@
 #include <ui/actors/button.h>
 #include <ui/window.h>
 
+void DoSomething(void * sender, void * info)
+{
+    printf("do something!!\n");
+}
+
 int main(int argc, char const * argv[])
 {
     google::InitGoogleLogging(argv[0]);
@@ -40,12 +45,12 @@ int main(int argc, char const * argv[])
     Button * button = new Button();
     button->SetPosition(400 - 50, 300);
     button->SetSize(100, 40);
+    button->SetAction(DoSomething, NULL);
     win->AddActor(button);
     button = new Button();
     button->SetPosition(400 - 50, 300 - 60);
     button->SetSize(100, 40);
     win->AddActor(button);
-
 
     win->MainLoop();
 

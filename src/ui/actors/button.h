@@ -28,6 +28,8 @@
 
 #include <ui/actor.h>
 
+typedef void (*ButtonAction)(void * sender, void * info);
+
 class Button : public Actor
 {
     public:
@@ -35,8 +37,15 @@ class Button : public Actor
 
         void Draw();
 
-    private:
+        void SetAction(ButtonAction cb, void * info);
 
+        void MouseDown(int button);
+        void MouseUp(int button);
+        void MouseCancelled();
+
+    private:
+        ButtonAction action;
+        void * actionInfo;
 };
 
 #endif

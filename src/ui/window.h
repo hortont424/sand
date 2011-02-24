@@ -41,6 +41,8 @@ class Window : public Group
 
         void SetWindowSize(int width, int height);
         void MouseMoved(int x, int y);
+        void MouseDown(int button);
+        void MouseUp(int button);
 
         std::list<Actor *> * Pick(int x, int y);
 

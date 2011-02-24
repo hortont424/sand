@@ -37,12 +37,17 @@ Actor::Actor()
 {
     LOG(INFO) << "Actor::Actor()";
 
-    hovering = clicking = false;
+    hovering = focused = clicking = false;
 
     pickingName = _maxPickingName;
     _pickingMap[pickingName] = this;
 
     _maxPickingName++;
+}
+
+bool Actor::AcceptsFocus()
+{
+    return false;
 }
 
 Actor * Actor::GetActorForPick(int pick)
@@ -110,12 +115,17 @@ int32_t Actor::GetH()
 
 void Actor::SetHovering(bool hover)
 {
-    hovering = hover;
+    this->hovering = hover;
 }
 
 void Actor::SetClicking(bool click)
 {
-    clicking = click;
+    this->clicking = click;
+}
+
+void Actor::SetFocused(bool focused)
+{
+    this->focused = focused;
 }
 
 bool Actor::GetHovering()
@@ -131,4 +141,29 @@ bool Actor::GetClicking()
 int32_t Actor::GetPickingName()
 {
     return pickingName;
+}
+
+bool Actor::GetFocused()
+{
+    return focused;
+}
+
+void Actor::MouseMoved(int x, int y)
+{
+
+}
+
+void Actor::MouseDown(int button)
+{
+
+}
+
+void Actor::MouseUp(int button)
+{
+
+}
+
+void Actor::MouseCancelled()
+{
+
 }

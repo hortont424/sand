@@ -31,19 +31,32 @@
 
 #define BUTTON_FILL_COLOR 0.310f, 0.525f, 0.788f, 0.2f
 #define BUTTON_HOVER_FILL_COLOR 0.310f, 0.525f, 0.788f, 0.4f
+#define BUTTON_CLICK_FILL_COLOR 0.310f, 0.525f, 0.788f, 0.6f
 #define BUTTON_BORDER_COLOR 0.310f, 0.525f, 0.788f, 1.0f
 
 Button::Button() : Actor::Actor()
 {
-
+    action = (ButtonAction)NULL;
+    actionInfo = NULL;
 }
 
 void Button::Draw()
 {
     if(GetHovering())
-        glColor4f(BUTTON_HOVER_FILL_COLOR);
+    {
+        if(GetClicking())
+        {
+            glColor4f(BUTTON_CLICK_FILL_COLOR);
+        }
+        else
+        {
+            glColor4f(BUTTON_HOVER_FILL_COLOR);
+        }
+    }
     else
+    {
         glColor4f(BUTTON_FILL_COLOR);
+    }
 
     glBegin(GL_QUADS);
         glVertex2f(0.0f, 0.0f);
@@ -61,4 +74,33 @@ void Button::Draw()
         glVertex2f(GetW(), 0.0f);
         glVertex2f(0.0f, 0.0f);
     glEnd();
+}
+
+void Button::SetAction(ButtonAction cb, void * info)
+{
+    action = cb;
+    actionInfo = info;
+}
+
+void Button::MouseDown(int button)
+{
+    SetClicking(true);
+}
+
+void Button::MouseUp(int button)
+{
+    if(GetClicking())
+    {
+        SetClicking(false);
+
+        if(action)
+        {
+            action(this, actionInfo);
+        }
+    }
+}
+
+void Button::MouseCancelled()
+{
+    SetClicking(false);
 }
