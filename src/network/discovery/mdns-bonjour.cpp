@@ -25,7 +25,7 @@
 
 #include "mdns.h"
 
-// TODO: ifdef darwin?
+#ifdef DARWIN
 
 #include <CoreServices/CoreServices.h>
 #include <glog/logging.h>
@@ -176,3 +176,5 @@ void MDNSBrowse(MDNSBrowseCallback addCb, MDNSBrowseCallback removeCb, void * in
         return;
     }
 }
+
+#endif // DARWIN

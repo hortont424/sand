@@ -19,7 +19,26 @@ glfw_files = ["enable.c",
               "time.c",
               "window.c"]
 
-if UNAME == "Linux":
+if UNAME == "Darwin":
+  glfw_files.extend(["cocoa/cocoa_enable.m",
+                     "cocoa/cocoa_fullscreen.m",
+                     "cocoa/cocoa_glext.m",
+                     "cocoa/cocoa_init.m",
+                     "cocoa/cocoa_joystick.m",
+                     "cocoa/cocoa_thread.c",
+                     "cocoa/cocoa_time.m",
+                     "cocoa/cocoa_window.m"])
+elif UNAME.startswith("CYGWIN"):
+  glfw_files.extend(["win32/win32_dllmain.c",
+                     "win32/win32_enable.c",
+                     "win32/win32_fullscreen.c",
+                     "win32/win32_glext.c",
+                     "win32/win32_init.c",
+                     "win32/win32_joystick.c",
+                     "win32/win32_thread.c",
+                     "win32/win32_time.c",
+                     "win32/win32_window.c"])
+else:
   glfw_files.extend(["x11/x11_enable.c",
                      "x11/x11_fullscreen.c",
                      "x11/x11_glext.c",
@@ -29,15 +48,6 @@ if UNAME == "Linux":
                      "x11/x11_thread.c",
                      "x11/x11_time.c",
                      "x11/x11_window.c"])
-elif UNAME == "Darwin":
-  glfw_files.extend(["cocoa/cocoa_enable.m",
-                     "cocoa/cocoa_fullscreen.m",
-                     "cocoa/cocoa_glext.m",
-                     "cocoa/cocoa_init.m",
-                     "cocoa/cocoa_joystick.m",
-                     "cocoa/cocoa_thread.c",
-                     "cocoa/cocoa_time.m",
-                     "cocoa/cocoa_window.m"])
 
 def build(bld):
   lib = bld.stlib(source = " ".join(glfw_files),
@@ -52,8 +62,11 @@ def build(bld):
                             '-g'],
                   use = "SOIL")
 
-  if UNAME == "Linux":
-    lib.cflags.append("-I./x11")
-    lib.uselib = 'GL GLU'
-  elif UNAME == "Darwin":
+  if UNAME == "Darwin":
     lib.cflags.append("-I../external/glfw/cocoa")
+  elif UNAME.startswith("CYGWIN"):
+	lib.cflags.append("-I../external/glfw/win32")
+	lib.uselib = 'GL GLU OPENGL32'
+  else:
+    lib.cflags.append("-I../external/glfw/x11")
+    lib.uselib = 'GL GLU'

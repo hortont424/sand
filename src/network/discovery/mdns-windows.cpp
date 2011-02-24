@@ -25,37 +25,31 @@
 
 #include "mdns.h"
 
-#include <cstring>
-#include <cstdlib>
+#ifdef WINDOWS
 
-MDNSService::MDNSService()
+#include <glog/logging.h>
+
+typedef struct
 {
-    this->name = NULL;
-    this->type = NULL;
+    MDNSBrowseCallback add, remove;
+    void * info;
+} MDNSResponderCallbacks;
+
+#pragma mark Public Functions
+
+void MDNSResponderTick()
+{
+    
 }
 
-MDNSService::MDNSService(const char * name, const char * type, uint16_t port)
+void MDNSRegister(uint16_t port)
 {
-    if(name)
-        this->name = strdup(name);
-
-    if(type)
-        this->type = strdup(type);
-
-    this->port = port;
+    
 }
 
-MDNSService::~MDNSService()
+void MDNSBrowse(MDNSBrowseCallback addCb, MDNSBrowseCallback removeCb, void * info)
 {
-    if(this->name)
-    {
-        free((void *)this->name);
-        this->name = NULL;
-    }
-
-    if(this->type)
-    {
-        free((void *)this->type);
-        this->type = NULL;
-    }
+    
 }
+
+#endif // WINDOWS

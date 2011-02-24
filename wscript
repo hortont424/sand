@@ -34,8 +34,8 @@ def pkgconfig_check(conf):
 def library_check(conf):
     if UNAME == "Darwin":
         libraries = ("gc",)
-    elif UNAME == "Windows":
-        libraries = ("GL", "gc")
+    elif UNAME.startswith("CYGWIN"):
+        libraries = ("GL", "GLU", "gc", "opengl32")
     else:
         libraries = ("GL", "gc")
 

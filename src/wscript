@@ -4,19 +4,21 @@ from waflib import TaskGen
 from waflib.Task import Task
 from waflib.TaskGen import extension
 
+import os
+
 TaskGen.task_gen.mappings['.cc'] = TaskGen.task_gen.mappings['.cpp']
 
-#TaskGen.declare_chain(
-#        name = 'protoc',
-#        rule = '${PROTOC} -I=../src/network/messages --cpp_out=src/network/messages ${SRC}',
-#        ext_in = '.proto',
-#        ext_out = '.pb.cc .pb.h',
-#        reentrant = False
-#)
+UNAME = os.uname()[0]
+if UNAME == "Darwin":
+	platformDefine = "DARWIN"
+elif UNAME.startswith("CYGWIN"):
+	platformDefine = "WINDOWS"
+else:
+	platformDefine == "UNIX"
 
 class proto(Task):
     run_str = '${PROTOC} -I=../src/network/messages --cpp_out=src/network/messages ${SRC}'
-    color = 'GREEN'
+    color = 'BLUE'
     ext_out = [".pb.cc", ".pb.h"]
 
 @extension(".proto")
@@ -27,10 +29,18 @@ def process_proto(self, node):
     self.source.append(cc_node)
 
 def build(bld):
-    bld.program(source=bld.path.ant_glob(["**/*cpp", "**/*proto"]),
-                target="game",
-                includes=[".", "../external/tinythread", "../external/glfw", "../build/src/network/messages", "../external/uuid"],
-                cxxflags=["-g"],
-                framework="OpenGL CoreServices Cocoa",
-                uselib="glog protobuf cairo",
-                use="tinythread glfw gc")
+    protos = bld.program(source=bld.path.ant_glob("**/*proto"),
+                         target="protos",
+                         features="cxx")
+
+    bld.add_group()
+
+    sand = bld.program(source=bld.path.ant_glob("**/*cpp"),
+                       target="game",
+                       includes=". ../external/tinythread ../external/glfw ../build/src/network/messages ../external/uuid",
+                       cxxflags="-g",
+				       defines=platformDefine,
+                       uselib="glog protobuf cairo gc opengl32",
+                       use="tinythread glfw protos")
+    if UNAME == "Darwin":
+        sand.framework = "OpenGL CoreServices Cocoa"
