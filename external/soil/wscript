@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+
+import os
+
+UNAME = os.uname()[0]
+
+def build(bld):
+    sand = bld.stlib(source=bld.path.ant_glob("**/*c"),
+                     target="soil",
+                     includes="",
+                     cxxflags="-g",
+                     uselib="opengl32",
+                     use="glfw")
+    if UNAME == "Darwin":
+        sand.framework = "OpenGL CoreFoundation"

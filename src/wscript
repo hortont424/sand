@@ -10,11 +10,11 @@ TaskGen.task_gen.mappings['.cc'] = TaskGen.task_gen.mappings['.cpp']
 
 UNAME = os.uname()[0]
 if UNAME == "Darwin":
-	platformDefine = "DARWIN"
+    platformDefine = "DARWIN"
 elif UNAME.startswith("CYGWIN"):
-	platformDefine = "WINDOWS"
+    platformDefine = "WINDOWS"
 else:
-	platformDefine == "UNIX"
+    platformDefine == "UNIX"
 
 class proto(Task):
     run_str = '${PROTOC} -I=../src/network/messages --cpp_out=src/network/messages ${SRC}'
@@ -37,10 +37,10 @@ def build(bld):
 
     sand = bld.program(source=bld.path.ant_glob("**/*cpp"),
                        target="game",
-                       includes=". ../external/tinythread ../external/glfw ../build/src/network/messages ../external/uuid",
+                       includes=". ../external/tinythread ../external/glfw ../build/src/network/messages ../external/uuid ../external/soil",
                        cxxflags="-g",
-				       defines=platformDefine,
+                       defines=platformDefine,
                        uselib="glog protobuf cairo gc opengl32",
-                       use="tinythread glfw protos")
+                       use="tinythread glfw protos soil")
     if UNAME == "Darwin":
         sand.framework = "OpenGL CoreServices Cocoa"

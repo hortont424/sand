@@ -43,7 +43,7 @@ def library_check(conf):
         conf.check_cc(lib=library)
 
 def build(bld):
-    bld.add_subdirs("src external/tinythread external/glfw")
+    bld.add_subdirs("src external/tinythread external/glfw external/soil")
     bld.add_group()
 
 def run(ctx):
