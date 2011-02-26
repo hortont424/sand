@@ -35,6 +35,7 @@ class Text : public Actor
 {
     public:
         Text(const char * text);
+        ~Text();
 
         void Draw();
 

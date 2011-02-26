@@ -27,9 +27,8 @@
 #define _SAND_UI_ACTOR_H_
 
 #include <inttypes.h>
-#include <gc_cpp.h>
 
-class Actor : public gc
+class Actor
 {
     public:
         Actor * parent;

@@ -200,6 +200,8 @@ void Window::MouseMoved(int x, int y)
         actor->SetHovering(true);
         hoveredActors.push_front(actor);
     }
+    
+    delete selectedActors;
 }
 
 void Window::MouseDown(int button)

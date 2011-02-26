@@ -80,6 +80,11 @@ Text::Text(const char * text) : Actor::Actor()
     cairo_destroy(cr);
 }
 
+Text::~Text()
+{
+    glDeleteTextures(1, &texture_id);
+}
+
 void Text::Draw()
 {
     glEnable(GL_TEXTURE_RECTANGLE_ARB);

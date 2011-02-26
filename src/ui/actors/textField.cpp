@@ -128,14 +128,16 @@ void TextField::MouseCancelled()
 
 void TextField::KeyUp(int key)
 {
-    printf("Up: %c\n", key);
-
     this->text.push_back((char)key);
+
+    if(this->label)
+    {
+        delete this->label;
+    }
 
     this->label = new Text(this->text.c_str());
 }
 
 void TextField::KeyDown(int key)
 {
-    printf("Down: %c\n", key);
 }

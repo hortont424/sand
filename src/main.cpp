@@ -32,10 +32,6 @@
 #include <ui/actors/textField.h>
 #include <ui/window.h>
 
-#define GC_THREADS 1a
-
-#include <gc.h>
-
 void DoSomething(void * sender, void * info)
 {
     printf("do something!!\n");
@@ -43,7 +39,6 @@ void DoSomething(void * sender, void * info)
 
 int main(int argc, char const * argv[])
 {
-    GC_INIT();
     google::InitGoogleLogging(argv[0]);
     glfwInit();
 

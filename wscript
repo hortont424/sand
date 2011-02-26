@@ -33,11 +33,11 @@ def pkgconfig_check(conf):
 @conf
 def library_check(conf):
     if UNAME == "Darwin":
-        libraries = ("gc", "gccpp")
+        libraries = ()
     elif UNAME.startswith("CYGWIN"):
-        libraries = ("GL", "GLU", "gc", "gccpp", "opengl32")
+        libraries = ("GL", "GLU", "opengl32")
     else:
-        libraries = ("GL", "GLU", "gc", "gccpp")
+        libraries = ("GL", "GLU")
 
     for library in libraries:
         conf.check_cc(lib=library)
