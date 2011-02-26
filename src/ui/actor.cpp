@@ -167,3 +167,13 @@ void Actor::MouseCancelled()
 {
 
 }
+
+void Actor::KeyUp(int key)
+{
+
+}
+
+void Actor::KeyDown(int key)
+{
+
+}

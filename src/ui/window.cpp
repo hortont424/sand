@@ -54,6 +54,17 @@ void GLFWCALL _setMouseClick(int button, int action)
     }
 }
 
+void GLFWCALL _setKeyPress(int key, int action)
+{
+    if(_window)
+    {
+        if(action == GLFW_PRESS)
+            _window->KeyDown(key);
+        else
+            _window->KeyUp(key);
+    }
+}
+
 Window::Window(int width, int height) : Group::Group()
 {
     if(_window)
@@ -65,11 +76,13 @@ Window::Window(int width, int height) : Group::Group()
 
     window = this;
     parent = NULL;
+    focusedActor = NULL;
 
     glfwOpenWindow(width, height, 8, 8, 8, 8, 0, 0, GLFW_WINDOW);
     glfwSetWindowSizeCallback(_setWindowSize);
     glfwSetMousePosCallback(_setMousePosition);
     glfwSetMouseButtonCallback(_setMouseClick);
+    glfwSetKeyCallback(_setKeyPress);
 
     glShadeModel(GL_SMOOTH);
     glEnable(GL_BLEND);
@@ -191,9 +204,22 @@ void Window::MouseMoved(int x, int y)
 
 void Window::MouseDown(int button)
 {
+    Actor * lastHovered = hoveredActors.back();
+
     for(std::list<Actor *>::iterator it = hoveredActors.begin(); it != hoveredActors.end(); it++)
     {
         (*it)->MouseDown(button);
+    }
+
+    if(focusedActor != lastHovered)
+    {
+        hoveredActors.back()->SetFocused(false);
+    }
+
+    if(hoveredActors.back()->AcceptsFocus())
+    {
+        focusedActor = hoveredActors.back();
+        hoveredActors.back()->SetFocused(true);
     }
 }
 
@@ -204,3 +230,20 @@ void Window::MouseUp(int button)
         (*it)->MouseUp(button);
     }
 }
+
+void Window::KeyDown(int key)
+{
+    if(focusedActor)
+    {
+        focusedActor->KeyDown(key);
+    }
+}
+
+void Window::KeyUp(int key)
+{
+    if(focusedActor)
+    {
+        focusedActor->KeyUp(key);
+    }
+}
+

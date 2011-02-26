@@ -44,10 +44,14 @@ class Window : public Group
         void MouseDown(int button);
         void MouseUp(int button);
 
+        void KeyDown(int button);
+        void KeyUp(int button);
+
         std::list<Actor *> * Pick(int x, int y);
 
     private:
         std::list<Actor *> hoveredActors;
+        Actor * focusedActor;
 };
 
 #endif

@@ -29,7 +29,12 @@
 #include <glog/logging.h>
 #include <ui/actors/button.h>
 #include <ui/actors/text.h>
+#include <ui/actors/textField.h>
 #include <ui/window.h>
+
+#define GC_THREADS 1a
+
+#include <gc.h>
 
 void DoSomething(void * sender, void * info)
 {
@@ -38,6 +43,7 @@ void DoSomething(void * sender, void * info)
 
 int main(int argc, char const * argv[])
 {
+    GC_INIT();
     google::InitGoogleLogging(argv[0]);
     glfwInit();
 
@@ -48,6 +54,12 @@ int main(int argc, char const * argv[])
     button->SetPosition(400 - 50, 300);
     button->SetAction(DoSomething, NULL);
     win->AddActor(button);
+
+    TextField * textField = new TextField();
+    textField->SetPosition(200, 400);
+    textField->SetW(200);
+    win->AddActor(textField);
+
     /*button = new Button();
     button->SetPosition(400 - 50, 300 - 60);
     button->SetSize(100, 40);

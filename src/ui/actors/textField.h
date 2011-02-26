@@ -23,59 +23,39 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SAND_UI_ACTOR_H_
-#define _SAND_UI_ACTOR_H_
+#ifndef _SAND_UI_ACTORS_TEXT_FIELD_H_
+#define _SAND_UI_ACTORS_TEXT_FIELD_H_
 
-#include <inttypes.h>
-#include <gc_cpp.h>
+#include <ui/actor.h>
+#include <ui/actors/text.h>
 
-class Actor : public gc
+#include <string>
+
+typedef void (*TextFieldAction)(void * sender, void * info);
+
+class TextField : public Actor
 {
     public:
-        Actor * parent;
-        Actor * window;
+        TextField();
 
-        Actor();
+        bool AcceptsFocus();
 
-        virtual void Draw() = 0;
+        void Draw();
 
-        virtual bool AcceptsFocus();
+        void SetAction(TextFieldAction cb, void * info);
 
-        void SetPosition(int32_t x, int32_t y);
-        void SetSize(int32_t w, int32_t h);
+        void MouseDown(int button);
+        void MouseUp(int button);
+        void MouseCancelled();
 
-        void SetX(int32_t x);
-        void SetY(int32_t y);
-        void SetW(int32_t w);
-        void SetH(int32_t h);
-        int32_t GetX();
-        int32_t GetY();
-        int32_t GetW();
-        int32_t GetH();
-
-        void SetHovering(bool hover);
-        void SetClicking(bool click);
-        void SetFocused(bool focused);
-        bool GetHovering();
-        bool GetClicking();
-        bool GetFocused();
-
-        int32_t GetPickingName();
-        static Actor * GetActorForPick(int pick);
-
-        virtual void MouseMoved(int x, int y);
-        virtual void MouseDown(int button);
-        virtual void MouseUp(int button);
-        virtual void MouseCancelled();
-
-        virtual void KeyUp(int key);
-        virtual void KeyDown(int key);
+        void KeyUp(int key);
+        void KeyDown(int key);
 
     private:
-        int32_t x, y, w, h;
-        int32_t pickingName;
-        bool dirty;
-        bool hovering, clicking, focused;
+        TextFieldAction action;
+        void * actionInfo;
+        Text * label;
+        std::string text;
 };
 
 #endif
