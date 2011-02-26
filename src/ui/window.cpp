@@ -200,25 +200,31 @@ void Window::MouseMoved(int x, int y)
         actor->SetHovering(true);
         hoveredActors.push_front(actor);
     }
-    
+
     delete selectedActors;
 }
 
 void Window::MouseDown(int button)
 {
-    Actor * lastHovered = hoveredActors.back();
+    Actor * lastHovered = NULL;
+
+    if(hoveredActors.size())
+    {
+        lastHovered = hoveredActors.back();
+    }
 
     for(std::list<Actor *>::iterator it = hoveredActors.begin(); it != hoveredActors.end(); it++)
     {
         (*it)->MouseDown(button);
     }
 
-    if(focusedActor != lastHovered)
+    if(focusedActor && (focusedActor != lastHovered))
     {
-        hoveredActors.back()->SetFocused(false);
+        focusedActor->SetFocused(false);
+        focusedActor = NULL;
     }
 
-    if(hoveredActors.back()->AcceptsFocus())
+    if(lastHovered && lastHovered->AcceptsFocus())
     {
         focusedActor = hoveredActors.back();
         hoveredActors.back()->SetFocused(true);

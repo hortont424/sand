@@ -33,6 +33,7 @@
 #define TEXT_FIELD_HOVER_FILL_COLOR 0.310f, 0.525f, 0.788f, 0.4f
 #define TEXT_FIELD_CLICK_FILL_COLOR 0.310f, 0.525f, 0.788f, 0.6f
 #define TEXT_FIELD_BORDER_COLOR 0.310f, 0.525f, 0.788f, 1.0f
+#define TEXT_FIELD_FOCUSED_BORDER_COLOR 0.6f, 0.6, 0.6, 1.0f
 
 TextField::TextField() : Actor::Actor()
 {
@@ -55,14 +56,7 @@ void TextField::Draw()
 {
     if(GetHovering())
     {
-        if(GetClicking())
-        {
-            glColor4f(TEXT_FIELD_CLICK_FILL_COLOR);
-        }
-        else
-        {
-            glColor4f(TEXT_FIELD_HOVER_FILL_COLOR);
-        }
+        glColor4f(TEXT_FIELD_HOVER_FILL_COLOR);
     }
     else
     {
@@ -71,15 +65,12 @@ void TextField::Draw()
 
     // TODO: opengl1.1ify
 
-    if(!GetFocused())
-    {
-        glBegin(GL_QUADS);
-            glVertex2f(0.0f, 0.0f);
-            glVertex2f(0.0f, GetH());
-            glVertex2f(GetW(), GetH());
-            glVertex2f(GetW(), 0.0f);
-        glEnd();
-    }
+    glBegin(GL_QUADS);
+        glVertex2f(0.0f, 0.0f);
+        glVertex2f(0.0f, GetH());
+        glVertex2f(GetW(), GetH());
+        glVertex2f(GetW(), 0.0f);
+    glEnd();
 
     glColor4f(TEXT_FIELD_BORDER_COLOR);
 
@@ -90,6 +81,19 @@ void TextField::Draw()
         glVertex2f(GetW(), 0.0f);
         glVertex2f(0.0f, 0.0f);
     glEnd();
+
+    if(GetFocused())
+    {
+        glColor4f(TEXT_FIELD_FOCUSED_BORDER_COLOR);
+
+        glBegin(GL_LINE_STRIP);
+            glVertex2f(-4.0f, -4.0f);
+            glVertex2f(-4.0f, GetH() + 4.0f);
+            glVertex2f(GetW() + 4.0f, GetH() + 4.0f);
+            glVertex2f(GetW() + 4.0f, -4.0f);
+            glVertex2f(-4.0f, -4.0f);
+        glEnd();
+    }
 
     glPushMatrix();
     glTranslatef(6.0f, 3.0f, 0.0f);
