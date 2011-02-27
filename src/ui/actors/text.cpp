@@ -53,7 +53,7 @@ Text::Text(const char * text) : Actor::Actor()
 {
     this->text = text;
 
-    SetSize(textWidth(text, "Helvetica", 24), 24 + 5);
+    SetSize(textWidth(text, "Helvetica", 24) + 5, 24 + 5);
 
     cairo_t * cr;
     unsigned char * buffer;

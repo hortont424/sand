@@ -132,7 +132,17 @@ void TextField::MouseCancelled()
 
 void TextField::KeyUp(int key)
 {
-    this->text.push_back((char)key);
+    printf("%d\n", key);
+
+    if(key == 295)
+    {
+        this->text.erase(this->text.length() - 1);
+    }
+    else
+    {
+        this->text.push_back((char)key);
+    }
+
 
     if(this->label)
     {
