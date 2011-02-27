@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 from waflib.Configure import conf
-import os
+import platform
 
 APPNAME = 'sand'
 VERSION = '0.0'
-UNAME = os.uname()[0]
+UNAME = platform.uname()[0]
 
 def options(opt):
     opt.tool_options('compiler_cxx compiler_c')
@@ -34,7 +34,7 @@ def pkgconfig_check(conf):
 def library_check(conf):
     if UNAME == "Darwin":
         libraries = ()
-    elif UNAME.startswith("CYGWIN"):
+    elif UNAME == "Windows":
         libraries = ("GL", "GLU", "opengl32")
     else:
         libraries = ("GL", "GLU")

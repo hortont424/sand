@@ -4,14 +4,14 @@ from waflib import TaskGen
 from waflib.Task import Task
 from waflib.TaskGen import extension
 
-import os
+import platform
 
 TaskGen.task_gen.mappings['.cc'] = TaskGen.task_gen.mappings['.cpp']
 
-UNAME = os.uname()[0]
+UNAME = platform.uname()[0]
 if UNAME == "Darwin":
     platformDefine = "DARWIN"
-elif UNAME.startswith("CYGWIN"):
+elif UNAME == "Windows":
     platformDefine = "WINDOWS"
 else:
     platformDefine == "UNIX"
