@@ -12,9 +12,14 @@ def options(opt):
 
 def configure(conf):
     conf.check_tool('compiler_cxx compiler_c')
+
+    # if windows, add external/windows to the path
+
     conf.find_program('protoc')
 
-    conf.pkgconfig_check()
+    if UNAME is not "Windows":
+        conf.pkgconfig_check()
+
     conf.library_check()
 
 @conf
@@ -35,7 +40,7 @@ def library_check(conf):
     if UNAME == "Darwin":
         libraries = ()
     elif UNAME == "Windows":
-        libraries = ("GL", "GLU", "opengl32")
+        libraries = ("opengl32", "glog", "protobuf")
     else:
         libraries = ("GL", "GLU")
 
