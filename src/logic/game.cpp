@@ -30,6 +30,7 @@
 #include <ui/actors/button.h>
 #include <ui/actors/text.h>
 #include <ui/actors/textField.h>
+#include <ui/actors/listView.h>
 #include <ui/window.h>
 
 void DoSomething(void * sender, void * info)
@@ -114,6 +115,15 @@ void Game::InitPlayerSetup()
     nameLabel->SetPosition(w / 2, (5 * h / 6) + textField->GetH() + 5);
     nameLabel->SetGravity(GRAVITY_VCENTER | GRAVITY_HCENTER);
     window->AddActor(nameLabel);
+
+    std::list<std::string> elements;
+    elements.push_back("asdf");
+    elements.push_back("one two three");
+
+    ListView * otherPlayers = new ListView();
+    otherPlayers->SetElements(elements);
+    otherPlayers->SetPosition(w / 2, h / 2);
+    window->AddActor(otherPlayers);
 }
 
 void Game::LeavePlayerSetup()
