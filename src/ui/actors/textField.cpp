@@ -136,13 +136,13 @@ void TextField::KeyUp(int key)
 
     if(key == 295)
     {
-        this->text.erase(this->text.length() - 1);
+        if(this->text.length())
+            this->text.erase(this->text.length() - 1);
     }
     else
     {
         this->text.push_back((char)key);
     }
-
 
     if(this->label)
     {
@@ -150,6 +150,11 @@ void TextField::KeyUp(int key)
     }
 
     this->label = new Text(this->text.c_str());
+
+    if(this->label->GetW() > (GetW() - 10))
+    {
+        KeyUp(295); // backspace
+    }
 }
 
 void TextField::KeyDown(int key)
