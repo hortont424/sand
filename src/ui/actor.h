@@ -32,6 +32,8 @@
 #define GRAVITY_BOTTOM (1 << 1)
 #define GRAVITY_LEFT (1 << 2)
 #define GRAVITY_RIGHT (1 << 3)
+#define GRAVITY_VCENTER (1 << 4)
+#define GRAVITY_HCENTER (1 << 5)
 
 class Actor
 {

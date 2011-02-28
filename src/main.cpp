@@ -52,9 +52,15 @@ int main(int argc, char const * argv[])
     win->AddActor(button);
 
     TextField * textField = new TextField();
-    textField->SetPosition(200, 400);
-    textField->SetW(200);
+    textField->SetPosition(1440 / 2, 5 * 900 / 6);
+    textField->SetW(300);
+    textField->SetGravity(GRAVITY_VCENTER | GRAVITY_HCENTER);
     win->AddActor(textField);
+
+    Text * nameLabel = new Text("Enter your name:");
+    nameLabel->SetPosition(1440 / 2, (5 * 900 / 6) + textField->GetH() + 5);
+    nameLabel->SetGravity(GRAVITY_VCENTER | GRAVITY_HCENTER);
+    win->AddActor(nameLabel);
 
     /*button = new Button();
     button->SetPosition(400 - 50, 300 - 60);

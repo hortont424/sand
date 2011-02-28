@@ -51,10 +51,18 @@ void Group::Draw()
         {
             x -= actor->GetW();
         }
+        else if(grav & GRAVITY_HCENTER)
+        {
+            x -= actor->GetW() / 2;
+        }
 
         if(grav & GRAVITY_TOP)
         {
             y -= actor->GetH();
+        }
+        else if(grav & GRAVITY_VCENTER)
+        {
+            y -= actor->GetH() / 2;
         }
 
         glPushName(actor->GetPickingName());
