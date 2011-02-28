@@ -23,41 +23,45 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SAND_UI_ACTORS_TEXT_FIELD_H_
-#define _SAND_UI_ACTORS_TEXT_FIELD_H_
+#ifndef _SAND_GAME_GAME_H_
+#define _SAND_GAME_GAME_H_
 
-#include <ui/actor.h>
-#include <ui/actors/text.h>
+#include <glog/logging.h>
+#include <list>
 
-#include <string>
+typedef enum
+{
+    GAME_STATE_STARTUP,
+    GAME_STATE_PLAYER_SETUP,
+    GAME_STATE_TEAM_SETUP,
+    GAME_STATE_WEAPON_SETUP
+} GameState;
 
-typedef void (*TextFieldAction)(void * sender, void * info);
+class Peer;
+class Window;
 
-class TextField : public Actor
+class Game
 {
     public:
-        TextField();
+        Game();
 
-        bool AcceptsFocus();
+        void Run();
 
-        void Draw();
-
-        const char * GetText();
-
-        void SetAction(TextFieldAction cb, void * info);
-
-        void MouseDown(int button);
-        void MouseUp(int button);
-        void MouseCancelled();
-
-        void KeyUp(int key);
-        void KeyDown(int key);
+        void SetState(GameState newState);
+        GameState GetState();
 
     private:
-        TextFieldAction action;
-        void * actionInfo;
-        Text * label;
-        std::string text;
+        GameState state;
+
+        uint32_t w, h;
+
+        Peer * myPeer;
+        Window * window;
+
+
+
+        void InitPlayerSetup();
+        void LeavePlayerSetup();
 };
 
 #endif

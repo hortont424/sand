@@ -52,6 +52,11 @@ bool TextField::AcceptsFocus()
     return true;
 }
 
+const char * TextField::GetText()
+{
+    return this->text.c_str();
+}
+
 void TextField::Draw()
 {
     if(GetHovering())
@@ -117,11 +122,6 @@ void TextField::MouseUp(int button)
     if(GetClicking())
     {
         SetClicking(false);
-
-        if(action)
-        {
-            action(this, actionInfo);
-        }
     }
 }
 
@@ -143,16 +143,25 @@ void TextField::KeyUp(int key)
             this->text.push_back((char)key);
     }
 
+    Text * newLabel = new Text(this->text.c_str());
+
+    if(newLabel->GetW() > (GetW() - 10))
+    {
+        this->text.erase(this->text.length() - 1);
+        delete newLabel;
+        newLabel = new Text(this->text.c_str());
+    }
+
     if(this->label)
     {
         delete this->label;
     }
 
-    this->label = new Text(this->text.c_str());
+    this->label = newLabel;
 
-    if(this->label->GetW() > (GetW() - 10))
+    if(action)
     {
-        KeyUp(295); // backspace
+        action(this, actionInfo);
     }
 }
 

@@ -78,7 +78,7 @@ void Group::AddActor(Actor * actor)
 {
     actors.insert(actor);
     actor->parent = this;
-    actor->window = window;
+    actor->window = window; // TODO: do this with a setter so we can recurse through children
 }
 
 void Group::RemoveActor(Actor * actor)

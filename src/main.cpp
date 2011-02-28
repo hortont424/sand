@@ -24,53 +24,20 @@
  */
 
 #include <iostream>
+#include <glfw.h>
 
-#include <network/peer.h>
-#include <glog/logging.h>
-#include <ui/actors/button.h>
-#include <ui/actors/text.h>
-#include <ui/actors/textField.h>
-#include <ui/window.h>
-
-void DoSomething(void * sender, void * info)
-{
-    printf("do something!!\n");
-}
+#include "logic/game.h"
 
 int main(int argc, char const * argv[])
 {
     google::InitGoogleLogging(argv[0]);
     glfwInit();
 
-    Peer * peer = new Peer("Unnamed");
-    Window * win = new Window(1440, 900);
+    Game * game = new Game();
 
-    Button * button = new Button("Ready");
-    button->SetPosition(1440 - 20, 20);
-    button->SetGravity(GRAVITY_RIGHT | GRAVITY_BOTTOM);
-    button->SetAction(DoSomething, NULL);
-    win->AddActor(button);
+    game->SetState(GAME_STATE_PLAYER_SETUP);
 
-    TextField * textField = new TextField();
-    textField->SetPosition(1440 / 2, 5 * 900 / 6);
-    textField->SetW(300);
-    textField->SetGravity(GRAVITY_VCENTER | GRAVITY_HCENTER);
-    win->AddActor(textField);
-
-    Text * nameLabel = new Text("Enter your name:");
-    nameLabel->SetPosition(1440 / 2, (5 * 900 / 6) + textField->GetH() + 5);
-    nameLabel->SetGravity(GRAVITY_VCENTER | GRAVITY_HCENTER);
-    win->AddActor(nameLabel);
-
-    /*button = new Button();
-    button->SetPosition(400 - 50, 300 - 60);
-    button->SetSize(100, 40);
-    win->AddActor(button);
-    Text * text = new Text("Hello, world!", 200, 200);
-    text->SetPosition(400 - 50, 300 - 60);
-    win->AddActor(text);*/
-
-    win->MainLoop();
+    game->Run();
 
     return 0;
 }

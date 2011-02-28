@@ -111,7 +111,7 @@ void Window::MainLoop()
 
         running = glfwGetWindowParam(GLFW_OPENED);
 
-        usleep(1000);
+        usleep(10000);
     }
 
     glfwTerminate();
