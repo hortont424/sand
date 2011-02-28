@@ -2,6 +2,7 @@
 
 from waflib.Configure import conf
 import platform
+import os
 
 APPNAME = 'sand'
 VERSION = '0.0'
