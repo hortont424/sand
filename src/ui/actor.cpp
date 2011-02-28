@@ -35,8 +35,6 @@ static std::map<int, Actor *> _pickingMap;
 
 Actor::Actor()
 {
-    LOG(INFO) << "Actor::Actor()";
-
     hovering = focused = clicking = false;
 
     pickingName = _maxPickingName;

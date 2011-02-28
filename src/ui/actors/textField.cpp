@@ -37,7 +37,7 @@
 
 TextField::TextField() : Actor::Actor()
 {
-    this->text = "asdf";
+    this->text = "TIM";
 
     this->label = new Text(this->text.c_str());
 
@@ -96,7 +96,7 @@ void TextField::Draw()
     }
 
     glPushMatrix();
-    glTranslatef(6.0f, 3.0f, 0.0f);
+    glTranslatef(8.0f, 3.0f, 0.0f);
     this->label->Draw();
     glPopMatrix();
 }
@@ -132,8 +132,6 @@ void TextField::MouseCancelled()
 
 void TextField::KeyUp(int key)
 {
-    printf("%d\n", key);
-
     if(key == 295)
     {
         if(this->text.length())
@@ -141,7 +139,8 @@ void TextField::KeyUp(int key)
     }
     else
     {
-        this->text.push_back((char)key);
+        if((key >= 'A' && key <= 'Z') || (key >= '0' && key <= '9'))
+            this->text.push_back((char)key);
     }
 
     if(this->label)

@@ -83,7 +83,7 @@ void Button::Draw()
     glEnd();
 
     glPushMatrix();
-    glTranslatef(6.0f, 3.0f, 0.0f);
+    glTranslatef(8.0f, 3.0f, 0.0f);
     this->label->Draw();
     glPopMatrix();
 }

@@ -41,7 +41,7 @@ int textWidth(const char * text, const char * fontFace, int fontSize)
         cr = cairo_create(surf);
     }
 
-    cairo_select_font_face(cr, fontFace, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_select_font_face(cr, fontFace, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
     cairo_set_font_size(cr, fontSize);
 
     cairo_text_extents(cr, text, &extents);
@@ -53,19 +53,24 @@ Text::Text(const char * text) : Actor::Actor()
 {
     this->text = text;
 
-    SetSize(textWidth(text, "Helvetica", 24) + 5, 24 + 5);
+    SetSize(textWidth(text, "Bitstream Vera Sans", 24) + 5, 24 + 5);
 
     cairo_t * cr;
     unsigned char * buffer;
     cairo_surface_t * surf;
+    cairo_font_options_t * cfo;
 
     buffer = (unsigned char *)calloc(GetW() * GetH() * 4, sizeof(unsigned char));
     surf = cairo_image_surface_create_for_data(buffer, CAIRO_FORMAT_ARGB32, GetW(), GetH(), 4 * GetW());
     cr = cairo_create(surf);
 
+    cfo = cairo_font_options_create();
+    cairo_font_options_set_antialias(cfo, CAIRO_ANTIALIAS_GRAY);
+
     cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 1.0);
     cairo_move_to(cr, 0, 24);
-    cairo_select_font_face(cr, "Helvetica", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_select_font_face(cr, "Bitstream Vera Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_options(cr, cfo);
     cairo_set_font_size(cr, 24);
     cairo_show_text(cr, text);
     cairo_surface_finish(surf);
