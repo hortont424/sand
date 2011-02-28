@@ -41,10 +41,25 @@ void Group::Draw()
     for(std::set<Actor *>::iterator it = actors.begin(); it != actors.end(); it++)
     {
         Actor * actor = *it;
+        int32_t x, y, grav;
+
+        x = actor->GetX();
+        y = actor->GetY();
+        grav = actor->GetGravity();
+
+        if(grav & GRAVITY_RIGHT)
+        {
+            x -= actor->GetW();
+        }
+
+        if(grav & GRAVITY_TOP)
+        {
+            y -= actor->GetH();
+        }
 
         glPushName(actor->GetPickingName());
         glPushMatrix();
-        glTranslatef(actor->GetX(), actor->GetY(), 0.0);
+        glTranslatef(x, y, 0.0);
         actor->Draw();
         glPopMatrix();
         glPopName();

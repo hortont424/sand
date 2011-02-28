@@ -82,6 +82,7 @@ Text::Text(const char * text) : Actor::Actor()
 
     free(buffer);
     cairo_surface_destroy(surf);
+    cairo_font_options_destroy(cfo);
     cairo_destroy(cr);
 }
 

@@ -43,10 +43,11 @@ int main(int argc, char const * argv[])
     glfwInit();
 
     Peer * peer = new Peer("Unnamed");
-    Window * win = new Window(800, 600);
+    Window * win = new Window(1440, 900);
 
-    Button * button = new Button("OK");
-    button->SetPosition(400 - 50, 300);
+    Button * button = new Button("Ready");
+    button->SetPosition(1440 - 20, 20);
+    button->SetGravity(GRAVITY_RIGHT | GRAVITY_BOTTOM);
     button->SetAction(DoSomething, NULL);
     win->AddActor(button);
 

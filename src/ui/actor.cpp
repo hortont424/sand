@@ -37,6 +37,8 @@ Actor::Actor()
 {
     hovering = focused = clicking = false;
 
+    gravity = GRAVITY_BOTTOM | GRAVITY_LEFT;
+
     pickingName = _maxPickingName;
     _pickingMap[pickingName] = this;
 
@@ -65,6 +67,16 @@ void Actor::SetSize(int32_t w, int32_t h)
     this->w = w;
     this->h = h;
     this->dirty = true;
+}
+
+void Actor::SetGravity(int32_t grav)
+{
+    this->gravity = grav;
+}
+
+int32_t Actor::GetGravity()
+{
+    return this->gravity;
 }
 
 void Actor::SetX(int32_t x)

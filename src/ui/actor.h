@@ -28,6 +28,11 @@
 
 #include <inttypes.h>
 
+#define GRAVITY_TOP (1 << 0)
+#define GRAVITY_BOTTOM (1 << 1)
+#define GRAVITY_LEFT (1 << 2)
+#define GRAVITY_RIGHT (1 << 3)
+
 class Actor
 {
     public:
@@ -42,6 +47,9 @@ class Actor
 
         void SetPosition(int32_t x, int32_t y);
         void SetSize(int32_t w, int32_t h);
+
+        void SetGravity(int32_t grav);
+        int32_t GetGravity();
 
         void SetX(int32_t x);
         void SetY(int32_t y);
@@ -71,7 +79,7 @@ class Actor
         virtual void KeyDown(int key);
 
     private:
-        int32_t x, y, w, h;
+        int32_t x, y, w, h, gravity;
         int32_t pickingName;
         bool dirty;
         bool hovering, clicking, focused;
