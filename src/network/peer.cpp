@@ -41,6 +41,11 @@
 
 using namespace google::protobuf::io;
 
+void RemotePeerNameChanged(void * sender, void * info)
+{
+    printf("jhgjhgjhg\n");
+}
+
 Peer::Peer(const char * name)
 {
     this->name = name;
@@ -362,7 +367,8 @@ void Peer::PeerJoined(MDNSService * service, void * info)
 
         if(self->peers.find(std::string(buffer)) == self->peers.end())
         {
-            self->peers[std::string(buffer)] = new RemotePeer(0, sock);
+            RemotePeer * rpeer = self->peers[std::string(buffer)] = new RemotePeer(0, sock);
+            rpeer->Connect(kRemotePeerNameChanged, RemotePeerNameChanged, self);
         }
         else
         {

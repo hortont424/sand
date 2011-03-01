@@ -27,6 +27,8 @@
 
 #include "handshakes.pb.h"
 
+const std::string kRemotePeerNameChanged = "kRemotePeerNameChanged";
+
 RemotePeer::RemotePeer(int writeSock, int readSock)
 {
     this->writeSock = writeSock;
@@ -39,6 +41,8 @@ void RemotePeer::UpdateName(const char * name)
     LOG(INFO) << "RemotePeer::UpdateName() " << name;
 
     this->name = strdup(name);
+
+    Notify(kRemotePeerNameChanged);
 }
 
 const char * RemotePeer::GetName()
@@ -52,5 +56,4 @@ void RemotePeer::ProcessMessage(SandMessage msg)
     {
         UpdateName(msg.nameupdate().name().c_str());
     }
-
 }

@@ -23,34 +23,25 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SAND_NETWORK_REMOTE_PEER_H_
-#define _SAND_NETWORK_REMOTE_PEER_H_
-
-#include <glog/logging.h>
-#include <list>
-#include <fast_mutex.h>
 #include "object.h"
 
-extern const std::string kRemotePeerNameChanged;
-
-class SandMessage;
-
-class RemotePeer : public Object
+void Object::Notify(std::string name)
 {
-    public:
-        RemotePeer();
-        RemotePeer(int writeSock, int readSock);
+    LOG(INFO) << "Object::Notify " << name;
 
-        void UpdateName(const char * name);
-        const char * GetName();
+    SignalCallbacksList sublist = signalCallbacks[name];
 
-        void ProcessMessage(SandMessage msg);
+    for(SignalCallbacksList::iterator it = sublist.begin(); it != sublist.end(); it++)
+    {
+        SignalCallbackPair cbPair = *it;
 
-        tthread::fast_mutex commLock;
-        int writeSock, readSock;
+        printf("sent a signal somewhere!!\n");
 
-    private:
-        const char * name;
-};
+        cbPair.first(this, cbPair.second);
+    }
+}
 
-#endif
+void Object::Connect(std::string name, SignalCallback cb, void * info)
+{
+    signalCallbacks[name].push_back(std::make_pair(cb, info));
+}
