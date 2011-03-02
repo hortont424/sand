@@ -4,9 +4,32 @@ Something about Sand Design Document
 Philosophy
 ==========
 
+Why create this game? Why would someone want to play it?
+----------------------------------------------
+
+* team play (it's nice to play with your friends!)
+* rts-like (with each team member controlling a single unit)
+
+What is the immediate and long-term projected socio-cultural impact of this project?
+--------------------------------------------------
+
+* giving people customization over their character for the team's gain (not for personal gain)
+* impossible to win solo; victory depends on all three players on a team playing together
+
+Are there any previous games in this genre?
+------------------------------
+
+alien swarm, etc.
+
+What is this game's target audience?
+------------------------
+
+fans of competitive team play; mostly "gamers", not so much in terms of "casual" gamers
+
 Team-based Play
 ---------------
 
+(move this elsewhere)
 Our game encourages team-based play as much as possible, by dividing the abilities of each class sufficiently to  make it impossible to play without three cooperative players on your team.
 
 Common Questions
@@ -16,9 +39,6 @@ What is the game?
 -----------------
 
 It’s a 3v3 abstract top-down map-conquest game!
-
-Why create this game?
----------------------
 
 Where does the game take place?
 -------------------------------
