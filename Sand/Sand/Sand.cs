@@ -1,64 +1,137 @@
+using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Net;
 
 namespace Sand
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
     public class Sand : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private LocalPlayer _player;
+        private NetworkSession _networkSession;
+        private KeyboardState _oldKeyState;
+        private GameState _gameState;
+        private GameState _oldGameState;
+
+        private enum GameState
+        {
+            Begin,
+            Login,
+            Lobby
+        } ;
+
+        // E27 white rice wonton soup ("I'll go with the boned")
+        // E16 chicken fried rice wonton soup
 
         public Sand()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            _player = new LocalPlayer(this);
+            Components.Add(_player);
+
+            _networkSession = null;
+
+            _gameState = GameState.Begin;
+
+            Components.Add(new GamerServicesComponent(this));
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        private void TransitionState(GameState newState)
+        {
+            switch(_gameState)
+            {
+                case GameState.Begin:
+                    break;
+                case GameState.Login:
+                    break;
+                case GameState.Lobby:
+                    break;
+                default:
+                    break;
+            }
+
+            _gameState = newState;
+
+            switch(_gameState)
+            {
+                case GameState.Begin:
+                    break;
+                case GameState.Login:
+                    DoLogin();
+                    break;
+                case GameState.Lobby:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void DoLogin()
+        {
+            if(!Guide.IsVisible)
+            {
+                SignedInGamer.SignedIn += new EventHandler<SignedInEventArgs>(UserReady);
+                Guide.ShowSignIn(1, false);
+            }
+        }
+
+        private void UserReady(Object sender, SignedInEventArgs eventArgs)
+        {
+            TransitionState(GameState.Lobby);
+        }
+
         protected override void Update(GameTime gameTime)
         {
+            UpdateInput();
+            UpdateState();
+
+            if(_gameState > GameState.Login)
+            {
+                if(_networkSession == null)
+                {
+                    // Try to find a Sand server. If there isn't one, start one!
+
+                    var availableSessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
+
+                    if(availableSessions.Count > 0)
+                    {
+                        _networkSession = NetworkSession.Join(availableSessions[0]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Couldn't find a server!");
+                    }
+                }
+
+                if(_networkSession != null)
+                {
+                    _networkSession.Update();
+                }
+            }
+
             // Allows the game to exit
             if(GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
             {
@@ -70,13 +143,24 @@ namespace Sand
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        private void UpdateInput()
+        {
+            KeyboardState newKeyState = Keyboard.GetState();
+
+            _oldKeyState = newKeyState;
+        }
+
+        private void UpdateState()
+        {
+            if(_gameState == GameState.Begin)
+            {
+                TransitionState(GameState.Login);
+            }
+        }
+
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 

@@ -3,11 +3,13 @@ namespace Sand
 #if WINDOWS || XBOX
     internal static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         private static void Main(string[] args)
         {
+            if(args.Length == 2)
+            {
+                System.Console.WriteLine(args[1]);
+            }
+
             using(var game = new Sand())
             {
                 game.Run();
