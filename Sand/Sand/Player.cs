@@ -10,7 +10,6 @@ namespace Sand
         private Vector2 _drag;
         private Vector2 _movementAcceleration;
         private KeyboardState _oldKeyState;
-        private Texture2D _playerTexture;
         private Vector2 _position;
         private SpriteBatch _spriteBatch;
         private Vector2 _velocity;
@@ -26,8 +25,6 @@ namespace Sand
             base.LoadContent();
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _playerTexture = new Texture2D(GraphicsDevice, 1, 1);
-            _playerTexture.SetData(new[] {Color.Red});
         }
 
         public override void Update(GameTime gameTime)
@@ -76,7 +73,7 @@ namespace Sand
         public override void Draw(GameTime gameTime)
         {
             _spriteBatch.Begin();
-            _spriteBatch.Draw(_playerTexture, new Rectangle((int)_position.X, (int)_position.Y, 5, 20), Color.White);
+            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)_position.X, (int)_position.Y, 5, 20), Color.Red);
             _spriteBatch.End();
         }
     }

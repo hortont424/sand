@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand
@@ -29,11 +28,14 @@ namespace Sand
 
             _spriteBatch.Begin();
 
-            _spriteBatch.DrawString(Storage.Font("Gotham24"), "SAND", new Vector2(200, 20), Color.White);
+            _spriteBatch.DrawString(Storage.Font("Calibri48Bold"), "SAND",
+                                    new Vector2(Game.Window.ClientBounds.Width * 0.2f, 20), Color.White);
 
             foreach(var gamer in Storage.networkSession.AllGamers)
             {
-                _spriteBatch.DrawString(Storage.Font("Gotham24"), gamer.Gamertag, new Vector2(20, i++ * 30 + 20), Color.White);
+                _spriteBatch.DrawString(Storage.Font("Calibri24"), gamer.Gamertag,
+                                        new Vector2(Game.Window.ClientBounds.Width * 0.22f, i++ * 30 + 80),
+                                        Color.White);
             }
 
             _spriteBatch.End();

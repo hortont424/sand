@@ -8,7 +8,7 @@ namespace Sand
     {
         private static Dictionary<string, Texture2D> _sprites = new Dictionary<string, Texture2D>();
         private static Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
-        
+
         public static NetworkSession networkSession;
 
         public static void AddSprite(string name, Texture2D texture)

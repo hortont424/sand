@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Net;
+using Sand.GameState;
 
 namespace Sand
 {
@@ -11,31 +12,34 @@ namespace Sand
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private LocalPlayer _player;
-        private KeyboardState _oldKeyState;
-        private GameState _gameState;
-        private GameState _oldGameState;
-        private bool _isServer;
-        private LobbyList _lobbyList;
 
-        private enum GameState
-        {
-            Begin,
-            Login,
-            AcquireSession,
-            Lobby,
-            Game
-        } ;
+        private KeyboardState _oldKeyState;
+        private States _gameState;
+        private Dictionary<States, GameState.GameState> _gameStateInstances;
 
         // E27 white rice wonton soup ("I'll go with the boned")
         // E16 chicken fried rice wonton soup
 
         public Sand()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this)
+                        {
+                            PreferredBackBufferWidth = 1680,
+                            PreferredBackBufferHeight = 1050
+                        };
+            _graphics.ToggleFullScreen();
+
             Content.RootDirectory = "Content";
 
-            _gameState = GameState.Begin;
+            IsMouseVisible = true;
+
+            _gameState = States.Begin;
+            _gameStateInstances = new Dictionary<States, GameState.GameState>();
+            _gameStateInstances[States.Begin] = new BeginState(this);
+            _gameStateInstances[States.Login] = new LoginState(this);
+            _gameStateInstances[States.AcquireSession] = new AcquireSessionState(this);
+            _gameStateInstances[States.Lobby] = new LobbyState(this);
+            _gameStateInstances[States.Play] = new PlayState(this);
 
             Components.Add(new GamerServicesComponent(this));
         }
@@ -50,7 +54,12 @@ namespace Sand
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
+            Storage.AddFont("Calibri48Bold", Content.Load<SpriteFont>("Fonts/Calibri48Bold"));
             Storage.AddFont("Gotham24", Content.Load<SpriteFont>("Fonts/Gotham24"));
+
+            var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
+            rectTexture.SetData(new[] {Color.White});
+            Storage.AddSprite("pixel", rectTexture);
         }
 
         protected override void UnloadContent()
@@ -58,114 +67,15 @@ namespace Sand
             // TODO: Unload any non ContentManager content here
         }
 
-        private void TransitionState(GameState newState)
+        public void TransitionState(States newState)
         {
-            System.Console.WriteLine("Moving from {0} to {1}", _gameState, newState);
+            Console.WriteLine("Moving from {0} to {1}", _gameState, newState);
 
-            switch(_gameState)
-            {
-                case GameState.Begin:
-                    break;
-                case GameState.Login:
-                    break;
-                case GameState.AcquireSession:
-                    EndAcquireSessionState();
-                    break;
-                case GameState.Lobby:
-                    EndLobbyState();
-                    break;
-                case GameState.Game:
-                    break;
-                default:
-                    break;
-            }
+            _gameStateInstances[_gameState].Leave();
 
             _gameState = newState;
 
-            switch(_gameState)
-            {
-                case GameState.Begin:
-                    break;
-                case GameState.Login:
-                    BeginLoginState();
-                    break;
-                case GameState.AcquireSession:
-                    BeginAcquireSessionState();
-                    break;
-                case GameState.Lobby:
-                    BeginLobbyState();
-                    break;
-                case GameState.Game:
-                    BeginGameState();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void BeginLoginState()
-        {
-            if(!Guide.IsVisible)
-            {
-                SignedInGamer.SignedIn += new EventHandler<SignedInEventArgs>(UserReady);
-                Guide.ShowSignIn(1, false);
-            }
-        }
-
-        private void UserReady(Object sender, SignedInEventArgs eventArgs)
-        {
-            TransitionState(GameState.AcquireSession);
-        }
-
-        private void BeginAcquireSessionState()
-        {
-            // Try to find a Sand server. If there isn't one, start one!
-
-            var availableSessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
-
-            if (availableSessions.Count > 0)
-            {
-                Console.WriteLine("Connecting to server from {0}", availableSessions[0].HostGamertag);
-                Storage.networkSession = NetworkSession.Join(availableSessions[0]);
-                _isServer = false;
-            }
-            else
-            {
-                Console.WriteLine("Couldn't find a server! Starting one...");
-                Storage.networkSession = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 6);
-                _isServer = true;
-            }
-
-            if(Storage.networkSession != null)
-            {
-                TransitionState(GameState.Lobby);
-            }
-            else
-            {
-                Console.WriteLine("Failed to get a session!");
-            }
-        }
-
-        private void EndAcquireSessionState()
-        {
-            
-        }
-
-        private void BeginLobbyState()
-        {
-            _lobbyList = new LobbyList(this);
-            Components.Add(_lobbyList);
-        }
-
-        private void EndLobbyState()
-        {
-            Components.Remove(_lobbyList);
-        }
-
-        private void BeginGameState()
-        {
-            _player = new LocalPlayer(this);
-            Components.Add(_player);
+            _gameStateInstances[_gameState].Enter();
         }
 
         protected override void Update(GameTime gameTime)
@@ -173,15 +83,9 @@ namespace Sand
             UpdateInput();
             UpdateState();
 
-            if (Storage.networkSession != null)
+            if(Storage.networkSession != null)
             {
                 Storage.networkSession.Update();
-            }
-
-            // Allows the game to exit
-            if(GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-            {
-                Exit();
             }
 
             base.Update(gameTime);
@@ -191,14 +95,19 @@ namespace Sand
         {
             KeyboardState newKeyState = Keyboard.GetState();
 
+            if(newKeyState.IsKeyDown(Keys.Escape))
+            {
+                Exit();
+            }
+
             _oldKeyState = newKeyState;
         }
 
         private void UpdateState()
         {
-            if(_gameState == GameState.Begin)
+            if(_gameState == GameState.States.Begin)
             {
-                TransitionState(GameState.Login);
+                TransitionState(GameState.States.Login);
             }
         }
 
