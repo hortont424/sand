@@ -1,44 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Net;
 
 namespace Sand.GameState
 {
     public class ReadyWaitState : GameState
     {
-        //Dictionary<,> 
-
         public ReadyWaitState(Sand game) : base(game)
         {
         }
 
         public override void Enter()
         {
-            if(!Storage.networkSession.IsHost)
-            {
-                Storage.networkSession.LocalGamers[0].IsReady = true;
-                //Storage.packetWriter.Write("ready");
-            }
+            Storage.networkSession.LocalGamers[0].IsReady = true;
+
+            Storage.networkSession.GameStarted += GameStarted;
+            Storage.networkSession.GameEnded += GameEnded;
+        }
+
+        private void GameStarted(object sender, GameStartedEventArgs e)
+        {
+            System.Console.WriteLine("start game!");
+            Game.TransitionState(States.Play);
+        }
+
+        private void GameEnded(object sender, GameEndedEventArgs e)
+        {
+            System.Console.WriteLine("done game!");
         }
 
         public override void Update()
         {
-            bool allReady = true;
-
-            foreach(var player in Storage.networkSession.AllGamers)
+            if(Storage.networkSession.IsHost)
             {
-                if (!player.IsReady)
-                    allReady = false;
-            }
+                if(Storage.networkSession.IsEveryoneReady)
+                {
+                    Storage.networkSession.StartGame();
 
-            if(allReady)
-            {
-                Game.TransitionState(States.Play);
+                    foreach(var signedInGamer in Gamer.SignedInGamers)
+                    {
+                        signedInGamer.Presence.PresenceMode = GamerPresenceMode.InCombat;
+                    }
+                }
             }
         }
 
         public override void Leave()
         {
+
         }
     }
 }
