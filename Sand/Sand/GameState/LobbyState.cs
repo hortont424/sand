@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Sand.GameState
 {
@@ -15,9 +16,15 @@ namespace Sand.GameState
         {
             _lobbyList = new LobbyList(Game);
             _readyButton = new Button(Game, new Rectangle(20, 20, 200, 50));
+            _readyButton.SetAction((a, b) => Game.TransitionState(States.ReadyWait), null);
 
             Game.Components.Add(_lobbyList);
             Game.Components.Add(_readyButton);
+        }
+
+        public override void Update()
+        {
+            
         }
 
         public override void Leave()

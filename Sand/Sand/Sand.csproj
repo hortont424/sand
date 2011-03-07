@@ -117,6 +117,7 @@
     <Compile Include="GameState\LobbyState.cs" />
     <Compile Include="GameState\LoginState.cs" />
     <Compile Include="GameState\PlayState.cs" />
+    <Compile Include="GameState\ReadyWaitState.cs" />
     <Compile Include="LobbyList.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,4 +1,6 @@
-﻿namespace Sand.GameState
+﻿using System;
+
+namespace Sand.GameState
 {
     public class BeginState : GameState
     {
@@ -8,6 +10,11 @@
 
         public override void Enter()
         {
+        }
+
+        public override void Update()
+        {
+            
         }
 
         public override void Leave()

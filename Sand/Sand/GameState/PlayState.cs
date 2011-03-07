@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.GamerServices;
+﻿using System;
+using Microsoft.Xna.Framework.GamerServices;
 
 namespace Sand.GameState
 {
@@ -14,6 +15,11 @@ namespace Sand.GameState
         {
             _player = new LocalPlayer(Game);
             Game.Components.Add(_player);
+        }
+
+        public override void Update()
+        {
+            
         }
 
         public override void Leave()

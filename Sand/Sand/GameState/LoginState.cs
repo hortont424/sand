@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.GamerServices;
+﻿using System;
+using Microsoft.Xna.Framework.GamerServices;
 
 namespace Sand.GameState
 {
@@ -15,6 +16,11 @@ namespace Sand.GameState
                 SignedInGamer.SignedIn += (o, args) => Game.TransitionState(States.AcquireSession);
                 Guide.ShowSignIn(1, false);
             }
+        }
+
+        public override void Update()
+        {
+            
         }
 
         public override void Leave()

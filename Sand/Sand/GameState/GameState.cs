@@ -6,6 +6,7 @@
         Login,
         AcquireSession,
         Lobby,
+        ReadyWait,
         Play
     }
 
@@ -19,7 +20,7 @@
         }
 
         public abstract void Enter();
-
+        public abstract void Update();
         public abstract void Leave();
     }
 }

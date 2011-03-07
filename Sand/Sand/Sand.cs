@@ -24,10 +24,10 @@ namespace Sand
         {
             _graphics = new GraphicsDeviceManager(this)
                         {
-                            PreferredBackBufferWidth = 1680,
-                            PreferredBackBufferHeight = 1050
+                            PreferredBackBufferWidth = 1440,
+                            PreferredBackBufferHeight = 900
                         };
-            _graphics.ToggleFullScreen();
+            //_graphics.ToggleFullScreen();
 
             Content.RootDirectory = "Content";
 
@@ -39,6 +39,7 @@ namespace Sand
             _gameStateInstances[States.Login] = new LoginState(this);
             _gameStateInstances[States.AcquireSession] = new AcquireSessionState(this);
             _gameStateInstances[States.Lobby] = new LobbyState(this);
+            _gameStateInstances[States.ReadyWait] = new ReadyWaitState(this);
             _gameStateInstances[States.Play] = new PlayState(this);
 
             Components.Add(new GamerServicesComponent(this));
@@ -109,6 +110,8 @@ namespace Sand
             {
                 TransitionState(GameState.States.Login);
             }
+
+            _gameStateInstances[_gameState].Update();
         }
 
         protected override void Draw(GameTime gameTime)

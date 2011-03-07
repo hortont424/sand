@@ -10,6 +10,8 @@ namespace Sand
         private static Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
 
         public static NetworkSession networkSession;
+        public static PacketReader packetReader = new PacketReader();
+        public static PacketWriter packetWriter = new PacketWriter();
 
         public static void AddSprite(string name, Texture2D texture)
         {
