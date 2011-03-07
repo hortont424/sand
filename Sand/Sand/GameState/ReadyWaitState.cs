@@ -20,13 +20,26 @@ namespace Sand.GameState
 
         private void GameStarted(object sender, GameStartedEventArgs e)
         {
-            System.Console.WriteLine("start game!");
+            Console.WriteLine("start game!");
+
+            foreach(var gamer in Storage.networkSession.AllGamers)
+            {
+                if(gamer.IsLocal)
+                {
+                    gamer.Tag = new LocalPlayer(Game);
+                }
+                else
+                {
+                    gamer.Tag = new RemotePlayer(Game, gamer);
+                }
+            }
+
             Game.TransitionState(States.Play);
         }
 
         private void GameEnded(object sender, GameEndedEventArgs e)
         {
-            System.Console.WriteLine("done game!");
+            Console.WriteLine("done game!");
         }
 
         public override void Update()
@@ -47,7 +60,6 @@ namespace Sand.GameState
 
         public override void Leave()
         {
-
         }
     }
 }

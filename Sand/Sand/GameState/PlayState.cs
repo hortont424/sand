@@ -13,8 +13,10 @@ namespace Sand.GameState
 
         public override void Enter()
         {
-            _player = new LocalPlayer(Game);
-            Game.Components.Add(_player);
+            foreach(var gamer in Storage.networkSession.AllGamers)
+            {
+                Game.Components.Add((Player)gamer.Tag);
+            }
         }
 
         public override void Update()
@@ -24,7 +26,10 @@ namespace Sand.GameState
 
         public override void Leave()
         {
-            Game.Components.Remove(_player);
+            foreach (var gamer in Storage.networkSession.AllGamers)
+            {
+                Game.Components.Remove((Player)gamer.Tag);
+            }
         }
     }
 }

@@ -1,23 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Net;
 
 namespace Sand
 {
-    internal class LocalPlayer : DrawableGameComponent
+    internal class Player : DrawableGameComponent
     {
-        private Vector2 _acceleration;
-        private Vector2 _drag;
-        private Vector2 _movementAcceleration;
-        private KeyboardState _oldKeyState;
-        private Vector2 _position;
-        private SpriteBatch _spriteBatch;
-        private Vector2 _velocity;
+        internal Vector2 _position;
+        internal SpriteBatch _spriteBatch;
 
-        public LocalPlayer(Game game) : base(game)
+        public Player(Game game) : base(game)
         {
-            _drag = new Vector2(0.1f, 0.1f);
-            _movementAcceleration = new Vector2(1.0f, 1.0f);
         }
 
         protected override void LoadContent()
@@ -27,8 +21,50 @@ namespace Sand
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 
+        public override void Draw(GameTime gameTime)
+        {
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)_position.X, (int)_position.Y, 5, 20), Color.Red);
+            _spriteBatch.End();
+        }
+    }
+
+    internal class RemotePlayer : Player
+    {
+        private NetworkGamer _gamer;
+
+        public RemotePlayer(Game game, NetworkGamer gamer) : base(game)
+        {
+            _gamer = gamer;
+        }
+
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
+            // see if any of the incoming messages from the server pertain to this player, update his position if so!
+        }
+    }
+
+    internal class LocalPlayer : Player
+    {
+        private Vector2 _acceleration;
+        private Vector2 _drag;
+        private Vector2 _movementAcceleration;
+        private KeyboardState _oldKeyState;
+        
+        private Vector2 _velocity;
+
+        public LocalPlayer(Game game) : base(game)
+        {
+            _drag = new Vector2(0.1f, 0.1f);
+            _movementAcceleration = new Vector2(1.0f, 1.0f);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
             var timestep = (float)(gameTime.ElapsedGameTime.TotalMilliseconds / (1000 / 60));
 
             UpdateInput();
@@ -68,13 +104,6 @@ namespace Sand
             }
 
             _oldKeyState = newKeyState;
-        }
-
-        public override void Draw(GameTime gameTime)
-        {
-            _spriteBatch.Begin();
-            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)_position.X, (int)_position.Y, 5, 20), Color.Red);
-            _spriteBatch.End();
         }
     }
 }
