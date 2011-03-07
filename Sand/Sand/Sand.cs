@@ -16,12 +16,15 @@ namespace Sand
         private KeyboardState _oldKeyState;
         private GameState _gameState;
         private GameState _oldGameState;
+        private bool _isServer;
+        private LobbyList _lobbyList;
 
         private enum GameState
         {
             Begin,
             Login,
-            Lobby
+            Lobby,
+            Game
         } ;
 
         // E27 white rice wonton soup ("I'll go with the boned")
@@ -31,9 +34,6 @@ namespace Sand
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
-            _player = new LocalPlayer(this);
-            Components.Add(_player);
 
             _networkSession = null;
 
@@ -51,7 +51,7 @@ namespace Sand
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
         }
 
         protected override void UnloadContent()
@@ -68,6 +68,9 @@ namespace Sand
                 case GameState.Login:
                     break;
                 case GameState.Lobby:
+                    EndLobbyState();
+                    break;
+                case GameState.Game:
                     break;
                 default:
                     break;
@@ -80,22 +83,43 @@ namespace Sand
                 case GameState.Begin:
                     break;
                 case GameState.Login:
-                    DoLogin();
+                    BeginLoginState();
                     break;
                 case GameState.Lobby:
+                    BeginLobbyState();
+                    break;
+                case GameState.Game:
+                    BeginGameState();
                     break;
                 default:
                     break;
             }
         }
 
-        private void DoLogin()
+        private void BeginLoginState()
         {
             if(!Guide.IsVisible)
             {
                 SignedInGamer.SignedIn += new EventHandler<SignedInEventArgs>(UserReady);
                 Guide.ShowSignIn(1, false);
             }
+        }
+
+        private void BeginLobbyState()
+        {
+            _lobbyList = new LobbyList(this);
+            Components.Add(_lobbyList);
+        }
+
+        private void EndLobbyState()
+        {
+            Components.Remove(_lobbyList);
+        }
+
+        private void BeginGameState()
+        {
+            _player = new LocalPlayer(this);
+            Components.Add(_player);
         }
 
         private void UserReady(Object sender, SignedInEventArgs eventArgs)
@@ -119,10 +143,13 @@ namespace Sand
                     if(availableSessions.Count > 0)
                     {
                         _networkSession = NetworkSession.Join(availableSessions[0]);
+                        _isServer = false;
                     }
                     else
                     {
-                        Console.WriteLine("Couldn't find a server!");
+                        Console.WriteLine("Couldn't find a server! Starting one...");
+                        _networkSession = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 6);
+                        _isServer = true;
                     }
                 }
 

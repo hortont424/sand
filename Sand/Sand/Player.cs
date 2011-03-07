@@ -23,6 +23,8 @@ namespace Sand
 
         protected override void LoadContent()
         {
+            base.LoadContent();
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _playerTexture = new Texture2D(GraphicsDevice, 1, 1);
             _playerTexture.SetData(new[] {Color.Red});

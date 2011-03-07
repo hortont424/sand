@@ -11,3 +11,4 @@ obj/
 *.csproj.user
 *.ReSharper.user
 *.suo
+*.cachefile
