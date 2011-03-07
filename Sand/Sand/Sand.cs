@@ -12,7 +12,6 @@ namespace Sand
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private LocalPlayer _player;
-        private NetworkSession _networkSession;
         private KeyboardState _oldKeyState;
         private GameState _gameState;
         private GameState _oldGameState;
@@ -23,6 +22,7 @@ namespace Sand
         {
             Begin,
             Login,
+            AcquireSession,
             Lobby,
             Game
         } ;
@@ -34,8 +34,6 @@ namespace Sand
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
-            _networkSession = null;
 
             _gameState = GameState.Begin;
 
@@ -52,6 +50,7 @@ namespace Sand
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
+            Storage.AddFont("Gotham24", Content.Load<SpriteFont>("Fonts/Gotham24"));
         }
 
         protected override void UnloadContent()
@@ -61,11 +60,16 @@ namespace Sand
 
         private void TransitionState(GameState newState)
         {
+            System.Console.WriteLine("Moving from {0} to {1}", _gameState, newState);
+
             switch(_gameState)
             {
                 case GameState.Begin:
                     break;
                 case GameState.Login:
+                    break;
+                case GameState.AcquireSession:
+                    EndAcquireSessionState();
                     break;
                 case GameState.Lobby:
                     EndLobbyState();
@@ -84,6 +88,9 @@ namespace Sand
                     break;
                 case GameState.Login:
                     BeginLoginState();
+                    break;
+                case GameState.AcquireSession:
+                    BeginAcquireSessionState();
                     break;
                 case GameState.Lobby:
                     BeginLobbyState();
@@ -105,6 +112,45 @@ namespace Sand
             }
         }
 
+        private void UserReady(Object sender, SignedInEventArgs eventArgs)
+        {
+            TransitionState(GameState.AcquireSession);
+        }
+
+        private void BeginAcquireSessionState()
+        {
+            // Try to find a Sand server. If there isn't one, start one!
+
+            var availableSessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
+
+            if (availableSessions.Count > 0)
+            {
+                Console.WriteLine("Connecting to server from {0}", availableSessions[0].HostGamertag);
+                Storage.networkSession = NetworkSession.Join(availableSessions[0]);
+                _isServer = false;
+            }
+            else
+            {
+                Console.WriteLine("Couldn't find a server! Starting one...");
+                Storage.networkSession = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 6);
+                _isServer = true;
+            }
+
+            if(Storage.networkSession != null)
+            {
+                TransitionState(GameState.Lobby);
+            }
+            else
+            {
+                Console.WriteLine("Failed to get a session!");
+            }
+        }
+
+        private void EndAcquireSessionState()
+        {
+            
+        }
+
         private void BeginLobbyState()
         {
             _lobbyList = new LobbyList(this);
@@ -122,41 +168,14 @@ namespace Sand
             Components.Add(_player);
         }
 
-        private void UserReady(Object sender, SignedInEventArgs eventArgs)
-        {
-            TransitionState(GameState.Lobby);
-        }
-
         protected override void Update(GameTime gameTime)
         {
             UpdateInput();
             UpdateState();
 
-            if(_gameState > GameState.Login)
+            if (Storage.networkSession != null)
             {
-                if(_networkSession == null)
-                {
-                    // Try to find a Sand server. If there isn't one, start one!
-
-                    var availableSessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
-
-                    if(availableSessions.Count > 0)
-                    {
-                        _networkSession = NetworkSession.Join(availableSessions[0]);
-                        _isServer = false;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Couldn't find a server! Starting one...");
-                        _networkSession = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 6);
-                        _isServer = true;
-                    }
-                }
-
-                if(_networkSession != null)
-                {
-                    _networkSession.Update();
-                }
+                Storage.networkSession.Update();
             }
 
             // Allows the game to exit
@@ -164,8 +183,6 @@ namespace Sand
             {
                 Exit();
             }
-
-            // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
