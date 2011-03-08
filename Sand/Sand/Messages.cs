@@ -15,6 +15,7 @@ namespace Sand
             Storage.packetWriter.Write((int) MessageTypes.UpdatePlayerPosition);
             Storage.packetWriter.Write(id);
             Storage.packetWriter.Write(player._position);
+            Storage.packetWriter.Write((double)player._angle);
 
             var server = Storage.networkSession.Host as LocalNetworkGamer;
 
@@ -27,6 +28,7 @@ namespace Sand
         private static void ProcessUpdatePlayerPositionMessage(Player player)
         {
             player._position = Storage.packetReader.ReadVector2();
+            player._angle = (float)Storage.packetReader.ReadDouble();
         }
 
         private static void UpdateClientStateFromServer(LocalNetworkGamer gamer)
