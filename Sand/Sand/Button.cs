@@ -63,11 +63,25 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            Color color = _clicked ? Color.PaleVioletRed : (_hovered ? Color.DarkRed : Color.Red);
+            Color fillColor = _clicked
+                                  ? Storage.Color("WidgetFillClick")
+                                  : (_hovered ? Storage.Color("WidgetFillHighlight") : Storage.Color("WidgetFill"));
+            Color borderColor = Storage.Color("WidgetBorder");
+            const int borderRadius = 3;
+
+            Vector2 textSize = Storage.Font("Calibri24").MeasureString("Button");
+            Vector2 textOrigin = textSize / 2;
 
             _spriteBatch.Begin();
             _spriteBatch.Draw(Storage.Sprite("pixel"),
-                              new Rectangle(_bounds.X, _bounds.Y, _bounds.Width, _bounds.Height), color);
+                              new Rectangle(_bounds.X, _bounds.Y, _bounds.Width, _bounds.Height), borderColor);
+            _spriteBatch.Draw(Storage.Sprite("pixel"),
+                              new Rectangle(_bounds.X + borderRadius, _bounds.Y + borderRadius,
+                                            _bounds.Width - (2 * borderRadius), _bounds.Height - (2 * borderRadius)),
+                              fillColor);
+            _spriteBatch.DrawString(Storage.Font("Calibri24"), "Button",
+                                    new Vector2(_bounds.X + (_bounds.Width / 2), _bounds.Y + (_bounds.Height / 2) + 2),
+                                    Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
             _spriteBatch.End();
         }
     }

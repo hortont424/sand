@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Net;
 
@@ -8,6 +9,7 @@ namespace Sand
     {
         private static Dictionary<string, Texture2D> _sprites = new Dictionary<string, Texture2D>();
         private static Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
+        private static Dictionary<string, Color> _colors = new Dictionary<string, Color>();
 
         public static NetworkSession networkSession;
         public static PacketReader packetReader = new PacketReader();
@@ -31,6 +33,16 @@ namespace Sand
         public static SpriteFont Font(string name)
         {
             return _fonts[name];
+        }
+
+        public static void AddColor(string name, Color color)
+        {
+            _colors.Add(name, color);
+        }
+
+        public static Color Color(string name)
+        {
+            return _colors[name];
         }
     }
 }
