@@ -5,3 +5,10 @@ build
 .lock*
 *.pb.cc
 *.pb.h
+_ReSharper.Sand
+bin/
+obj/
+*.csproj.user
+*.ReSharper.user
+*.suo
+*.cachefile
