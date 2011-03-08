@@ -16,13 +16,6 @@ namespace Sand
             Storage.packetWriter.Write(id);
             Storage.packetWriter.Write(player._position);
             Storage.packetWriter.Write((double)player._angle);
-
-            var server = Storage.networkSession.Host as LocalNetworkGamer;
-
-            if(server != null)
-            {
-                server.SendData(Storage.packetWriter, SendDataOptions.None);
-            }
         }
 
         private static void ProcessUpdatePlayerPositionMessage(Player player)
@@ -84,13 +77,13 @@ namespace Sand
                 if(!Storage.networkSession.IsHost)
                 {
                     SendUpdatePlayerPositionMessage(gamer.Tag as Player, gamer.Id);
+
+                    gamer.SendData(Storage.packetWriter, SendDataOptions.InOrder);
                 }
             }
 
             if(Storage.networkSession.IsHost)
             {
-                // TODO: write updates from server to clients!
-
                 foreach(var gamer in Storage.networkSession.AllGamers)
                 {
                     var player = gamer.Tag as Player;
@@ -101,6 +94,13 @@ namespace Sand
                     }
 
                     SendUpdatePlayerPositionMessage(player, gamer.Id);
+                }
+
+                var server = Storage.networkSession.Host as LocalNetworkGamer;
+
+                if (server != null)
+                {
+                    server.SendData(Storage.packetWriter, SendDataOptions.InOrder);
                 }
             }
 
