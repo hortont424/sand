@@ -25,7 +25,8 @@ namespace Sand
             _graphics = new GraphicsDeviceManager(this)
                         {
                             PreferredBackBufferWidth = 1440,
-                            PreferredBackBufferHeight = 900
+                            PreferredBackBufferHeight = 900,
+                            GraphicsProfile = GraphicsProfile.Reach
                         };
             //_graphics.ToggleFullScreen();
 
