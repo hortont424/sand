@@ -10,9 +10,10 @@ namespace Sand
 
     internal class Messages
     {
-        public static void SendUpdatePlayerPositionMessage(Player player)
+        public static void SendUpdatePlayerPositionMessage(Player player, byte id)
         {
-            Storage.packetWriter.Write((int)MessageTypes.UpdatePlayerPosition);
+            Storage.packetWriter.Write((int) MessageTypes.UpdatePlayerPosition);
+            Storage.packetWriter.Write(id);
             Storage.packetWriter.Write(player._position);
 
             var server = Storage.networkSession.Host as LocalNetworkGamer;
@@ -37,30 +38,81 @@ namespace Sand
 
                 while(Storage.packetReader.Position < Storage.packetReader.Length)
                 {
-                    // TODODODODODODO
-                }
+                    var type = (MessageTypes) Storage.packetReader.ReadInt32();
+                    byte gamerId = Storage.packetReader.ReadByte();
+                    NetworkGamer remoteGamer = Storage.networkSession.FindGamerById(gamerId);
 
-                var type = (MessageTypes)Storage.packetReader.ReadInt32();
-
-                switch(type)
-                {
-                    case MessageTypes.UpdatePlayerPosition:
-                        ProcessUpdatePlayerPositionMessage(sender.Tag as Player);
+                    if(remoteGamer == null)
+                    {
                         break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    }
+
+                    if(remoteGamer.IsLocal)
+                    {
+                        continue;
+                    }
+
+                    var player = remoteGamer.Tag as Player;
+
+                    switch(type)
+                    {
+                        case MessageTypes.UpdatePlayerPosition:
+                            ProcessUpdatePlayerPositionMessage(player);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
         }
 
-        private static void UpdateServerStateFromClients()
+        private static void UpdateServerStateFromClients(LocalNetworkGamer gamer)
         {
-            foreach(var gamer in Storage.networkSession.AllGamers)
+            if(gamer != null && gamer.IsDataAvailable)
             {
-                var netGamer = gamer as LocalNetworkGamer;
+            }
+        }
 
-                if(netGamer != null && netGamer.IsDataAvailable)
+        public static void Update()
+        {
+            foreach(LocalNetworkGamer gamer in Storage.networkSession.LocalGamers)
+            {
+                // TODO: write out updates from this client to the server!
+
+                if(!Storage.networkSession.IsHost)
                 {
+                    SendUpdatePlayerPositionMessage(gamer.Tag as Player, gamer.Id);
+                }
+            }
+
+            if(Storage.networkSession.IsHost)
+            {
+                // TODO: write updates from server to clients!
+
+                foreach(var gamer in Storage.networkSession.AllGamers)
+                {
+                    var player = gamer.Tag as Player;
+
+                    if(player == null)
+                    {
+                        return;
+                    }
+
+                    SendUpdatePlayerPositionMessage(player, gamer.Id);
+                }
+            }
+
+            Storage.networkSession.Update();
+
+            foreach(LocalNetworkGamer gamer in Storage.networkSession.LocalGamers)
+            {
+                if(gamer.IsHost)
+                {
+                    UpdateServerStateFromClients(gamer);
+                }
+                else
+                {
+                    UpdateClientStateFromServer(gamer);
                 }
             }
         }
