@@ -28,11 +28,17 @@ namespace Sand
 
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(Storage.Sprite("SandLogo"), new Vector2(Game.Window.ClientBounds.Width * 0.2f, 20), Color.White);
+            var logoSprite = Storage.Sprite("SandLogo");
+
+            _spriteBatch.Draw(logoSprite,
+                              new Vector2(Game.Window.ClientBounds.Width * 0.5f - (logoSprite.Width * 0.5f), 20),
+                              Color.White);
 
             foreach(var gamer in Storage.networkSession.AllGamers)
             {
-                _spriteBatch.DrawString(Storage.Font("Calibri24"), string.Format("{0} ({1} ms)", gamer.Gamertag, gamer.RoundtripTime.TotalMilliseconds),
+                _spriteBatch.DrawString(Storage.Font("Calibri24"),
+                                        string.Format("{0} ({1} ms)", gamer.Gamertag,
+                                                      gamer.RoundtripTime.TotalMilliseconds),
                                         new Vector2(Game.Window.ClientBounds.Width * 0.22f, i++ * 30 + 120),
                                         Color.White);
             }
