@@ -91,14 +91,12 @@ The Physical World
 Rendering System
 ----------------
 
+Sand uses Microsoft's XNA libraries for both graphics and networking. These provide hardware-accelerated access to the graphics card through DirectX, allowing rapid rendering of our game world.
+
 Camera
 ------
 
-Game Engine
------------
-
-Lighting Models
----------------
+The camera is top-down, aimed towards a two-dimensional surface. <does it move??>
 
 World Layout
 ------------
@@ -153,10 +151,12 @@ The maximum number of players in a single game of Sand is 6, as each game is com
 Servers
 -------
 
-The first player to launch the game on a particular network becomes the de-facto server.
+The first player to launch the game on a particular network becomes the de-facto server. <this might change>
 
 Customization
 -------------
+
+Before the game begins, each player has the opportunity to select his loadout (there are five slots: two primaries, a weapon, utility, and mobility modifier), and many of the tools can be modified with a single slider which increases a positive and a negative attribute of the player in a balanced fashion.
 
 Internet
 --------
@@ -179,15 +179,7 @@ Character Rendering
 Overview
 --------
 
+Characters are static icons which are guided around the screen by their players. Each class has a different icon, and each team is a different color. The icons have a well-defined direction to make it relatively easy to tell in which direction they're pointing, and each one is an abstract representations of its class' primary goal.
+
 Character Rendering Detail x
 ----------------------------
-
-World Editing
-=============
-
-Overview
---------
-
-World Editing Detail x
-----------------------
-
