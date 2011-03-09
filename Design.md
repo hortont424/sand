@@ -35,12 +35,12 @@ It’s a 3v3 abstract top-down map-conquest game!
 Where does the game take place?
 -------------------------------
 
-The game takes place on an abstract world with fixed obstacles.
+The game takes place on an two-dimensional abstract world with fixed obstacles.
 
 What do I control?
 ------------------
 
-You control a tank, with a set of tools.
+You control a tank, with a set of tools. Tools are described in greater detail in the character section. <DO THIS>
 
 How many characters do I control?
 ---------------------------------
