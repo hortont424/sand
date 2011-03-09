@@ -6,27 +6,15 @@ Introduction
 
 It's a game, played with sand.
 
-Dependencies
+Runtime Dependencies
+-------------
+
+* Microsoft .NET Framework 4.0 Runtime
+* Microsoft XNA 4.0 Redistributable
+* Graphics card capable of DirectX 9+
+
+Build Dependencies
 ------------
 
-The game depends on a few things which must already be available on your system:
-
-* OpenGL
-* protobuf (http://code.google.com/p/protobuf/)
-* glog (http://code.google.com/p/google-glog/)
-* Cairo (http://www.cairographics.org/)
-
-It also includes various external libraries within itself:
-
-* SOIL (http://www.lonesock.net/soil.html)
-* TinyThread++ (http://tinythread.sourceforge.net/)
-* GLFW (http://www.glfw.org/)
-* ooid (http://sourceforge.net/projects/ooid/)
-
-The game depends on a few other things depending on your platform:
-
-* Linux
-    * Avahi
-
-* Windows
-    * Bonjour for Windows
+* Microsoft Visual Studio 2010
+* Microsoft XNA Game Studio 4.0
