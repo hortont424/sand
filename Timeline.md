@@ -21,6 +21,7 @@ March 16
 --------
 
 * Make sure that 3v3 works
+* Teaming
 * Get loadout selection working fully (with icons from Pete)
 * Spring break, won't have a computer for most of it
 
