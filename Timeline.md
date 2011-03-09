@@ -28,7 +28,9 @@ March 16
 March 23
 --------
 
+* Visualization of sand and synchronization between machines
 * Begin implementing tools (primaries first)
+* Implement cooldown mechanics in a pluggable way
 
 March 30
 --------
