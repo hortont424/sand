@@ -11,23 +11,30 @@ namespace Sand
     public class Sand : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        public SpriteBatch SpriteBatch;
 
         private KeyboardState _oldKeyState;
         private States _gameState;
         private Dictionary<States, GameState.GameState> _gameStateInstances;
+
+        public Vector2 BaseScreenSize;
+        public Matrix GlobalTransformMatrix;
 
         // E27 white rice wonton soup ("I'll go with the boned")
         // E16 chicken fried rice wonton soup
 
         public Sand()
         {
+            BaseScreenSize = new Vector2(1920, 1200);
+
             _graphics = new GraphicsDeviceManager(this)
                         {
-                            PreferredBackBufferWidth = 1440,
-                            PreferredBackBufferHeight = 900,
+                            PreferredBackBufferWidth = (int)1680, // TODO: these should be figured out dynamically
+                            PreferredBackBufferHeight = (int)1050,
                             GraphicsProfile = GraphicsProfile.Reach
                         };
+
+            // TODO: when going fullscreen, determine the size of the screen!
             //_graphics.ToggleFullScreen();
 
             Content.RootDirectory = "Content";
@@ -53,7 +60,12 @@ namespace Sand
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
+
+            float horScaling = GraphicsDevice.PresentationParameters.BackBufferWidth / BaseScreenSize.X;
+            float verScaling = GraphicsDevice.PresentationParameters.BackBufferHeight / BaseScreenSize.Y;
+            var screenScalingFactor = new Vector3(horScaling, verScaling, 1);
+            GlobalTransformMatrix = Matrix.CreateScale(screenScalingFactor);
 
             Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
             Storage.AddFont("Calibri48Bold", Content.Load<SpriteFont>("Fonts/Calibri48Bold"));
@@ -126,9 +138,13 @@ namespace Sand
         {
             GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
+            
+
+            SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, GlobalTransformMatrix);
 
             base.Draw(gameTime);
+
+            SpriteBatch.End();
         }
     }
 }

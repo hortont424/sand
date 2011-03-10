@@ -30,7 +30,12 @@ namespace Sand
         {
             base.LoadContent();
 
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            var sandGame = Game as Sand;
+
+            if(sandGame != null)
+            {
+                _spriteBatch = sandGame.SpriteBatch;
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -41,10 +46,12 @@ namespace Sand
         private void UpdateInput()
         {
             MouseState mouse = Mouse.GetState();
+            var sandGame = Game as Sand;
+            var transformedMouse = Vector2.Transform(new Vector2(mouse.X, mouse.Y), Matrix.Invert(sandGame.GlobalTransformMatrix));
 
             _hovered = false;
 
-            if(_bounds.Intersects(new Rectangle(mouse.X, mouse.Y, 1, 1)))
+            if(_bounds.Intersects(new Rectangle((int) transformedMouse.X, (int) transformedMouse.Y, 1, 1)))
             {
                 _hovered = true;
             }
@@ -72,7 +79,6 @@ namespace Sand
             Vector2 textSize = Storage.Font("Calibri24").MeasureString("Button");
             Vector2 textOrigin = textSize / 2;
 
-            _spriteBatch.Begin();
             _spriteBatch.Draw(Storage.Sprite("pixel"),
                               new Rectangle(_bounds.X, _bounds.Y, _bounds.Width, _bounds.Height), borderColor);
             _spriteBatch.Draw(Storage.Sprite("pixel"),
@@ -82,7 +88,6 @@ namespace Sand
             _spriteBatch.DrawString(Storage.Font("Calibri24"), "Button",
                                     new Vector2(_bounds.X + (_bounds.Width / 2), _bounds.Y + (_bounds.Height / 2) + 2),
                                     Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
-            _spriteBatch.End();
         }
     }
 }

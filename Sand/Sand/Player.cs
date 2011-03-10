@@ -20,15 +20,18 @@ namespace Sand
         {
             base.LoadContent();
 
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            var sandGame = Game as Sand;
+
+            if (sandGame != null)
+            {
+                _spriteBatch = sandGame.SpriteBatch;
+            }
         }
 
         public override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin();
             _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int) _position.X, (int) _position.Y, 5, 20), null,
                               Color.Red, _angle, new Vector2(0.5f, 0.5f), SpriteEffects.None, 0.0f);
-            _spriteBatch.End();
         }
     }
 
