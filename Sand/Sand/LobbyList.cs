@@ -37,12 +37,6 @@ namespace Sand
                 return;
             }
 
-            var logoSprite = Storage.Sprite("SandLogo");
-
-            _spriteBatch.Draw(logoSprite,
-                              new Vector2(sandGame.BaseScreenSize.X * 0.5f - (logoSprite.Width * 0.5f), 20),
-                              Color.White);
-
             foreach(var gamer in Storage.networkSession.AllGamers)
             {
                 _spriteBatch.DrawString(Storage.Font("Calibri24"),

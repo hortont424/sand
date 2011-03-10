@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -12,12 +13,24 @@ namespace Sand
         private bool _clicked;
         private object _actionUserInfo;
         private Action _action;
+        private string _text;
+        private Color _baseColor;
+        private Color _clickColor;
+        private Color _highlightColor;
+        private Color _borderColor;
 
         public delegate void Action(object sender, object userInfo);
 
-        public Button(Game game, Rectangle bounds) : base(game)
+        public Button(Game game, Rectangle bounds, string text) : base(game)
         {
             _bounds = bounds;
+            _text = text;
+            _baseColor = Storage.Color("WidgetFill");
+        }
+
+        public Button(Game game, Rectangle bounds, string text, Color baseColor) : this(game, bounds, text)
+        {
+            _baseColor = baseColor;
         }
 
         public void SetAction(Action action, object userInfo)
@@ -36,6 +49,13 @@ namespace Sand
             {
                 _spriteBatch = sandGame.SpriteBatch;
             }
+
+            double hue, saturation, value;
+            SandColor.ToHSV(_baseColor, out hue, out saturation, out value);
+
+            _borderColor = SandColor.FromHSV(hue, saturation, Math.Max(value - 0.3, 0.0));
+            _clickColor = SandColor.FromHSV(hue, Math.Max(saturation - 0.2, 0.0), Math.Min(value + 0.4, 1.0));
+            _highlightColor = SandColor.FromHSV(hue, Math.Max(saturation - 0.2, 0.0), Math.Min(value + 0.2, 1.0));
         }
 
         public override void Update(GameTime gameTime)
@@ -47,11 +67,12 @@ namespace Sand
         {
             MouseState mouse = Mouse.GetState();
             var sandGame = Game as Sand;
-            var transformedMouse = Vector2.Transform(new Vector2(mouse.X, mouse.Y), Matrix.Invert(sandGame.GlobalTransformMatrix));
+            var transformedMouse = Vector2.Transform(new Vector2(mouse.X, mouse.Y),
+                                                     Matrix.Invert(sandGame.GlobalTransformMatrix));
 
             _hovered = false;
 
-            if(_bounds.Intersects(new Rectangle((int) transformedMouse.X, (int) transformedMouse.Y, 1, 1)))
+            if(_bounds.Intersects(new Rectangle((int)transformedMouse.X, (int)transformedMouse.Y, 1, 1)))
             {
                 _hovered = true;
             }
@@ -70,13 +91,11 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            Color fillColor = _clicked
-                                  ? Storage.Color("WidgetFillClick")
-                                  : (_hovered ? Storage.Color("WidgetFillHighlight") : Storage.Color("WidgetFill"));
-            Color borderColor = Storage.Color("WidgetBorder");
+            Color fillColor = _clicked ? _clickColor : (_hovered ? _highlightColor : _baseColor);
+            Color borderColor = _borderColor;
             const int borderRadius = 3;
 
-            Vector2 textSize = Storage.Font("Calibri24").MeasureString("Button");
+            Vector2 textSize = Storage.Font("Calibri24").MeasureString(_text);
             Vector2 textOrigin = textSize / 2;
 
             _spriteBatch.Draw(Storage.Sprite("pixel"),
@@ -85,7 +104,7 @@ namespace Sand
                               new Rectangle(_bounds.X + borderRadius, _bounds.Y + borderRadius,
                                             _bounds.Width - (2 * borderRadius), _bounds.Height - (2 * borderRadius)),
                               fillColor);
-            _spriteBatch.DrawString(Storage.Font("Calibri24"), "Button",
+            _spriteBatch.DrawString(Storage.Font("Calibri24"), _text,
                                     new Vector2(_bounds.X + (_bounds.Width / 2), _bounds.Y + (_bounds.Height / 2) + 2),
                                     Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
         }
