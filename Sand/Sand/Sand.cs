@@ -71,7 +71,9 @@ namespace Sand
             Storage.AddFont("Calibri48Bold", Content.Load<SpriteFont>("Fonts/Calibri48Bold"));
             Storage.AddFont("Gotham24", Content.Load<SpriteFont>("Fonts/Gotham24"));
 
-            Storage.AddColor("WidgetFill", new Color(0.043f, 0.373f, 0.647f));
+            Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));
+            Storage.AddColor("RedTeam", new Color(0.65f, 0.1f, 0.1f));
+            Storage.AddColor("BlueTeam", new Color(0.1f, 0.37f, 0.65f));
 
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
 

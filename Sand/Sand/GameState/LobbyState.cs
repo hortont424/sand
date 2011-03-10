@@ -29,21 +29,21 @@ namespace Sand.GameState
             readyButtonRect.X = (int)sandGame.BaseScreenSize.X - readyButtonRect.Width - 50;
             readyButtonRect.Y = (int)sandGame.BaseScreenSize.Y - readyButtonRect.Height - 50;
 
-            _readyButton = new Button(Game, readyButtonRect, "Ready", new Color(0.7f, 0.1f, 0.1f));
+            _readyButton = new Button(Game, readyButtonRect, "Ready", new Color(0.1f, 0.7f, 0.1f));
             _readyButton.SetAction((a, b) => Game.TransitionState(States.ReadyWait), null);
 
             var redTeamButtonRect = new Rectangle(0, 0, 200, 50);
             redTeamButtonRect.X = (int)(sandGame.BaseScreenSize.X / 3.0f) - (redTeamButtonRect.Width / 2);
             redTeamButtonRect.Y = (int)(logoSprite.Height + sandLogoOrigin.Y + 30);
 
-            _redTeamButton = new Button(Game, redTeamButtonRect, "Choose Team");
+            _redTeamButton = new Button(Game, redTeamButtonRect, "Choose Team", Storage.Color("RedTeam"));
             _redTeamButton.SetAction((a, b) => System.Console.WriteLine("Go Red!"), null);
 
             var blueTeamButtonRect = new Rectangle(0, 0, 200, 50);
             blueTeamButtonRect.X = (int)(2.0f * sandGame.BaseScreenSize.X / 3.0f) - (blueTeamButtonRect.Width / 2);
             blueTeamButtonRect.Y = redTeamButtonRect.Y;
 
-            _blueTeamButton = new Button(Game, blueTeamButtonRect, "Choose Team");
+            _blueTeamButton = new Button(Game, blueTeamButtonRect, "Choose Team", Storage.Color("BlueTeam"));
             _blueTeamButton.SetAction((a, b) => System.Console.WriteLine("Go Blue!"), null);
 
             Game.Components.Add(_sandLogo);
