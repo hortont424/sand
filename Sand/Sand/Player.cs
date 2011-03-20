@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -19,11 +20,20 @@ namespace Sand
 
         public Vector2 Position;
         public float Angle;
-        public Team Team;
+        
+        public Team _team;
+        public Queue<MessageTypes> Messages;
+
+        public virtual Team Team
+        {
+            get { return _team; }
+
+            set { _team = value; Messages.Enqueue(MessageTypes.UpdatePlayerTeam); }
+        }
 
         public Player(Game game) : base(game)
         {
-            Team = Team.None;
+            Messages = new Queue<MessageTypes>();
         }
 
         protected override void LoadContent()

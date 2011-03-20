@@ -29,8 +29,8 @@ namespace Sand
 
             _graphics = new GraphicsDeviceManager(this)
                         {
-                            PreferredBackBufferWidth = (int)1680, // TODO: these should be figured out dynamically
-                            PreferredBackBufferHeight = (int)1050,
+                            PreferredBackBufferWidth = (int)1440, // TODO: these should be figured out dynamically
+                            PreferredBackBufferHeight = (int)900,
                             GraphicsProfile = GraphicsProfile.Reach
                         };
 
