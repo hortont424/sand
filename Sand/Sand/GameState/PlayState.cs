@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework.GamerServices;
-
-namespace Sand.GameState
+﻿namespace Sand.GameState
 {
     public class PlayState : GameState
     {
@@ -26,7 +23,7 @@ namespace Sand.GameState
 
         public override void Leave()
         {
-            foreach (var gamer in Storage.networkSession.AllGamers)
+            foreach(var gamer in Storage.networkSession.AllGamers)
             {
                 Game.Components.Remove((Player)gamer.Tag);
             }

@@ -6,22 +6,22 @@ namespace Sand
     public enum MessageTypes
     {
         UpdatePlayerPosition
-    } ;
+    };
 
     internal class Messages
     {
         public static void SendUpdatePlayerPositionMessage(Player player, byte id)
         {
-            Storage.packetWriter.Write((int) MessageTypes.UpdatePlayerPosition);
+            Storage.packetWriter.Write((int)MessageTypes.UpdatePlayerPosition);
             Storage.packetWriter.Write(id);
-            Storage.packetWriter.Write(player._position);
-            Storage.packetWriter.Write((double) player._angle);
+            Storage.packetWriter.Write(player.Position);
+            Storage.packetWriter.Write((double)player.Angle);
         }
 
         private static void ProcessUpdatePlayerPositionMessage(Player player)
         {
-            player._position = Storage.packetReader.ReadVector2();
-            player._angle = (float) Storage.packetReader.ReadDouble();
+            player.Position = Storage.packetReader.ReadVector2();
+            player.Angle = (float)Storage.packetReader.ReadDouble();
         }
 
         private static void UpdateClientStateFromServer(LocalNetworkGamer gamer)
@@ -33,7 +33,7 @@ namespace Sand
 
                 while(Storage.packetReader.Position < Storage.packetReader.Length)
                 {
-                    var type = (MessageTypes) Storage.packetReader.ReadInt32();
+                    var type = (MessageTypes)Storage.packetReader.ReadInt32();
                     byte gamerId = Storage.packetReader.ReadByte();
                     NetworkGamer remoteGamer = Storage.networkSession.FindGamerById(gamerId);
 
@@ -75,7 +75,7 @@ namespace Sand
 
                 while(Storage.packetReader.Position < Storage.packetReader.Length)
                 {
-                    var type = (MessageTypes) Storage.packetReader.ReadInt32();
+                    var type = (MessageTypes)Storage.packetReader.ReadInt32();
                     byte gamerId = Storage.packetReader.ReadByte();
 
                     var player = sender.Tag as Player;

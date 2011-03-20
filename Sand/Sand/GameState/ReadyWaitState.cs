@@ -24,11 +24,7 @@ namespace Sand.GameState
 
             foreach(var gamer in Storage.networkSession.AllGamers)
             {
-                if(gamer.IsLocal)
-                {
-                    gamer.Tag = new LocalPlayer(Game);
-                }
-                else
+                if(!gamer.IsLocal)
                 {
                     gamer.Tag = new RemotePlayer(Game, gamer);
                 }

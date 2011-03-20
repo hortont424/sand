@@ -10,6 +10,7 @@ namespace Sand.GameState
 
         public override void Enter()
         {
+            
         }
 
         public override void Update()

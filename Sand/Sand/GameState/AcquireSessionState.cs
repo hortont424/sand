@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework.Net;
 
 namespace Sand.GameState
@@ -18,7 +15,7 @@ namespace Sand.GameState
 
             var availableSessions = NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
 
-            if (availableSessions.Count > 0)
+            if(availableSessions.Count > 0)
             {
                 Console.WriteLine("Connecting to server from {0}", availableSessions[0].HostGamertag);
                 Storage.networkSession = NetworkSession.Join(availableSessions[0]);
@@ -29,7 +26,15 @@ namespace Sand.GameState
                 Storage.networkSession = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 6);
             }
 
-            if (Storage.networkSession != null)
+            foreach(var gamer in Storage.networkSession.AllGamers)
+            {
+                if(gamer.IsLocal)
+                {
+                    gamer.Tag = new LocalPlayer(Game);
+                }
+            }
+
+            if(Storage.networkSession != null)
             {
                 Game.TransitionState(States.Lobby);
             }
@@ -41,12 +46,10 @@ namespace Sand.GameState
 
         public override void Update()
         {
-            
         }
 
         public override void Leave()
         {
-            
         }
     }
 }

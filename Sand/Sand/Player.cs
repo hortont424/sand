@@ -6,14 +6,24 @@ using Microsoft.Xna.Framework.Net;
 
 namespace Sand
 {
+    public enum Team
+    {
+        None,
+        Red,
+        Blue
+    } ;
+
     internal class Player : DrawableGameComponent
     {
-        internal Vector2 _position;
-        internal SpriteBatch _spriteBatch;
-        internal float _angle;
+        private SpriteBatch _spriteBatch;
+
+        public Vector2 Position;
+        public float Angle;
+        public Team Team;
 
         public Player(Game game) : base(game)
         {
+            Team = Team.None;
         }
 
         protected override void LoadContent()
@@ -22,7 +32,7 @@ namespace Sand
 
             var sandGame = Game as Sand;
 
-            if (sandGame != null)
+            if(sandGame != null)
             {
                 _spriteBatch = sandGame.SpriteBatch;
             }
@@ -30,8 +40,9 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int) _position.X, (int) _position.Y, 5, 20), null,
-                              Color.Red, _angle, new Vector2(0.5f, 0.5f), SpriteEffects.None, 0.0f);
+            Color teamColor = Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
+            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 5, 20), null,
+                              teamColor, Angle, new Vector2(0.5f, 0.5f), SpriteEffects.None, 0.0f);
         }
     }
 
@@ -47,8 +58,6 @@ namespace Sand
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
-            // see if any of the incoming messages from the server pertain to this player, update his position if so!
         }
     }
 
@@ -105,7 +114,7 @@ namespace Sand
         {
             var mouseState = Mouse.GetState();
 
-            _angle = (float)Math.Atan2(mouseState.Y - _position.Y, mouseState.X - _position.X) + ((float)Math.PI / 2.0f);
+            Angle = (float)Math.Atan2(mouseState.Y - Position.Y, mouseState.X - Position.X) + ((float)Math.PI / 2.0f);
         }
 
         private void UpdatePosition(GameTime gameTime)
@@ -118,8 +127,8 @@ namespace Sand
             _velocity.X += _acceleration.X;
             _velocity.Y += _acceleration.Y;
 
-            _position.X += _velocity.X * timestep;
-            _position.Y += _velocity.Y * timestep;
+            Position.X += _velocity.X * timestep;
+            Position.Y += _velocity.Y * timestep;
 
             _acceleration.X = _acceleration.Y = 0.0f;
         }

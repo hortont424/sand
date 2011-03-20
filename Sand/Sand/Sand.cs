@@ -74,6 +74,7 @@ namespace Sand
             Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));
             Storage.AddColor("RedTeam", new Color(0.65f, 0.1f, 0.1f));
             Storage.AddColor("BlueTeam", new Color(0.1f, 0.37f, 0.65f));
+            Storage.AddColor("NeutralTeam", new Color(0.9f, 0.9f, 0.9f));
 
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
 
