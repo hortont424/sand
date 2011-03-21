@@ -21,19 +21,10 @@ namespace Sand
         public Vector2 Position;
         public float Angle;
         
-        public Team _team;
-        public Queue<MessageTypes> Messages;
-
-        public virtual Team Team
-        {
-            get { return _team; }
-
-            set { _team = value; Messages.Enqueue(MessageTypes.UpdatePlayerTeam); Console.WriteLine("Changing to team {0}", value); }
-        }
+        public Team Team;
 
         public Player(Game game) : base(game)
         {
-            Messages = new Queue<MessageTypes>();
         }
 
         protected override void LoadContent()

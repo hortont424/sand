@@ -5,50 +5,25 @@ namespace Sand
 {
     public enum MessageTypes
     {
-        UpdatePlayerPosition,
-        UpdatePlayerTeam
+        UpdatePlayerPosition
     };
 
     internal class Messages
     {
-        // UpdatePlayerPosition
-
-        public static void SendUpdatePlayerPositionMessage(Player player, byte id)
+        public static void SendUpdatePlayerStateMessage(Player player, byte id)
         {
             Storage.packetWriter.Write((int)MessageTypes.UpdatePlayerPosition);
             Storage.packetWriter.Write(id);
             Storage.packetWriter.Write(player.Position);
             Storage.packetWriter.Write((double)player.Angle);
+            Storage.packetWriter.Write((Byte)player.Team);
         }
 
-        private static void ProcessUpdatePlayerPositionMessage(Player player)
+        private static void ProcessUpdatePlayerStateMessage(Player player)
         {
             player.Position = Storage.packetReader.ReadVector2();
             player.Angle = (float)Storage.packetReader.ReadDouble();
-        }
-
-        // UpdatePlayerTeam
-
-        public static void SendUpdatePlayerTeamMessage(Player player, byte id)
-        {
-            Storage.packetWriter.Write((int)MessageTypes.UpdatePlayerTeam);
-            Storage.packetWriter.Write(id);
-            Storage.packetWriter.Write((Int32)player.Team);
-        }
-
-        private static void ProcessUpdatePlayerTeamMessage(Player player, bool rebroadcast)
-        {
-            if(player is RemotePlayer)
-            {
-                if(rebroadcast)
-                {
-                    player.Team = (Team)Storage.packetReader.ReadInt32();
-                }
-                else
-                {
-                    player._team = (Team)Storage.packetReader.ReadInt32();
-                }
-            }
+            player.Team = (Team)Storage.packetReader.ReadByte();
         }
 
         private static void UpdateClientStateFromServer(LocalNetworkGamer gamer)
@@ -79,10 +54,7 @@ namespace Sand
                     switch(type)
                     {
                         case MessageTypes.UpdatePlayerPosition:
-                            ProcessUpdatePlayerPositionMessage(player);
-                            break;
-                        case MessageTypes.UpdatePlayerTeam:
-                            ProcessUpdatePlayerTeamMessage(player, false);
+                            ProcessUpdatePlayerStateMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -113,10 +85,7 @@ namespace Sand
                     switch(type)
                     {
                         case MessageTypes.UpdatePlayerPosition:
-                            ProcessUpdatePlayerPositionMessage(player);
-                            break;
-                        case MessageTypes.UpdatePlayerTeam:
-                            ProcessUpdatePlayerTeamMessage(player, true);
+                            ProcessUpdatePlayerStateMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -133,24 +102,7 @@ namespace Sand
                 {
                     var player = gamer.Tag as Player;
 
-                    SendUpdatePlayerPositionMessage(player, gamer.Id);
-
-                    while(player.Messages.Count > 0)
-                    {
-                        MessageTypes messageType = player.Messages.Dequeue();
-
-                        switch(messageType)
-                        {
-                            case MessageTypes.UpdatePlayerPosition:
-                                // send position maybe
-                                break;
-                            case MessageTypes.UpdatePlayerTeam:
-                                SendUpdatePlayerTeamMessage(player, gamer.Id);
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    }
+                    SendUpdatePlayerStateMessage(player, gamer.Id);
 
                     gamer.SendData(Storage.packetWriter, SendDataOptions.ReliableInOrder, Storage.networkSession.Host);
                 }
@@ -167,24 +119,7 @@ namespace Sand
                         return;
                     }
 
-                    SendUpdatePlayerPositionMessage(player, gamer.Id);
-
-                    while (player.Messages.Count > 0)
-                    {
-                        MessageTypes messageType = player.Messages.Dequeue();
-
-                        switch (messageType)
-                        {
-                            case MessageTypes.UpdatePlayerPosition:
-                                // send position maybe
-                                break;
-                            case MessageTypes.UpdatePlayerTeam:
-                                SendUpdatePlayerTeamMessage(player, gamer.Id);
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    }
+                    SendUpdatePlayerStateMessage(player, gamer.Id);
                 }
 
                 var server = Storage.networkSession.Host as LocalNetworkGamer;
