@@ -45,7 +45,7 @@ namespace Sand
             {
                 if((gamer.Tag as Player).Team != _team)
                 {
-                    return;
+                    continue;
                 }
 
                 _spriteBatch.DrawString(Storage.Font("Calibri24"),
