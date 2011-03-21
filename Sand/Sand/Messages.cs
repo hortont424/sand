@@ -26,6 +26,13 @@ namespace Sand
             player.Team = (Team)Storage.packetReader.ReadByte();
         }
 
+        private static void DiscardUpdatePlayerStateMessage()
+        {
+            Storage.packetReader.ReadVector2();
+            Storage.packetReader.ReadDouble();
+            Storage.packetReader.ReadByte();
+        }
+
         private static void UpdateClientStateFromServer(LocalNetworkGamer gamer)
         {
             while(gamer.IsDataAvailable)
@@ -39,13 +46,9 @@ namespace Sand
                     byte gamerId = Storage.packetReader.ReadByte();
                     NetworkGamer remoteGamer = Storage.networkSession.FindGamerById(gamerId);
 
-                    if(remoteGamer == null)
+                    if(remoteGamer == null || remoteGamer.IsLocal)
                     {
-                        break;
-                    }
-
-                    if(remoteGamer.IsLocal)
-                    {
+                        DiscardUpdatePlayerStateMessage();
                         continue;
                     }
 
