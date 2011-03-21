@@ -43,6 +43,7 @@ namespace Sand
 
             foreach(var gamer in Storage.networkSession.AllGamers)
             {
+                System.Console.WriteLine("{0} {1}", gamer.Gamertag, (gamer.Tag as Player).Team);
                 if((gamer.Tag as Player).Team != _team)
                 {
                     return;

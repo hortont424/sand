@@ -28,7 +28,7 @@ namespace Sand
         {
             get { return _team; }
 
-            set { _team = value; Messages.Enqueue(MessageTypes.UpdatePlayerTeam); }
+            set { _team = value; Messages.Enqueue(MessageTypes.UpdatePlayerTeam); Console.WriteLine("Changing to team {0}", value); }
         }
 
         public Player(Game game) : base(game)

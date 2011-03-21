@@ -127,7 +127,7 @@ namespace Sand
 
         public static void Update()
         {
-            foreach(LocalNetworkGamer gamer in Storage.networkSession.LocalGamers)
+            foreach(var gamer in Storage.networkSession.LocalGamers)
             {
                 if(!Storage.networkSession.IsHost)
                 {
@@ -152,7 +152,7 @@ namespace Sand
                         }
                     }
 
-                    gamer.SendData(Storage.packetWriter, SendDataOptions.InOrder, Storage.networkSession.Host);
+                    gamer.SendData(Storage.packetWriter, SendDataOptions.ReliableInOrder, Storage.networkSession.Host);
                 }
             }
 
@@ -191,7 +191,7 @@ namespace Sand
 
                 if(server != null)
                 {
-                    server.SendData(Storage.packetWriter, SendDataOptions.InOrder);
+                    server.SendData(Storage.packetWriter, SendDataOptions.ReliableInOrder);
                 }
             }
 
