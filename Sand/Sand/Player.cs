@@ -88,7 +88,6 @@ namespace Sand
 
         private void UpdateInput()
         {
-            Console.WriteLine("Update Input");
             var newKeyState = Keyboard.GetState();
 
             if(newKeyState.IsKeyDown(Keys.A))
