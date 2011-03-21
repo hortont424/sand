@@ -6,7 +6,7 @@ namespace Sand.GameState
 {
     public class LobbyState : GameState
     {
-        private LobbyList _lobbyListRed, _lobbyListBlue;
+        private LobbyList _lobbyListRed, _lobbyListBlue, _lobbyListNone;
         private Button _readyButton;
         private Button _redTeamButton;
         private Button _blueTeamButton;
@@ -66,14 +66,12 @@ namespace Sand.GameState
             _blueTeamButton = new Button(Game, blueTeamButtonRect, "Choose Team", Storage.Color("BlueTeam"));
             _blueTeamButton.SetAction((a, userInfo) => player.Team = Team.Blue, null);
 
-            _lobbyListRed = new LobbyList(Game, Team.Red);
-            _lobbyListRed.X = redTeamButtonRect.X;
-            _lobbyListRed.Y = redTeamButtonRect.Y + 40;
-            _lobbyListBlue = new LobbyList(Game, Team.Blue);
-            _lobbyListBlue.X = blueTeamButtonRect.X;
-            _lobbyListBlue.Y = blueTeamButtonRect.Y + 40;
+            _lobbyListNone = new LobbyList(Game, Team.None) { X = 0, Y = redTeamButtonRect.Y + 40 };
+            _lobbyListRed = new LobbyList(Game, Team.Red) { X = redTeamButtonRect.X, Y = redTeamButtonRect.Y + 40 };
+            _lobbyListBlue = new LobbyList(Game, Team.Blue) { X = blueTeamButtonRect.X, Y = blueTeamButtonRect.Y + 40 };
 
             Game.Components.Add(_sandLogo);
+            Game.Components.Add(_lobbyListNone);
             Game.Components.Add(_lobbyListRed);
             Game.Components.Add(_lobbyListBlue);
             Game.Components.Add(_readyButton);
@@ -89,6 +87,7 @@ namespace Sand.GameState
         public override void Leave()
         {
             Game.Components.Remove(_sandLogo);
+            Game.Components.Remove(_lobbyListNone);
             Game.Components.Remove(_lobbyListRed);
             Game.Components.Remove(_lobbyListBlue);
             Game.Components.Remove(_readyButton);

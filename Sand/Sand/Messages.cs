@@ -24,6 +24,8 @@ namespace Sand
             player.Position = Storage.packetReader.ReadVector2();
             player.Angle = (float)Storage.packetReader.ReadDouble();
             player.Team = (Team)Storage.packetReader.ReadByte();
+
+            Console.WriteLine("Got team {0} for {1}", player.Team, player.ToString());
         }
 
         private static void UpdateClientStateFromServer(LocalNetworkGamer gamer)
