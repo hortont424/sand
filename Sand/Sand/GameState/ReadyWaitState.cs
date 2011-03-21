@@ -22,14 +22,6 @@ namespace Sand.GameState
         {
             Console.WriteLine("start game!");
 
-            foreach(var gamer in Storage.networkSession.AllGamers)
-            {
-                if(!gamer.IsLocal)
-                {
-                    gamer.Tag = new RemotePlayer(Game, gamer);
-                }
-            }
-
             Game.TransitionState(States.Play);
         }
 

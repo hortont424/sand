@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Net;
 
 namespace Sand.GameState
 {
@@ -15,8 +16,22 @@ namespace Sand.GameState
         {
         }
 
+        private void GamerJoined(object sender, GamerJoinedEventArgs e)
+        {
+            NetworkGamer gamer = e.Gamer;
+            Player player = new Player(Game);
+            gamer.Tag = player;
+        }
+
+        private void GamerLeft(object sender, GamerLeftEventArgs e)
+        {
+        }
+
         public override void Enter()
         {
+            Storage.networkSession.GamerJoined += GamerJoined;
+            Storage.networkSession.GamerLeft += GamerLeft;
+
             var netPlayer = Storage.networkSession.LocalGamers[0];
             var player = netPlayer.Tag as Player;
 
