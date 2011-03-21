@@ -83,6 +83,7 @@ namespace Sand.GameState
 
         public override void Update()
         {
+            Messages.Update();
         }
 
         public override void Leave()

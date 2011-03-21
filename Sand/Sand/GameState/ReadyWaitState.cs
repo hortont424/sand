@@ -32,6 +32,8 @@ namespace Sand.GameState
 
         public override void Update()
         {
+            Messages.Update();
+
             if(Storage.networkSession.IsHost)
             {
                 if(Storage.networkSession.IsEveryoneReady)
