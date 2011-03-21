@@ -5,14 +5,14 @@ namespace Sand
 {
     public enum MessageTypes
     {
-        UpdatePlayerPosition
+        UpdatePlayerState
     };
 
     internal class Messages
     {
         public static void SendUpdatePlayerStateMessage(Player player, byte id)
         {
-            Storage.packetWriter.Write((int)MessageTypes.UpdatePlayerPosition);
+            Storage.packetWriter.Write((int)MessageTypes.UpdatePlayerState);
             Storage.packetWriter.Write(id);
             Storage.packetWriter.Write(player.Position);
             Storage.packetWriter.Write((double)player.Angle);
@@ -25,7 +25,7 @@ namespace Sand
             player.Angle = (float)Storage.packetReader.ReadDouble();
             player.Team = (Team)Storage.packetReader.ReadByte();
 
-            Console.WriteLine("Got team {0} for {1}", player.Team, player.ToString());
+            Console.WriteLine("Got position {0} for {1}", player.Position, player.ToString());
         }
 
         private static void UpdateClientStateFromServer(LocalNetworkGamer gamer)
@@ -55,7 +55,7 @@ namespace Sand
 
                     switch(type)
                     {
-                        case MessageTypes.UpdatePlayerPosition:
+                        case MessageTypes.UpdatePlayerState:
                             ProcessUpdatePlayerStateMessage(player);
                             break;
                         default:
@@ -86,7 +86,7 @@ namespace Sand
 
                     switch(type)
                     {
-                        case MessageTypes.UpdatePlayerPosition:
+                        case MessageTypes.UpdatePlayerState:
                             ProcessUpdatePlayerStateMessage(player);
                             break;
                         default:

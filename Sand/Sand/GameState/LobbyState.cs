@@ -18,8 +18,14 @@ namespace Sand.GameState
 
         private void GamerJoined(object sender, GamerJoinedEventArgs e)
         {
-            NetworkGamer gamer = e.Gamer;
-            Player player = new Player(Game);
+            var gamer = e.Gamer;
+
+            if(gamer.IsLocal)
+            {
+                return;
+            }
+
+            var player = new RemotePlayer(Game, gamer);
             gamer.Tag = player;
         }
 

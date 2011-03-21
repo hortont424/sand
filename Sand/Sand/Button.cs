@@ -67,6 +67,7 @@ namespace Sand
         {
             MouseState mouse = Mouse.GetState();
             var sandGame = Game as Sand;
+            // TODO: cache this!!!
             var transformedMouse = Vector2.Transform(new Vector2(mouse.X, mouse.Y),
                                                      Matrix.Invert(sandGame.GlobalTransformMatrix));
 
