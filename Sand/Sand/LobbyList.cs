@@ -6,9 +6,13 @@ namespace Sand
     internal class LobbyList : DrawableGameComponent
     {
         private SpriteBatch _spriteBatch;
+        private Team _team;
 
-        public LobbyList(Game game) : base(game)
+        public float X, Y;
+
+        public LobbyList(Game game, Team team) : base(game)
         {
+            _team = team;
         }
 
         protected override void LoadContent()
@@ -39,10 +43,15 @@ namespace Sand
 
             foreach(var gamer in Storage.networkSession.AllGamers)
             {
+                if((gamer.Tag as Player).Team != _team)
+                {
+                    return;
+                }
+
                 _spriteBatch.DrawString(Storage.Font("Calibri24"),
                                         string.Format("{0} ({1} ms)", gamer.Gamertag,
                                                       gamer.RoundtripTime.TotalMilliseconds),
-                                        new Vector2(sandGame.BaseScreenSize.X * 0.22f, i++ * 30 + 120),
+                                        new Vector2(X, i++ * 30 + Y),
                                         Color.White);
             }
         }

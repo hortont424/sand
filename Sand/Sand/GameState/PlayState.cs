@@ -2,8 +2,6 @@
 {
     public class PlayState : GameState
     {
-        private LocalPlayer _player;
-
         public PlayState(Sand game) : base(game)
         {
         }
