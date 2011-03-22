@@ -55,8 +55,11 @@ namespace Sand
         {
             Color teamColor =
                 Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
-            _spriteBatch.Draw(Storage.Sprite("player"), new Rectangle((int)Position.X, (int)Position.Y, Width, Height),
-                              null,
+
+            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 3, 3000), null,
+                              teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+
+            _spriteBatch.Draw(Storage.Sprite("player"), new Rectangle((int)Position.X, (int)Position.Y, Width, Height), null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
         }
     }

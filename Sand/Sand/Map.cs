@@ -65,7 +65,7 @@ namespace Sand
                                                (y - rectangleB.Top) * rectangleB.Width];
 
                     // If both pixels are not completely transparent,
-                    if(colorA.A != 0 && colorB != Color.Black)
+                    if(colorA.A != 0 && colorB == Color.White)
                     {
                         // then an intersection has been found
                         return true;
