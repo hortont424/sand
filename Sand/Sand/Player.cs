@@ -55,11 +55,13 @@ namespace Sand
         {
             Color teamColor =
                 Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
+            teamColor.A = 0;
 
             _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 2, 3000), null,
                               teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
 
-            _spriteBatch.Draw(Storage.Sprite("player"), new Rectangle((int)Position.X, (int)Position.Y, Width, Height), null,
+            _spriteBatch.Draw(Storage.Sprite("player"), new Rectangle((int)Position.X, (int)Position.Y, Width, Height),
+                              null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
         }
     }
@@ -164,9 +166,25 @@ namespace Sand
             }
             else
             {
-                // TODO: this is obviously wrong (should reflect, not just bounce back in the same direction!)
-                _velocity.X = -_velocity.X;
-                _velocity.Y = -_velocity.Y;
+                if(!sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(newPosition.X - (Width / 2.0)),
+                                                                           (int)(Position.Y - (Height / 2.0)), Width,
+                                                                           Height)))
+                {
+                    _velocity.Y = -_velocity.Y;
+                    Position.X = newPosition.X;
+                }
+                else if(!sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(Position.X - (Width / 2.0)),
+                                                                                (int)(newPosition.Y - (Height / 2.0)),
+                                                                                Width, Height)))
+                {
+                    _velocity.X = -_velocity.X;
+                    Position.Y = newPosition.Y;
+                }
+                else
+                {
+                    _velocity.X = -_velocity.X;
+                    _velocity.Y = -_velocity.Y;
+                }
             }
         }
     }
