@@ -48,9 +48,12 @@ namespace Sand
                     continue;
                 }
 
-                _spriteBatch.DrawString(Storage.Font("Calibri24"),
-                                        string.Format("{0} ({1} ms)", gamer.Gamertag,
-                                                      gamer.RoundtripTime.TotalMilliseconds),
+                var nameString = gamer.IsLocal
+                                     ? string.Format("{0}", gamer.Gamertag)
+                                     : string.Format("{0} ({1} ms)", gamer.Gamertag,
+                                                     gamer.RoundtripTime.TotalMilliseconds / 2);
+
+                _spriteBatch.DrawString(Storage.Font("Calibri24"), nameString,
                                         new Vector2(X, i++ * 30 + Y),
                                         Color.White);
             }

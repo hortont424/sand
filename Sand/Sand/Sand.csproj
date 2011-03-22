@@ -121,6 +121,7 @@
     <Compile Include="GameState\PlayState.cs" />
     <Compile Include="GameState\ReadyWaitState.cs" />
     <Compile Include="LobbyList.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
