@@ -83,7 +83,6 @@ namespace Sand
 
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
             Storage.AddSprite("player", Content.Load<Texture2D>("Textures/player"));
-            Storage.AddSprite("GoogleLogo", Content.Load<Texture2D>("Textures/google"));
 
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });
