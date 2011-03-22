@@ -59,11 +59,13 @@ namespace Sand
             {
                 for(int x = left; x < right; x++)
                 {
+                    Color colorA = pTexture[(x - rectangleA.Left) +
+                                            (y - rectangleA.Top) * rectangleA.Width];
                     Color colorB = _mapTexture[(x - rectangleB.Left) +
                                                (y - rectangleB.Top) * rectangleB.Width];
 
                     // If both pixels are not completely transparent,
-                    if(colorB != Color.Black)
+                    if(colorA.A != 0 && colorB != Color.Black)
                     {
                         // then an intersection has been found
                         return true;

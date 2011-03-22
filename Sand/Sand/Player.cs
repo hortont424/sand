@@ -151,18 +151,19 @@ namespace Sand
 
             _acceleration.X = _acceleration.Y = 0.0f;
 
-            Matrix transform = Matrix.CreateTranslation(Width / 2.0f, Height / 2.0f, 0.0f) *
-                               Matrix.CreateRotationZ(Angle) *
-                               Matrix.CreateTranslation(newPosition.X, newPosition.Y, 0.0f);
-
-            if(
-                !sandGame.GameMap.CollisionTest(_texture,
-                                                new Rectangle((int)(newPosition.X - (Width / 2.0)),
-                                                              (int)(newPosition.Y - (Height / 2.0)),
-                                                              Width, Height)))
+            if(!sandGame.GameMap.CollisionTest(_texture,
+                                               new Rectangle((int)(newPosition.X - (Width / 2.0)),
+                                                             (int)(newPosition.Y - (Height / 2.0)),
+                                                             Width, Height)))
             {
                 Position.X = newPosition.X;
                 Position.Y = newPosition.Y;
+            }
+            else
+            {
+                // TODO: this is obviously wrong (should reflect, not just bounce back in the same direction!)
+                _velocity.X = -_velocity.X;
+                _velocity.Y = -_velocity.Y;
             }
         }
     }
