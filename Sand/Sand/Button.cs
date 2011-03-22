@@ -67,13 +67,10 @@ namespace Sand
         {
             MouseState mouse = Mouse.GetState();
             var sandGame = Game as Sand;
-            // TODO: cache this!!!
-            var transformedMouse = Vector2.Transform(new Vector2(mouse.X, mouse.Y),
-                                                     Matrix.Invert(sandGame.GlobalTransformMatrix));
 
             _hovered = false;
 
-            if(_bounds.Intersects(new Rectangle((int)transformedMouse.X, (int)transformedMouse.Y, 1, 1)))
+            if(_bounds.Intersects(new Rectangle((int)sandGame.MouseLocation.X, (int)sandGame.MouseLocation.Y, 1, 1)))
             {
                 _hovered = true;
             }

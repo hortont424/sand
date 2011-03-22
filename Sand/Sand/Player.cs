@@ -115,10 +115,8 @@ namespace Sand
         {
             var mouse = Mouse.GetState();
             var sandGame = Game as Sand;
-            var transformedMouse = Vector2.Transform(new Vector2(mouse.X, mouse.Y),
-                                                     Matrix.Invert(sandGame.GlobalTransformMatrix));
 
-            Angle = (float)Math.Atan2(transformedMouse.Y - Position.Y, transformedMouse.X - Position.X) + ((float)Math.PI / 2.0f);
+            Angle = (float)Math.Atan2(sandGame.MouseLocation.Y - Position.Y, sandGame.MouseLocation.X - Position.X) + ((float)Math.PI / 2.0f);
         }
 
         private void UpdatePosition(GameTime gameTime)

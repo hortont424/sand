@@ -18,7 +18,8 @@ namespace Sand
         private Dictionary<States, GameState.GameState> _gameStateInstances;
 
         public Vector2 BaseScreenSize;
-        public Matrix GlobalTransformMatrix;
+        private Matrix GlobalTransformMatrix;
+        public Vector2 MouseLocation;
 
         // E27 white rice wonton soup ("I'll go with the boned")
         // E16 chicken fried rice wonton soup
@@ -29,8 +30,9 @@ namespace Sand
 
             _graphics = new GraphicsDeviceManager(this)
                         {
-                            PreferredBackBufferWidth = (int)1440, // TODO: these should be figured out dynamically
-                            PreferredBackBufferHeight = (int)900,
+                            PreferredBackBufferWidth = 1440,
+                            // TODO: these should be figured out dynamically
+                            PreferredBackBufferHeight = 900,
                             GraphicsProfile = GraphicsProfile.Reach
                         };
 
@@ -79,7 +81,7 @@ namespace Sand
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
 
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
-            rectTexture.SetData(new[] {Color.White});
+            rectTexture.SetData(new[] { Color.White });
             Storage.AddSprite("pixel", rectTexture);
         }
 
@@ -101,6 +103,10 @@ namespace Sand
 
         protected override void Update(GameTime gameTime)
         {
+            MouseState mouse = Mouse.GetState();
+            MouseLocation = Vector2.Transform(new Vector2(mouse.X, mouse.Y),
+                                              Matrix.Invert(GlobalTransformMatrix)); // TODO: cache inverse?
+
             UpdateInput();
             UpdateState();
 
@@ -126,9 +132,9 @@ namespace Sand
 
         private void UpdateState()
         {
-            if(_gameState == GameState.States.Begin)
+            if(_gameState == States.Begin)
             {
-                TransitionState(GameState.States.Login);
+                TransitionState(States.Login);
             }
 
             _gameStateInstances[_gameState].Update();
@@ -137,8 +143,6 @@ namespace Sand
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-
-            
 
             SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, GlobalTransformMatrix);
 
