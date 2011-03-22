@@ -2,6 +2,8 @@
 {
     public class PlayState : GameState
     {
+        private Map _gameMap;
+
         public PlayState(Sand game) : base(game)
         {
         }
@@ -12,6 +14,10 @@
             {
                 Game.Components.Add((Player)gamer.Tag);
             }
+
+            _gameMap = new Map(Game, "01");
+
+            Game.Components.Add(_gameMap);
         }
 
         public override void Update()
@@ -25,6 +31,8 @@
             {
                 Game.Components.Remove((Player)gamer.Tag);
             }
+
+            Game.Components.Remove(_gameMap);
         }
     }
 }
