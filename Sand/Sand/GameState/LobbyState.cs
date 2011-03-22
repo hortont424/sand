@@ -8,6 +8,7 @@ namespace Sand.GameState
     {
         private LobbyList _lobbyListRed, _lobbyListBlue, _lobbyListNone;
         private Button _readyButton;
+        private Button _noTeamButton;
         private Button _redTeamButton;
         private Button _blueTeamButton;
         private Billboard _sandLogo;
@@ -54,25 +55,27 @@ namespace Sand.GameState
             var readyButtonRect = new Rectangle(0, 0, 200, 50);
             readyButtonRect.X = (int)Game.BaseScreenSize.X - readyButtonRect.Width - 50;
             readyButtonRect.Y = (int)Game.BaseScreenSize.Y - readyButtonRect.Height - 50;
-
             _readyButton = new Button(Game, readyButtonRect, "Ready", new Color(0.1f, 0.7f, 0.1f));
             _readyButton.SetAction((a, userInfo) => Game.TransitionState(States.ReadyWait), null);
 
+            var noTeamButtonRect = new Rectangle(0, 0, 200, 50);
+            noTeamButtonRect.X = 20;
+            noTeamButtonRect.Y = (int)(logoSprite.Height + sandLogoOrigin.Y + 30);
+            _noTeamButton = new Button(Game, noTeamButtonRect, "No Team", Storage.Color("NeutralTeam"));
+
             var redTeamButtonRect = new Rectangle(0, 0, 200, 50);
             redTeamButtonRect.X = (int)(Game.BaseScreenSize.X / 3.0f) - (redTeamButtonRect.Width / 2);
-            redTeamButtonRect.Y = (int)(logoSprite.Height + sandLogoOrigin.Y + 30);
-
+            redTeamButtonRect.Y = noTeamButtonRect.Y;
             _redTeamButton = new Button(Game, redTeamButtonRect, "Choose Team", Storage.Color("RedTeam"));
             _redTeamButton.SetAction((a, userInfo) => player.Team = Team.Red, null);
 
             var blueTeamButtonRect = new Rectangle(0, 0, 200, 50);
             blueTeamButtonRect.X = (int)(2.0f * Game.BaseScreenSize.X / 3.0f) - (blueTeamButtonRect.Width / 2);
-            blueTeamButtonRect.Y = redTeamButtonRect.Y;
-
+            blueTeamButtonRect.Y = noTeamButtonRect.Y;
             _blueTeamButton = new Button(Game, blueTeamButtonRect, "Choose Team", Storage.Color("BlueTeam"));
             _blueTeamButton.SetAction((a, userInfo) => player.Team = Team.Blue, null);
 
-            _lobbyListNone = new LobbyList(Game, Team.None) { X = 0, Y = redTeamButtonRect.Y + 40 };
+            _lobbyListNone = new LobbyList(Game, Team.None) { X = 20, Y = redTeamButtonRect.Y + 40 };
             _lobbyListRed = new LobbyList(Game, Team.Red) { X = redTeamButtonRect.X, Y = redTeamButtonRect.Y + 40 };
             _lobbyListBlue = new LobbyList(Game, Team.Blue) { X = blueTeamButtonRect.X, Y = blueTeamButtonRect.Y + 40 };
 
@@ -81,6 +84,7 @@ namespace Sand.GameState
             Game.Components.Add(_lobbyListRed);
             Game.Components.Add(_lobbyListBlue);
             Game.Components.Add(_readyButton);
+            Game.Components.Add(_noTeamButton);
             Game.Components.Add(_redTeamButton);
             Game.Components.Add(_blueTeamButton);
         }
@@ -97,6 +101,7 @@ namespace Sand.GameState
             Game.Components.Remove(_lobbyListRed);
             Game.Components.Remove(_lobbyListBlue);
             Game.Components.Remove(_readyButton);
+            Game.Components.Remove(_noTeamButton);
             Game.Components.Remove(_redTeamButton);
             Game.Components.Remove(_blueTeamButton);
         }

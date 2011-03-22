@@ -25,6 +25,7 @@ namespace Sand
         {
             _bounds = bounds;
             _text = text;
+            _action = null;
             _baseColor = Storage.Color("WidgetFill");
         }
 
@@ -70,17 +71,17 @@ namespace Sand
 
             _hovered = false;
 
-            if(_bounds.Intersects(new Rectangle((int)sandGame.MouseLocation.X, (int)sandGame.MouseLocation.Y, 1, 1)))
+            if(_action != null)
             {
-                _hovered = true;
-            }
+                if(_bounds.Intersects(new Rectangle((int)sandGame.MouseLocation.X, (int)sandGame.MouseLocation.Y, 1, 1)))
+                {
+                    _hovered = true;
+                }
 
-            var oldClicked = _clicked;
-            _clicked = _hovered && (mouse.LeftButton == ButtonState.Pressed);
+                var oldClicked = _clicked;
+                _clicked = _hovered && (mouse.LeftButton == ButtonState.Pressed);
 
-            if(!oldClicked && _clicked)
-            {
-                if(_action != null)
+                if(!oldClicked && _clicked)
                 {
                     _action(this, _actionUserInfo);
                 }
