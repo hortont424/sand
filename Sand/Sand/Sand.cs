@@ -90,15 +90,29 @@ namespace Sand
             // TODO: Unload any non ContentManager content here
         }
 
-        public void TransitionState(States newState)
+        public bool TransitionState(States newState)
         {
             Console.WriteLine("Moving from {0} to {1}", _gameState, newState);
+
+            if(!_gameStateInstances[_gameState].CanLeave())
+            {
+                Console.WriteLine("Couldn't leave {0}", _gameState);
+                return false;
+            }
+
+            if(!_gameStateInstances[newState].CanEnter())
+            {
+                Console.WriteLine("Couldn't enter {0}", newState);
+                return false;
+            }
 
             _gameStateInstances[_gameState].Leave();
 
             _gameState = newState;
 
             _gameStateInstances[_gameState].Enter();
+
+            return true;
         }
 
         protected override void Update(GameTime gameTime)

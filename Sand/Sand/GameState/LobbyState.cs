@@ -100,5 +100,23 @@ namespace Sand.GameState
             Game.Components.Remove(_redTeamButton);
             Game.Components.Remove(_blueTeamButton);
         }
+
+        public override bool CanLeave()
+        {
+            var netPlayer = Storage.networkSession.LocalGamers[0];
+            var player = netPlayer.Tag as Player;
+
+            if(player == null)
+            {
+                throw new Exception("Player not inited!?");
+            }
+
+            if(player.Team == Team.None)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

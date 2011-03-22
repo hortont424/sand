@@ -22,5 +22,15 @@
         public abstract void Enter();
         public abstract void Update();
         public abstract void Leave();
+
+        public virtual bool CanLeave()
+        {
+            return true;
+        }
+
+        public virtual bool CanEnter()
+        {
+            return true;
+        }
     }
 }
