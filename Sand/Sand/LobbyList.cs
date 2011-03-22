@@ -49,7 +49,7 @@ namespace Sand
                 }
 
                 var nameString = gamer.IsLocal
-                                     ? string.Format("{0}", gamer.Gamertag)
+                                     ? string.Format("{0} (you)", gamer.Gamertag)
                                      : string.Format("{0} ({1} ms)", gamer.Gamertag,
                                                      gamer.RoundtripTime.TotalMilliseconds / 2);
 

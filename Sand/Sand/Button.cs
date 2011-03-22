@@ -18,6 +18,7 @@ namespace Sand
         private Color _clickColor;
         private Color _highlightColor;
         private Color _borderColor;
+        private Texture2D _sprite;
 
         public delegate void Action(object sender, object userInfo);
 
@@ -25,11 +26,32 @@ namespace Sand
         {
             _bounds = bounds;
             _text = text;
+            _sprite = null;
             _action = null;
             _baseColor = Storage.Color("WidgetFill");
         }
 
         public Button(Game game, Rectangle bounds, string text, Color baseColor) : this(game, bounds, text)
+        {
+            _baseColor = baseColor;
+        }
+
+        public Button(Game game, Vector2 origin, Texture2D sprite) : base(game)
+        {
+            _bounds.X = (int)origin.X;
+            _bounds.Y = (int)origin.Y;
+            _bounds.Width = sprite.Width;
+            _bounds.Height = sprite.Height;
+
+            _sprite = sprite;
+
+            _text = null;
+            _action = null;
+
+            _baseColor = Storage.Color("WidgetFill");
+        }
+
+        public Button(Game game, Vector2 origin, Texture2D sprite, Color baseColor) : this(game, origin, sprite)
         {
             _baseColor = baseColor;
         }
@@ -94,18 +116,27 @@ namespace Sand
             Color borderColor = _borderColor;
             const int borderRadius = 3;
 
-            Vector2 textSize = Storage.Font("Calibri24").MeasureString(_text);
-            Vector2 textOrigin = textSize / 2;
-
             _spriteBatch.Draw(Storage.Sprite("pixel"),
                               new Rectangle(_bounds.X, _bounds.Y, _bounds.Width, _bounds.Height), borderColor);
             _spriteBatch.Draw(Storage.Sprite("pixel"),
                               new Rectangle(_bounds.X + borderRadius, _bounds.Y + borderRadius,
                                             _bounds.Width - (2 * borderRadius), _bounds.Height - (2 * borderRadius)),
                               fillColor);
-            _spriteBatch.DrawString(Storage.Font("Calibri24"), _text,
-                                    new Vector2(_bounds.X + (_bounds.Width / 2), _bounds.Y + (_bounds.Height / 2) + 2),
-                                    Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
+
+            if(_text != null)
+            {
+                Vector2 textSize = Storage.Font("Calibri24").MeasureString(_text);
+                Vector2 textOrigin = textSize / 2;
+                _spriteBatch.DrawString(Storage.Font("Calibri24"), _text,
+                                        new Vector2(_bounds.X + (_bounds.Width / 2),
+                                                    _bounds.Y + (_bounds.Height / 2) + 2),
+                                        Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
+            }
+           
+            if(_sprite != null)
+            {
+                _spriteBatch.Draw(_sprite, new Vector2(_bounds.X, _bounds.Y), Color.White);
+            }
         }
     }
 }
