@@ -35,7 +35,8 @@ namespace Sand
                             PreferredBackBufferWidth = 1440,
                             // TODO: these should be figured out dynamically
                             PreferredBackBufferHeight = 900,
-                            GraphicsProfile = GraphicsProfile.Reach
+                            GraphicsProfile = GraphicsProfile.Reach,
+                            PreferMultiSampling = true
                         };
 
             // TODO: when going fullscreen, determine the size of the screen!

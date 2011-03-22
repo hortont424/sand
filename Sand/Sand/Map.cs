@@ -6,6 +6,8 @@ namespace Sand
 {
     public class Map : DrawableGameComponent
     {
+        public string Name { get; set; }
+
         private Texture2D _map;
         private Texture2D _mapImage;
         private Color[] _mapTexture;
@@ -15,6 +17,7 @@ namespace Sand
 
         public Map(Game game, string name) : base(game)
         {
+            Name = name;
             DrawOrder = 1;
         }
 
@@ -29,8 +32,8 @@ namespace Sand
                 _spriteBatch = sandGame.SpriteBatch;
             }
 
-            _map = sandGame.Content.Load<Texture2D>("Textures/Maps/01"); // TODO: use name
-            _mapImage = _map;
+            _map = sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}", Name));
+            _mapImage = sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}-image", Name));
 
             Width = _map.Width;
             Height = _map.Height;
