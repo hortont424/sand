@@ -21,6 +21,8 @@ namespace Sand
         private Matrix GlobalTransformMatrix;
         public Vector2 MouseLocation;
 
+        public Map GameMap;
+
         // E27 white rice wonton soup ("I'll go with the boned")
         // E16 chicken fried rice wonton soup
 
@@ -79,6 +81,7 @@ namespace Sand
             Storage.AddColor("NeutralTeam", new Color(0.9f, 0.9f, 0.9f));
 
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
+            Storage.AddSprite("player", Content.Load<Texture2D>("Textures/player"));
 
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });

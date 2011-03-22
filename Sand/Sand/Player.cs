@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -18,13 +17,22 @@ namespace Sand
     {
         private SpriteBatch _spriteBatch;
 
+        protected Color[] _texture;
+
         public Vector2 Position;
         public float Angle;
-        
+        public int Width, Height;
+
         public Team Team;
 
         public Player(Game game) : base(game)
         {
+            DrawOrder = 100;
+            Width = Storage.Sprite("player").Width;
+            Height = Storage.Sprite("player").Height;
+
+            Position.X = 60;
+            Position.Y = 60;
         }
 
         protected override void LoadContent()
@@ -37,13 +45,19 @@ namespace Sand
             {
                 _spriteBatch = sandGame.SpriteBatch;
             }
+
+            // TODO: _texture should be a proper cache property, updating when team/class changes
+            _texture = new Color[Width * Height];
+            Storage.Sprite("player").GetData(_texture);
         }
 
         public override void Draw(GameTime gameTime)
         {
-            Color teamColor = Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
-            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 5, 20), null,
-                              teamColor, Angle, new Vector2(0.5f, 0.5f), SpriteEffects.None, 0.0f);
+            Color teamColor =
+                Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
+            _spriteBatch.Draw(Storage.Sprite("player"), new Rectangle((int)Position.X, (int)Position.Y, Width, Height),
+                              null,
+                              teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
         }
     }
 
@@ -116,11 +130,14 @@ namespace Sand
             var mouse = Mouse.GetState();
             var sandGame = Game as Sand;
 
-            Angle = (float)Math.Atan2(sandGame.MouseLocation.Y - Position.Y, sandGame.MouseLocation.X - Position.X) + ((float)Math.PI / 2.0f);
+            Angle = (float)Math.Atan2(sandGame.MouseLocation.Y - Position.Y, sandGame.MouseLocation.X - Position.X) +
+                    ((float)Math.PI / 2.0f);
         }
 
         private void UpdatePosition(GameTime gameTime)
         {
+            Vector2 newPosition = new Vector2(Position.X, Position.Y);
+            var sandGame = Game as Sand;
             var timestep = (float)(gameTime.ElapsedGameTime.TotalMilliseconds / (1000 / 60));
 
             _acceleration.X -= _drag.X * _velocity.X;
@@ -129,10 +146,24 @@ namespace Sand
             _velocity.X += _acceleration.X;
             _velocity.Y += _acceleration.Y;
 
-            Position.X += _velocity.X * timestep;
-            Position.Y += _velocity.Y * timestep;
+            newPosition.X += _velocity.X * timestep;
+            newPosition.Y += _velocity.Y * timestep;
 
             _acceleration.X = _acceleration.Y = 0.0f;
+
+            Matrix transform = Matrix.CreateTranslation(Width / 2.0f, Height / 2.0f, 0.0f) *
+                               Matrix.CreateRotationZ(Angle) *
+                               Matrix.CreateTranslation(newPosition.X, newPosition.Y, 0.0f);
+
+            if(
+                !sandGame.GameMap.CollisionTest(_texture,
+                                                new Rectangle((int)(newPosition.X - (Width / 2.0)),
+                                                              (int)(newPosition.Y - (Height / 2.0)),
+                                                              Width, Height)))
+            {
+                Position.X = newPosition.X;
+                Position.Y = newPosition.Y;
+            }
         }
     }
 }
