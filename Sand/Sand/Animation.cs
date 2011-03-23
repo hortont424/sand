@@ -10,14 +10,26 @@ namespace Sand
         private readonly PropertyInfo _property;
         private readonly object _obj;
         private readonly double _startValue, _endValue;
-        private EaseFunctionDelegate EaseFunc;
-        private EasingType _easeType;
+        private readonly EaseFunctionDelegate _easeFunc;
+        private readonly EasingType _easeType;
 
         public delegate float EaseFunctionDelegate(double linearStep, EasingType type);
 
         public Animation(object obj, string propName, double startValue, double endValue)
             : this(obj, propName, startValue, endValue, Easing.EaseInOut, EasingType.Sine)
         {
+        }
+
+        public Animation(object obj, string propName, double endValue)
+            : this(obj, propName, 0.0, endValue, Easing.EaseInOut, EasingType.Sine)
+        {
+            _startValue = (double)_property.GetValue(obj, null);
+        }
+
+        public Animation(object obj, string propName, double endValue, EaseFunctionDelegate easeFunc,
+                         EasingType easeType) : this(obj, propName, 0.0, endValue, easeFunc, easeType)
+        {
+            _startValue = (double)_property.GetValue(obj, null);
         }
 
         public Animation(object obj, string propName, double startValue, double endValue, EaseFunctionDelegate easeFunc,
@@ -27,15 +39,14 @@ namespace Sand
             _obj = obj;
             _startValue = startValue;
             _endValue = endValue;
-            EaseFunc = easeFunc;
+            _easeFunc = easeFunc;
             _easeType = easeType;
         }
 
         public void Update(double newProgress)
         {
-            // TODO: use easing for progress here
             Type propertyType = _property.PropertyType;
-            var easingProgress = EaseFunc(newProgress, _easeType);
+            var easingProgress = _easeFunc(newProgress, _easeType);
             _property.SetValue(_obj,
                                Convert.ChangeType(_startValue + (easingProgress * (_endValue - _startValue)),
                                                   propertyType),
