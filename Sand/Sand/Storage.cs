@@ -11,6 +11,7 @@ namespace Sand
         private static Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
         private static Dictionary<string, Color> _colors = new Dictionary<string, Color>();
 
+        public static AnimationController animationController;
         public static NetworkSession networkSession;
         public static PacketReader packetReader = new PacketReader();
         public static PacketWriter packetWriter = new PacketWriter();

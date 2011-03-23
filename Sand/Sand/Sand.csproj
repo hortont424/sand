@@ -111,8 +111,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animation.cs" />
     <Compile Include="Billboard.cs" />
     <Compile Include="Button.cs" />
+    <Compile Include="Easing.cs" />
     <Compile Include="GameState\AcquireSessionState.cs" />
     <Compile Include="GameState\BeginState.cs" />
     <Compile Include="GameState\GameState.cs" />

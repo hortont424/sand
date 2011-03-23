@@ -1,21 +1,26 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Sand
 {
     internal class Billboard : DrawableGameComponent
     {
-        private Vector2 _origin;
+        public float X { get; set; }
+        public float Y { get; set; }
+
         private SpriteBatch _spriteBatch;
         private Texture2D _texture;
 
         public delegate void Action(object sender, object userInfo);
 
-        public Billboard(Game game, Vector2 origin, Texture2D texture)
-            : base(game)
+        public Billboard(Game game, Vector2 origin, Texture2D texture) : this(game, origin.X, origin.Y, texture)
         {
-            _origin = origin;
+        }
+
+        public Billboard(Game game, float x, float y, Texture2D texture) : base(game)
+        {
+            X = x;
+            Y = y;
             _texture = texture;
         }
 
@@ -25,7 +30,7 @@ namespace Sand
 
             var sandGame = Game as Sand;
 
-            if (sandGame != null)
+            if(sandGame != null)
             {
                 _spriteBatch = sandGame.SpriteBatch;
             }
@@ -33,7 +38,7 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Draw(_texture, _origin, Color.White);
+            _spriteBatch.Draw(_texture, new Vector2(X, Y), Color.White);
         }
     }
 }

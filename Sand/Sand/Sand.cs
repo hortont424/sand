@@ -56,6 +56,9 @@ namespace Sand
             _gameStateInstances[States.Play] = new PlayState(this);
 
             Components.Add(new GamerServicesComponent(this));
+
+            Storage.animationController = new AnimationController(this);
+            Components.Add(Storage.animationController);
         }
 
         protected override void Initialize()
