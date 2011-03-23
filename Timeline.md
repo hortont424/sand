@@ -21,13 +21,15 @@ March 16
 --------
 
 * Make sure that 3v3 works
-* Teaming
+* [DONE] Teaming
 * Get loadout selection working fully (with icons from Pete)
-* Spring break, won't have a computer for most of it
+* [TRUE] Spring break, won't have a computer for most of it
 
 March 23
 --------
 
+* [DONE] Map loading
+* [DONE] Map collision
 * Visualization of sand and synchronization between machines
 * Begin implementing tools (primaries first)
 * Implement cooldown mechanics in a pluggable way
