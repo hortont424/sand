@@ -1,10 +1,13 @@
-﻿namespace Sand.GameState
+﻿using System.Collections.Generic;
+
+namespace Sand.GameState
 {
     public enum States
     {
         Begin = 0,
         Login,
         AcquireSession,
+        InitialReady,
         Lobby,
         ReadyWait,
         Play
@@ -19,9 +22,20 @@
             Game = game;
         }
 
-        public abstract void Enter();
-        public abstract void Update();
-        public abstract void Leave();
+        public virtual void Enter(Dictionary<string, object> data)
+        {
+            
+        }
+
+        public virtual void Update()
+        {
+            
+        }
+
+        public virtual Dictionary<string,object> Leave()
+        {
+            return null;
+        }
 
         public virtual bool CanLeave()
         {

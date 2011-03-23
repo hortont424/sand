@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Net;
 
 namespace Sand.GameState
@@ -9,7 +10,7 @@ namespace Sand.GameState
         {
         }
 
-        public override void Enter()
+        public override void Enter(Dictionary<string, object> data)
         {
             // Try to find a Sand server. If there isn't one, start one!
 
@@ -36,20 +37,12 @@ namespace Sand.GameState
 
             if(Storage.networkSession != null)
             {
-                Game.TransitionState(States.Lobby);
+                Game.TransitionState(States.InitialReady);
             }
             else
             {
                 Console.WriteLine("Failed to get a session!");
             }
-        }
-
-        public override void Update()
-        {
-        }
-
-        public override void Leave()
-        {
         }
     }
 }

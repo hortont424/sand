@@ -114,9 +114,11 @@
     <Compile Include="Animation.cs" />
     <Compile Include="Billboard.cs" />
     <Compile Include="Button.cs" />
+    <Compile Include="Label.cs" />
     <Compile Include="Easing.cs" />
     <Compile Include="GameState\AcquireSessionState.cs" />
     <Compile Include="GameState\BeginState.cs" />
+    <Compile Include="GameState\InitialReadyState.cs" />
     <Compile Include="GameState\GameState.cs" />
     <Compile Include="GameState\LobbyState.cs" />
     <Compile Include="GameState\LoginState.cs" />

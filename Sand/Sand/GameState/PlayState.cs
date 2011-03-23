@@ -1,4 +1,6 @@
-﻿namespace Sand.GameState
+﻿using System.Collections.Generic;
+
+namespace Sand.GameState
 {
     public class PlayState : GameState
     {
@@ -6,7 +8,7 @@
         {
         }
 
-        public override void Enter()
+        public override void Enter(Dictionary<string, object> data)
         {
             var sandGame = Game;
 
@@ -25,7 +27,7 @@
             Messages.Update();
         }
 
-        public override void Leave()
+        public override Dictionary<string, object> Leave()
         {
             var sandGame = Game;
 
@@ -35,6 +37,8 @@
             }
 
             Game.Components.Remove(sandGame.GameMap);
+
+            return null;
         }
     }
 }

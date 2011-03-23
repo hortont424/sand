@@ -51,6 +51,7 @@ namespace Sand
             _gameStateInstances[States.Begin] = new BeginState(this);
             _gameStateInstances[States.Login] = new LoginState(this);
             _gameStateInstances[States.AcquireSession] = new AcquireSessionState(this);
+            _gameStateInstances[States.InitialReady] = new InitialReadyState(this);
             _gameStateInstances[States.Lobby] = new LobbyState(this);
             _gameStateInstances[States.ReadyWait] = new ReadyWaitState(this);
             _gameStateInstances[States.Play] = new PlayState(this);
@@ -113,11 +114,11 @@ namespace Sand
                 return false;
             }
 
-            _gameStateInstances[_gameState].Leave();
+            var data = _gameStateInstances[_gameState].Leave();
 
             _gameState = newState;
 
-            _gameStateInstances[_gameState].Enter();
+            _gameStateInstances[_gameState].Enter(data);
 
             return true;
         }
@@ -167,7 +168,10 @@ namespace Sand
 
             SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, GlobalTransformMatrix);
 
-            base.Draw(gameTime);
+            if(!Guide.IsVisible)
+            {
+                base.Draw(gameTime);
+            }
 
             SpriteBatch.End();
         }

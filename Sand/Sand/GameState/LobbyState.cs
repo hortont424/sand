@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Net;
 
@@ -34,7 +35,7 @@ namespace Sand.GameState
         {
         }
 
-        public override void Enter()
+        public override void Enter(Dictionary<string, object> data)
         {
             Storage.networkSession.GamerJoined += GamerJoined;
             Storage.networkSession.GamerLeft += GamerLeft;
@@ -50,7 +51,9 @@ namespace Sand.GameState
             var logoSprite = Storage.Sprite("SandLogo");
             var sandLogoOrigin = new Vector2(Game.BaseScreenSize.X * 0.5f - (logoSprite.Width * 0.5f), 30);
 
-            _sandLogo = new Billboard(Game, sandLogoOrigin, logoSprite);
+            _sandLogo = data["SandLogo"] as Billboard ?? new Billboard(Game, sandLogoOrigin, logoSprite);
+
+            Storage.animationController.Add(new Animation(_sandLogo, "Y", sandLogoOrigin.Y), 750);
 
             var readyButtonRect = new Rectangle(0, 0, 200, 50);
             readyButtonRect.X = (int)Game.BaseScreenSize.X - readyButtonRect.Width - 50;
@@ -94,7 +97,7 @@ namespace Sand.GameState
             Messages.Update();
         }
 
-        public override void Leave()
+        public override Dictionary<string, object> Leave()
         {
             Game.Components.Remove(_sandLogo);
             Game.Components.Remove(_lobbyListNone);
@@ -104,6 +107,8 @@ namespace Sand.GameState
             Game.Components.Remove(_noTeamButton);
             Game.Components.Remove(_redTeamButton);
             Game.Components.Remove(_blueTeamButton);
+
+            return null;
         }
 
         public override bool CanLeave()

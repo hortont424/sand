@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.GamerServices;
 
 namespace Sand.GameState
@@ -9,7 +10,7 @@ namespace Sand.GameState
         {
         }
 
-        public override void Enter()
+        public override void Enter(Dictionary<string, object> data)
         {
             if(Gamer.SignedInGamers.Count > 0)
             {
@@ -23,15 +24,6 @@ namespace Sand.GameState
                 SignedInGamer.SignedIn += (o, args) => Game.TransitionState(States.AcquireSession);
                 Guide.ShowSignIn(1, false);
             }
-        }
-
-        public override void Update()
-        {
-            
-        }
-
-        public override void Leave()
-        {
         }
     }
 }

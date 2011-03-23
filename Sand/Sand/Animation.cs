@@ -23,13 +23,13 @@ namespace Sand
         public Animation(object obj, string propName, double endValue)
             : this(obj, propName, 0.0, endValue, Easing.EaseInOut, EasingType.Sine)
         {
-            _startValue = (double)_property.GetValue(obj, null);
+            _startValue = Convert.ToDouble(_property.GetValue(obj, null));
         }
 
         public Animation(object obj, string propName, double endValue, EaseFunctionDelegate easeFunc,
                          EasingType easeType) : this(obj, propName, 0.0, endValue, easeFunc, easeType)
         {
-            _startValue = (double)_property.GetValue(obj, null);
+            _startValue = Convert.ToDouble(_property.GetValue(obj, null));
         }
 
         public Animation(object obj, string propName, double startValue, double endValue, EaseFunctionDelegate easeFunc,

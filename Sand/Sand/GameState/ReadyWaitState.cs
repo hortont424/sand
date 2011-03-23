@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Net;
 
@@ -10,7 +11,7 @@ namespace Sand.GameState
         {
         }
 
-        public override void Enter()
+        public override void Enter(Dictionary<string, object> data)
         {
             Storage.networkSession.LocalGamers[0].IsReady = true;
 
@@ -46,10 +47,6 @@ namespace Sand.GameState
                     }
                 }
             }
-        }
-
-        public override void Leave()
-        {
         }
     }
 }
