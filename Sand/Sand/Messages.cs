@@ -17,6 +17,7 @@ namespace Sand
             Storage.packetWriter.Write(player.Position);
             Storage.packetWriter.Write((double)player.Angle);
             Storage.packetWriter.Write((Byte)player.Team);
+            Storage.packetWriter.Write((Byte)player.Class);
         }
 
         private static void ProcessUpdatePlayerStateMessage(Player player)
@@ -24,12 +25,14 @@ namespace Sand
             player.Position = Storage.packetReader.ReadVector2();
             player.Angle = (float)Storage.packetReader.ReadDouble();
             player.Team = (Team)Storage.packetReader.ReadByte();
+            player.Class = (Class)Storage.packetReader.ReadByte();
         }
 
         private static void DiscardUpdatePlayerStateMessage()
         {
             Storage.packetReader.ReadVector2();
             Storage.packetReader.ReadDouble();
+            Storage.packetReader.ReadByte();
             Storage.packetReader.ReadByte();
         }
 
