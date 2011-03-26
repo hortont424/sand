@@ -6,14 +6,22 @@ namespace Sand
     public enum MessageTypes
     {
         UpdatePlayerState
-    };
+    } ;
 
     internal class Messages
     {
+        public static void SendMessageHeader(MessageTypes type, byte id)
+        {
+            Storage.packetWriter.Write((byte)42);
+            Storage.packetWriter.Write((byte)24);
+            Storage.packetWriter.Write((int)type);
+            Storage.packetWriter.Write(id);
+        }
+
         public static void SendUpdatePlayerStateMessage(Player player, byte id)
         {
-            Storage.packetWriter.Write((int)MessageTypes.UpdatePlayerState);
-            Storage.packetWriter.Write(id);
+            SendMessageHeader(MessageTypes.UpdatePlayerState, id);
+
             Storage.packetWriter.Write(player.Position);
             Storage.packetWriter.Write((double)player.Angle);
             Storage.packetWriter.Write((Byte)player.Team);
@@ -36,6 +44,40 @@ namespace Sand
             Storage.packetReader.ReadByte();
         }
 
+        private static bool NextPacketIsValid()
+        {
+            bool goodPacket = true;
+            var magic = Storage.packetReader.ReadBytes(2);
+
+            if(magic.Length != 2 || magic[0] != 42 || magic[1] != 24)
+            {
+                goodPacket = false;
+            }
+
+            Storage.packetReader.Position -= magic.Length;
+
+            return goodPacket;
+        }
+
+        private static bool FindNextValidPacket()
+        {
+            while(Storage.packetReader.Position < Storage.packetReader.Length)
+            {
+                if(!NextPacketIsValid())
+                {
+                    Storage.packetReader.ReadByte();
+                }
+                else
+                {
+                    Storage.packetReader.Position += 2;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static void UpdateClientStateFromServer(LocalNetworkGamer gamer)
         {
             while(gamer.IsDataAvailable)
@@ -45,9 +87,14 @@ namespace Sand
 
                 while(Storage.packetReader.Position < Storage.packetReader.Length)
                 {
+                    if(!FindNextValidPacket())
+                    {
+                        continue;
+                    }
+
                     var type = (MessageTypes)Storage.packetReader.ReadInt32();
-                    byte gamerId = Storage.packetReader.ReadByte();
-                    NetworkGamer remoteGamer = Storage.networkSession.FindGamerById(gamerId);
+                    var gamerId = Storage.packetReader.ReadByte();
+                    var remoteGamer = Storage.networkSession.FindGamerById(gamerId);
 
                     if(remoteGamer == null || remoteGamer.IsLocal)
                     {
@@ -83,6 +130,11 @@ namespace Sand
 
                 while(Storage.packetReader.Position < Storage.packetReader.Length)
                 {
+                    if(!FindNextValidPacket())
+                    {
+                        continue;
+                    }
+
                     var type = (MessageTypes)Storage.packetReader.ReadInt32();
                     byte gamerId = Storage.packetReader.ReadByte();
 
