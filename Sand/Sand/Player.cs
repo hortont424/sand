@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -23,6 +24,7 @@ namespace Sand
 
     internal class Player : DrawableGameComponent
     {
+        public NetworkGamer Gamer;
         private SpriteBatch _spriteBatch;
 
         protected Color[] _texture;
@@ -43,11 +45,17 @@ namespace Sand
                 _class = value;
                 _sprite = SpriteForClass(_class);
                 _sprite.GetData(_texture);
+
+                if(this is LocalPlayer)
+                {
+                    Messages.SendUpdatePlayerClassMessage(this, this.Gamer.Id, true);
+                }
             }
         }
 
-        public Player(Game game) : base(game)
+        public Player(Game game, NetworkGamer gamer) : base(game)
         {
+            Gamer = gamer;
             DrawOrder = 100;
             Width = Storage.Sprite("DefenseClass").Width;
             Height = Storage.Sprite("DefenseClass").Height;
@@ -112,11 +120,9 @@ namespace Sand
 
     internal class RemotePlayer : Player
     {
-        private NetworkGamer _gamer;
-
-        public RemotePlayer(Game game, NetworkGamer gamer) : base(game)
+        public RemotePlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
-            _gamer = gamer;
+
         }
 
         public override void Update(GameTime gameTime)
@@ -134,7 +140,7 @@ namespace Sand
 
         private Vector2 _velocity;
 
-        public LocalPlayer(Game game) : base(game)
+        public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             _drag = new Vector2(0.1f, 0.1f);
             _movementAcceleration = new Vector2(1.0f, 1.0f);

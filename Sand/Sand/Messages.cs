@@ -5,7 +5,8 @@ namespace Sand
 {
     public enum MessageTypes
     {
-        UpdatePlayerState
+        UpdatePlayerState,
+        UpdatePlayerClass
     } ;
 
     internal class Messages
@@ -18,6 +19,8 @@ namespace Sand
             Storage.packetWriter.Write(id);
         }
 
+        // UpdatePlayerState
+
         public static void SendUpdatePlayerStateMessage(Player player, byte id)
         {
             SendMessageHeader(MessageTypes.UpdatePlayerState, id);
@@ -25,7 +28,6 @@ namespace Sand
             Storage.packetWriter.Write(player.Position);
             Storage.packetWriter.Write((double)player.Angle);
             Storage.packetWriter.Write((Byte)player.Team);
-            Storage.packetWriter.Write((Byte)player.Class);
         }
 
         private static void ProcessUpdatePlayerStateMessage(Player player)
@@ -33,7 +35,6 @@ namespace Sand
             player.Position = Storage.packetReader.ReadVector2();
             player.Angle = (float)Storage.packetReader.ReadDouble();
             player.Team = (Team)Storage.packetReader.ReadByte();
-            player.Class = (Class)Storage.packetReader.ReadByte();
         }
 
         private static void DiscardUpdatePlayerStateMessage()
@@ -41,6 +42,38 @@ namespace Sand
             Storage.packetReader.ReadVector2();
             Storage.packetReader.ReadDouble();
             Storage.packetReader.ReadByte();
+        }
+
+        // UpdatePlayerClass
+
+        public static void SendUpdatePlayerClassMessage(Player player, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageTypes.UpdatePlayerClass, id);
+
+            Storage.packetWriter.Write((Byte)player.Class);
+
+            if(immediate)
+            {
+                if(!Storage.networkSession.IsHost)
+                {
+                    (player.Gamer as LocalNetworkGamer).SendData(Storage.packetWriter, SendDataOptions.InOrder, Storage.networkSession.Host);
+                }
+                else
+                {
+                    var server = (LocalNetworkGamer)Storage.networkSession.Host;
+
+                    server.SendData(Storage.packetWriter, SendDataOptions.InOrder);
+                }
+            }
+        }
+
+        private static void ProcessUpdatePlayerClassMessage(Player player)
+        {
+            player.Class = (Class)Storage.packetReader.ReadByte();
+        }
+
+        private static void DiscardUpdatePlayerClassMessage()
+        {
             Storage.packetReader.ReadByte();
         }
 
@@ -99,7 +132,18 @@ namespace Sand
 
                     if(remoteGamer == null || remoteGamer.IsLocal)
                     {
-                        DiscardUpdatePlayerStateMessage();
+                        switch (type)
+                        {
+                            case MessageTypes.UpdatePlayerState:
+                                DiscardUpdatePlayerStateMessage();
+                                break;
+                            case MessageTypes.UpdatePlayerClass:
+                                DiscardUpdatePlayerClassMessage();
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+
                         continue;
                     }
 
@@ -109,6 +153,9 @@ namespace Sand
                     {
                         case MessageTypes.UpdatePlayerState:
                             ProcessUpdatePlayerStateMessage(player);
+                            break;
+                        case MessageTypes.UpdatePlayerClass:
+                            ProcessUpdatePlayerClassMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -146,6 +193,20 @@ namespace Sand
                         case MessageTypes.UpdatePlayerState:
                             ProcessUpdatePlayerStateMessage(player);
                             break;
+                        case MessageTypes.UpdatePlayerClass:
+                            ProcessUpdatePlayerClassMessage(player);
+
+                            foreach(NetworkGamer clientGamer in Storage.networkSession.AllGamers)
+                            {
+                                var clientPlayer = clientGamer.Tag as Player;
+
+                                SendUpdatePlayerClassMessage(gamer.Tag as Player, gamerId, false);
+                            }
+
+                            var server = (LocalNetworkGamer)Storage.networkSession.Host;
+                            server.SendData(Storage.packetWriter, SendDataOptions.InOrder);
+
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -157,11 +218,25 @@ namespace Sand
         {
             foreach(var gamer in Storage.networkSession.LocalGamers)
             {
+                var player = gamer.Tag as Player;
+
                 if(!Storage.networkSession.IsHost)
                 {
-                    var player = gamer.Tag as Player;
-
                     SendUpdatePlayerStateMessage(player, gamer.Id);
+
+                    /*while(player.Messages.Count != 0)
+                    {
+                        Message message = player.Messages.Dequeue();
+
+                        switch(message.Type)
+                        {
+                            case MessageTypes.UpdatePlayerClass:
+                                SendUpdatePlayerClassMessage(player, gamer.Id);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }*/
 
                     gamer.SendData(Storage.packetWriter, SendDataOptions.InOrder, Storage.networkSession.Host);
                 }
@@ -175,10 +250,26 @@ namespace Sand
 
                     if(player == null)
                     {
-                        return;
+                        continue;
                     }
 
                     SendUpdatePlayerStateMessage(player, gamer.Id);
+                    /*
+                    // TODO: not sure about this
+
+                    while(player.Messages.Count != 0)
+                    {
+                        Message message = player.Messages.Dequeue();
+
+                        switch (message.Type)
+                        {
+                            case MessageTypes.UpdatePlayerClass:
+                                SendUpdatePlayerClassMessage(player, gamer.Id);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }*/
                 }
 
                 var server = Storage.networkSession.Host as LocalNetworkGamer;
