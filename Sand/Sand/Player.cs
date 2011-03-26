@@ -13,6 +13,14 @@ namespace Sand
         Blue
     } ;
 
+    public enum Class
+    {
+        None,
+        Defense,
+        Offense,
+        Support
+    } ;
+
     internal class Player : DrawableGameComponent
     {
         private SpriteBatch _spriteBatch;
@@ -24,15 +32,56 @@ namespace Sand
         public int Width, Height;
 
         public Team Team;
+        private Class _class;
+        private Texture2D _sprite;
+
+        public Class Class
+        {
+            get { return _class; }
+            set
+            {
+                _class = value;
+                _sprite = SpriteForClass(_class);
+                _sprite.GetData(_texture);
+            }
+        }
 
         public Player(Game game) : base(game)
         {
             DrawOrder = 100;
-            Width = Storage.Sprite("player").Width;
-            Height = Storage.Sprite("player").Height;
+            Width = Storage.Sprite("DefenseClass").Width;
+            Height = Storage.Sprite("DefenseClass").Height;
 
             Position.X = 60;
             Position.Y = 60;
+
+            _texture = new Color[Width * Height];
+            Class = Class.None;
+        }
+
+        private static Texture2D SpriteForClass(Class cls)
+        {
+            string spriteName;
+
+            switch(cls) // TODO: I hear you like dictionaries?
+            {
+                case Class.None:
+                    spriteName = "DefenseClass"; // TODO: questionmark class?
+                    break;
+                case Class.Defense:
+                    spriteName = "DefenseClass";
+                    break;
+                case Class.Offense:
+                    spriteName = "OffenseClass";
+                    break;
+                case Class.Support:
+                    spriteName = "SupportClass";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("cls");
+            }
+
+            return Storage.Sprite(spriteName);
         }
 
         protected override void LoadContent()
@@ -45,22 +94,17 @@ namespace Sand
             {
                 _spriteBatch = sandGame.SpriteBatch;
             }
-
-            // TODO: _texture should be a proper cache property, updating when team/class changes
-            _texture = new Color[Width * Height];
-            Storage.Sprite("player").GetData(_texture);
         }
 
         public override void Draw(GameTime gameTime)
         {
             Color teamColor =
                 Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
-            teamColor.A = 0;
 
-            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 2, 3000), null,
+            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 1, 3000), null,
                               teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
 
-            _spriteBatch.Draw(Storage.Sprite("player"), new Rectangle((int)Position.X, (int)Position.Y, Width, Height),
+            _spriteBatch.Draw(_sprite, new Rectangle((int)Position.X, (int)Position.Y, Width, Height),
                               null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
         }
@@ -125,6 +169,19 @@ namespace Sand
             else if(newKeyState.IsKeyDown(Keys.S))
             {
                 _acceleration.Y += _movementAcceleration.Y;
+            }
+
+            if(newKeyState.IsKeyDown(Keys.D1))
+            {
+                Class = Class.Defense;
+            }
+            else if(newKeyState.IsKeyDown(Keys.D2))
+            {
+                Class = Class.Offense;
+            }
+            else if(newKeyState.IsKeyDown(Keys.D3))
+            {
+                Class = Class.Support;
             }
 
             _oldKeyState = newKeyState;

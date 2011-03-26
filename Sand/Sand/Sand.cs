@@ -86,7 +86,9 @@ namespace Sand
             Storage.AddColor("NeutralTeam", new Color(0.6f, 0.6f, 0.6f));
 
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
-            Storage.AddSprite("player", Content.Load<Texture2D>("Textures/player"));
+            Storage.AddSprite("DefenseClass", Content.Load<Texture2D>("Textures/Classes/defense"));
+            Storage.AddSprite("OffenseClass", Content.Load<Texture2D>("Textures/Classes/offense"));
+            Storage.AddSprite("SupportClass", Content.Load<Texture2D>("Textures/Classes/support"));
 
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });
