@@ -31,8 +31,6 @@ namespace Sand.GameState
         {
             MouseState mouse = Mouse.GetState();
 
-            Messages.Update();
-
             if(mouse.LeftButton == ButtonState.Pressed && !Guide.IsVisible)
             {
                 Game.TransitionState(States.Lobby);
