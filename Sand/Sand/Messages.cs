@@ -162,7 +162,7 @@ namespace Sand
 
                     SendUpdatePlayerStateMessage(player, gamer.Id);
 
-                    gamer.SendData(Storage.packetWriter, SendDataOptions.ReliableInOrder, Storage.networkSession.Host);
+                    gamer.SendData(Storage.packetWriter, SendDataOptions.InOrder, Storage.networkSession.Host);
                 }
             }
 
@@ -184,7 +184,7 @@ namespace Sand
 
                 if(server != null)
                 {
-                    server.SendData(Storage.packetWriter, SendDataOptions.ReliableInOrder);
+                    server.SendData(Storage.packetWriter, SendDataOptions.InOrder);
                 }
             }
 
