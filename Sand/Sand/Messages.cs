@@ -65,6 +65,7 @@ namespace Sand
             {
                 if(!NextPacketIsValid())
                 {
+                    Console.WriteLine("Skipping a byte!");
                     Storage.packetReader.ReadByte();
                 }
                 else
