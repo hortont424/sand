@@ -13,10 +13,10 @@ namespace Sand.GameState
 
         public override void Enter(Dictionary<string, object> data)
         {
-            Storage.networkSession.LocalGamers[0].IsReady = true;
+            Storage.NetworkSession.LocalGamers[0].IsReady = true;
 
-            Storage.networkSession.GameStarted += GameStarted;
-            Storage.networkSession.GameEnded += GameEnded;
+            Storage.NetworkSession.GameStarted += GameStarted;
+            Storage.NetworkSession.GameEnded += GameEnded;
         }
 
         private void GameStarted(object sender, GameStartedEventArgs e)
@@ -35,11 +35,11 @@ namespace Sand.GameState
         {
             Messages.Update();
 
-            if(Storage.networkSession.IsHost)
+            if(Storage.NetworkSession.IsHost)
             {
-                if(Storage.networkSession.IsEveryoneReady)
+                if(Storage.NetworkSession.IsEveryoneReady)
                 {
-                    Storage.networkSession.StartGame();
+                    Storage.NetworkSession.StartGame();
 
                     foreach(var signedInGamer in Gamer.SignedInGamers)
                     {

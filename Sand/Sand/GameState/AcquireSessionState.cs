@@ -19,15 +19,15 @@ namespace Sand.GameState
             if(availableSessions.Count > 0)
             {
                 Console.WriteLine("Connecting to server from {0}", availableSessions[0].HostGamertag);
-                Storage.networkSession = NetworkSession.Join(availableSessions[0]);
+                Storage.NetworkSession = NetworkSession.Join(availableSessions[0]);
             }
             else
             {
                 Console.WriteLine("Couldn't find a server! Starting one...");
-                Storage.networkSession = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 6);
+                Storage.NetworkSession = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 6);
             }
 
-            foreach(var gamer in Storage.networkSession.AllGamers)
+            foreach(var gamer in Storage.NetworkSession.AllGamers)
             {
                 if(gamer.IsLocal)
                 {
@@ -35,7 +35,7 @@ namespace Sand.GameState
                 }
             }
 
-            if(Storage.networkSession != null)
+            if(Storage.NetworkSession != null)
             {
                 Game.TransitionState(States.InitialReady);
             }

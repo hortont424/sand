@@ -58,8 +58,8 @@ namespace Sand
 
             Components.Add(new GamerServicesComponent(this));
 
-            Storage.animationController = new AnimationController(this);
-            Components.Add(Storage.animationController);
+            Storage.AnimationController = new AnimationController(this);
+            Components.Add(Storage.AnimationController);
         }
 
         protected override void Initialize()
@@ -134,9 +134,9 @@ namespace Sand
             UpdateInput();
             UpdateState();
 
-            if(Storage.networkSession != null)
+            if(Storage.NetworkSession != null)
             {
-                Storage.networkSession.Update();
+                Storage.NetworkSession.Update();
             }
 
             base.Update(gameTime);

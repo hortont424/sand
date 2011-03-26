@@ -37,10 +37,10 @@ namespace Sand.GameState
 
         public override void Enter(Dictionary<string, object> data)
         {
-            Storage.networkSession.GamerJoined += GamerJoined;
-            Storage.networkSession.GamerLeft += GamerLeft;
+            Storage.NetworkSession.GamerJoined += GamerJoined;
+            Storage.NetworkSession.GamerLeft += GamerLeft;
 
-            var netPlayer = Storage.networkSession.LocalGamers[0];
+            var netPlayer = Storage.NetworkSession.LocalGamers[0];
             var player = netPlayer.Tag as Player;
 
             if(player == null)
@@ -53,7 +53,7 @@ namespace Sand.GameState
 
             _sandLogo = data["SandLogo"] as Billboard ?? new Billboard(Game, sandLogoOrigin, logoSprite);
 
-            Storage.animationController.Add(new Animation(_sandLogo, "Y", sandLogoOrigin.Y), 750);
+            Storage.AnimationController.Add(new Animation(_sandLogo, "Y", sandLogoOrigin.Y), 750);
 
             var readyButtonRect = new Rectangle(0, 0, 200, 50);
             readyButtonRect.X = (int)Game.BaseScreenSize.X - readyButtonRect.Width - 50;
@@ -113,7 +113,7 @@ namespace Sand.GameState
 
         public override bool CanLeave()
         {
-            var netPlayer = Storage.networkSession.LocalGamers[0];
+            var netPlayer = Storage.NetworkSession.LocalGamers[0];
             var player = netPlayer.Tag as Player;
 
             if(player == null)

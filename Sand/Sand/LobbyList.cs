@@ -41,7 +41,7 @@ namespace Sand
                 return;
             }
 
-            foreach(var gamer in Storage.networkSession.AllGamers)
+            foreach(var gamer in Storage.NetworkSession.AllGamers)
             {
                 if((gamer.Tag as Player).Team != _team)
                 {

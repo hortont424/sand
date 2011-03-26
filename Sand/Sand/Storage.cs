@@ -7,14 +7,14 @@ namespace Sand
 {
     public static class Storage
     {
-        private static Dictionary<string, Texture2D> _sprites = new Dictionary<string, Texture2D>();
-        private static Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
-        private static Dictionary<string, Color> _colors = new Dictionary<string, Color>();
+        private static readonly Dictionary<string, Texture2D> _sprites = new Dictionary<string, Texture2D>();
+        private static readonly Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
+        private static readonly Dictionary<string, Color> _colors = new Dictionary<string, Color>();
 
-        public static AnimationController animationController;
-        public static NetworkSession networkSession;
-        public static PacketReader packetReader = new PacketReader();
-        public static PacketWriter packetWriter = new PacketWriter();
+        public static AnimationController AnimationController;
+        public static NetworkSession NetworkSession;
+        public static PacketReader PacketReader = new PacketReader();
+        public static PacketWriter PacketWriter = new PacketWriter();
 
         public static void AddSprite(string name, Texture2D texture)
         {

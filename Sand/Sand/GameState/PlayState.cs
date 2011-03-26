@@ -12,7 +12,7 @@ namespace Sand.GameState
         {
             var sandGame = Game;
 
-            foreach(var gamer in Storage.networkSession.AllGamers)
+            foreach(var gamer in Storage.NetworkSession.AllGamers)
             {
                 Game.Components.Add((Player)gamer.Tag);
             }
@@ -31,7 +31,7 @@ namespace Sand.GameState
         {
             var sandGame = Game;
 
-            foreach(var gamer in Storage.networkSession.AllGamers)
+            foreach(var gamer in Storage.NetworkSession.AllGamers)
             {
                 Game.Components.Remove((Player)gamer.Tag);
             }
