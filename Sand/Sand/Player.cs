@@ -33,9 +33,23 @@ namespace Sand
         public float Angle;
         public int Width, Height;
 
-        public Team Team;
         private Class _class;
+        private Team _team;
         private Texture2D _sprite;
+
+        public Team Team
+        {
+            get { return _team; }
+            set
+            {
+                _team = value;
+
+                if (this is LocalPlayer)
+                {
+                    Messages.SendUpdatePlayerTeamMessage(this, this.Gamer.Id, true);
+                }
+            }
+        }
 
         public Class Class
         {
