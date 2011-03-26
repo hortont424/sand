@@ -31,7 +31,7 @@ namespace Sand.GameState
             {
                 if(gamer.IsLocal)
                 {
-                    gamer.Tag = new LocalPlayer(Game);
+                    gamer.Tag = new LocalPlayer(Game, gamer);
                 }
             }
 
