@@ -30,8 +30,8 @@ March 23
 
 * [DONE] Map loading
 * [DONE] Map collision
-* Visualization of sand and synchronization between machines
-* Begin implementing tools (primaries first)
+* [POSTPONE due to VV] Visualization of sand and synchronization between machines
+* [WIP] Begin implementing tools
 * [WIP] Implement cooldown mechanics in a pluggable way
 * [DONE] Get sound working
 * [DONE] Loadout + tool frameworks
