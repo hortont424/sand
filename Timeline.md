@@ -40,6 +40,7 @@ March 30
 --------
 
 * Implement more tools
+* Fix Windows Live vs. XBox Live MS nonsense
 
 April 6
 -------
