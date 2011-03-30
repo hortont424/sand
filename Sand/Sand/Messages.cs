@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Net;
 
 namespace Sand
 {
-    public enum MessageTypes
+    public enum MessageType
     {
         UpdatePlayerState,
         UpdatePlayerClass,
@@ -14,7 +14,7 @@ namespace Sand
     {
         #region Message Helpers
 
-        public static void SendMessageHeader(MessageTypes type, byte id)
+        public static void SendMessageHeader(MessageType type, byte id)
         {
             Storage.PacketWriter.Write((byte)42);
             Storage.PacketWriter.Write((byte)24);
@@ -50,7 +50,7 @@ namespace Sand
 
         public static void SendUpdatePlayerStateMessage(Player player, byte id)
         {
-            SendMessageHeader(MessageTypes.UpdatePlayerState, id);
+            SendMessageHeader(MessageType.UpdatePlayerState, id);
 
             Storage.PacketWriter.Write(player.Position);
             Storage.PacketWriter.Write((double)player.Angle);
@@ -74,7 +74,7 @@ namespace Sand
 
         public static void SendUpdatePlayerClassMessage(Player player, byte id, bool immediate)
         {
-            SendMessageHeader(MessageTypes.UpdatePlayerClass, id);
+            SendMessageHeader(MessageType.UpdatePlayerClass, id);
 
             Storage.PacketWriter.Write((Byte)player.Class);
 
@@ -100,7 +100,7 @@ namespace Sand
 
         public static void SendUpdatePlayerTeamMessage(Player player, byte id, bool immediate)
         {
-            SendMessageHeader(MessageTypes.UpdatePlayerTeam, id);
+            SendMessageHeader(MessageType.UpdatePlayerTeam, id);
 
             Storage.PacketWriter.Write((Byte)player.Team);
 
@@ -171,7 +171,7 @@ namespace Sand
                         continue;
                     }
 
-                    var type = (MessageTypes)Storage.PacketReader.ReadInt32();
+                    var type = (MessageType)Storage.PacketReader.ReadInt32();
                     var gamerId = Storage.PacketReader.ReadByte();
                     var remoteGamer = Storage.NetworkSession.FindGamerById(gamerId);
 
@@ -179,13 +179,13 @@ namespace Sand
                     {
                         switch (type)
                         {
-                            case MessageTypes.UpdatePlayerState:
+                            case MessageType.UpdatePlayerState:
                                 DiscardUpdatePlayerStateMessage();
                                 break;
-                            case MessageTypes.UpdatePlayerClass:
+                            case MessageType.UpdatePlayerClass:
                                 DiscardUpdatePlayerClassMessage();
                                 break;
-                            case MessageTypes.UpdatePlayerTeam:
+                            case MessageType.UpdatePlayerTeam:
                                 DiscardUpdatePlayerTeamMessage();
                                 break;
                             default:
@@ -199,13 +199,13 @@ namespace Sand
 
                     switch(type)
                     {
-                        case MessageTypes.UpdatePlayerState:
+                        case MessageType.UpdatePlayerState:
                             ProcessUpdatePlayerStateMessage(player);
                             break;
-                        case MessageTypes.UpdatePlayerClass:
+                        case MessageType.UpdatePlayerClass:
                             ProcessUpdatePlayerClassMessage(player);
                             break;
-                        case MessageTypes.UpdatePlayerTeam:
+                        case MessageType.UpdatePlayerTeam:
                             ProcessUpdatePlayerTeamMessage(player);
                             break;
                         default:
@@ -234,7 +234,7 @@ namespace Sand
                         continue;
                     }
 
-                    var type = (MessageTypes)Storage.PacketReader.ReadInt32();
+                    var type = (MessageType)Storage.PacketReader.ReadInt32();
                     byte gamerId = Storage.PacketReader.ReadByte();
 
                     var player = sender.Tag as Player;
@@ -243,10 +243,10 @@ namespace Sand
                     
                     switch(type)
                     {
-                        case MessageTypes.UpdatePlayerState:
+                        case MessageType.UpdatePlayerState:
                             ProcessUpdatePlayerStateMessage(player);
                             break;
-                        case MessageTypes.UpdatePlayerClass:
+                        case MessageType.UpdatePlayerClass:
                             ProcessUpdatePlayerClassMessage(player);
 
                             foreach(NetworkGamer clientGamer in Storage.NetworkSession.AllGamers)
@@ -260,7 +260,7 @@ namespace Sand
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
-                        case MessageTypes.UpdatePlayerTeam:
+                        case MessageType.UpdatePlayerTeam:
                             ProcessUpdatePlayerTeamMessage(player);
 
                             foreach (NetworkGamer clientGamer in Storage.NetworkSession.AllGamers)
