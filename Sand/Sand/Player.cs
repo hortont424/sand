@@ -157,7 +157,7 @@ namespace Sand
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             _drag = new Vector2(0.1f, 0.1f);
-            _movementAcceleration = new Vector2(1.0f, 1.0f);
+            _movementAcceleration = new Vector2(0.3f, 0.3f);
         }
 
         public override void Update(GameTime gameTime)
@@ -202,6 +202,25 @@ namespace Sand
             else if(newKeyState.IsKeyDown(Keys.D3))
             {
                 Class = Class.Support;
+            }
+
+            if(newKeyState.IsKeyDown(Keys.LeftShift))
+            {
+                if(!_oldKeyState.IsKeyDown(Keys.LeftShift))
+                {
+                    _movementAcceleration = new Vector2(1.5f, 1.5f);
+
+                    Storage.Sound("boostdrive_start").Play();
+                }
+            }
+            else
+            {
+                if(_oldKeyState.IsKeyDown(Keys.LeftShift))
+                {
+                    _movementAcceleration = new Vector2(0.3f, 0.3f);
+
+                    Storage.Sound("boostdrive_stop").Play();
+                }
             }
 
             _oldKeyState = newKeyState;

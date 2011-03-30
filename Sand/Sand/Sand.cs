@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -89,6 +90,9 @@ namespace Sand
             Storage.AddSprite("DefenseClass", Content.Load<Texture2D>("Textures/Classes/defense"));
             Storage.AddSprite("OffenseClass", Content.Load<Texture2D>("Textures/Classes/offense"));
             Storage.AddSprite("SupportClass", Content.Load<Texture2D>("Textures/Classes/support"));
+
+            Storage.AddSound("boostdrive_start", Content.Load<SoundEffect>("Sounds/boostdrive_start"));
+            Storage.AddSound("boostdrive_stop", Content.Load<SoundEffect>("Sounds/boostdrive_stop"));
 
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });

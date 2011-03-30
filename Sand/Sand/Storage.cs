@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Net;
 
@@ -8,6 +9,7 @@ namespace Sand
     public static class Storage
     {
         private static readonly Dictionary<string, Texture2D> _sprites = new Dictionary<string, Texture2D>();
+        private static readonly Dictionary<string, SoundEffect> _sounds = new Dictionary<string, SoundEffect>();
         private static readonly Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
         private static readonly Dictionary<string, Color> _colors = new Dictionary<string, Color>();
 
@@ -24,6 +26,16 @@ namespace Sand
         public static Texture2D Sprite(string name)
         {
             return _sprites[name];
+        }
+
+        public static void AddSound(string name, SoundEffect sound)
+        {
+            _sounds.Add(name, sound);
+        }
+
+        public static SoundEffect Sound(string name)
+        {
+            return _sounds[name];
         }
 
         public static void AddFont(string name, SpriteFont font)
