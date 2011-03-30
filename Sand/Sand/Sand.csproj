@@ -133,6 +133,7 @@
     <Compile Include="Sand.cs" />
     <Compile Include="SandColor.cs" />
     <Compile Include="Storage.cs" />
+    <Compile Include="Tools\Mobilities\BoostDrive.cs" />
     <Compile Include="Tools\Tool.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -173,7 +174,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Tools\Mobilities\" />
     <Folder Include="Tools\Primaries\" />
     <Folder Include="Tools\Utilities\" />
     <Folder Include="Tools\Weapons\" />

@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
+using Sand.Tools;
+using Sand.Tools.Mobilities;
 
 namespace Sand
 {
@@ -22,7 +24,7 @@ namespace Sand
         Support
     } ;
 
-    internal class Player : DrawableGameComponent
+    public class Player : DrawableGameComponent
     {
         public NetworkGamer Gamer;
         private SpriteBatch _spriteBatch;
@@ -39,21 +41,27 @@ namespace Sand
 
         public Team Team
         {
-            get { return _team; }
+            get
+            {
+                return _team;
+            }
             set
             {
                 _team = value;
 
-                if (this is LocalPlayer)
+                if(this is LocalPlayer)
                 {
-                    Messages.SendUpdatePlayerTeamMessage(this, this.Gamer.Id, true);
+                    Messages.SendUpdatePlayerTeamMessage(this, Gamer.Id, true);
                 }
             }
         }
 
         public Class Class
         {
-            get { return _class; }
+            get
+            {
+                return _class;
+            }
             set
             {
                 _class = value;
@@ -62,7 +70,7 @@ namespace Sand
 
                 if(this is LocalPlayer)
                 {
-                    Messages.SendUpdatePlayerClassMessage(this, this.Gamer.Id, true);
+                    Messages.SendUpdatePlayerClassMessage(this, Gamer.Id, true);
                 }
             }
         }
@@ -136,7 +144,6 @@ namespace Sand
     {
         public RemotePlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
-
         }
 
         public override void Update(GameTime gameTime)
@@ -145,19 +152,28 @@ namespace Sand
         }
     }
 
-    internal class LocalPlayer : Player
+    public class LocalPlayer : Player
     {
-        private Vector2 _acceleration;
-        private Vector2 _drag;
-        private Vector2 _movementAcceleration;
-        private KeyboardState _oldKeyState;
+        public Vector2 Acceleration;
+        public Vector2 Drag;
+        public Vector2 MovementAcceleration;
+        public readonly Vector2 DefaultAcceleration;
 
+        public readonly List<Tool> Primaries;
+        public readonly Tool Mobility;
+        public readonly Tool Weapon;
+        public readonly Tool Utility;
+
+        private KeyboardState _oldKeyState;
         private Vector2 _velocity;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
-            _drag = new Vector2(0.1f, 0.1f);
-            _movementAcceleration = new Vector2(0.3f, 0.3f);
+            Drag = new Vector2(0.1f, 0.1f);
+            DefaultAcceleration = new Vector2(0.3f, 0.3f);
+            MovementAcceleration = DefaultAcceleration;
+
+            Mobility = new BoostDrive(this);
         }
 
         public override void Update(GameTime gameTime)
@@ -175,20 +191,20 @@ namespace Sand
 
             if(newKeyState.IsKeyDown(Keys.A))
             {
-                _acceleration.X += -_movementAcceleration.X;
+                Acceleration.X += -MovementAcceleration.X;
             }
             else if(newKeyState.IsKeyDown(Keys.D))
             {
-                _acceleration.X += _movementAcceleration.X;
+                Acceleration.X += MovementAcceleration.X;
             }
 
             if(newKeyState.IsKeyDown(Keys.W))
             {
-                _acceleration.Y += -_movementAcceleration.Y;
+                Acceleration.Y += -MovementAcceleration.Y;
             }
             else if(newKeyState.IsKeyDown(Keys.S))
             {
-                _acceleration.Y += _movementAcceleration.Y;
+                Acceleration.Y += MovementAcceleration.Y;
             }
 
             if(newKeyState.IsKeyDown(Keys.D1))
@@ -204,24 +220,7 @@ namespace Sand
                 Class = Class.Support;
             }
 
-            if(newKeyState.IsKeyDown(Keys.LeftShift))
-            {
-                if(!_oldKeyState.IsKeyDown(Keys.LeftShift))
-                {
-                    _movementAcceleration = new Vector2(1.5f, 1.5f);
-
-                    Storage.Sound("boostdrive_start").Play();
-                }
-            }
-            else
-            {
-                if(_oldKeyState.IsKeyDown(Keys.LeftShift))
-                {
-                    _movementAcceleration = new Vector2(0.3f, 0.3f);
-
-                    Storage.Sound("boostdrive_stop").Play();
-                }
-            }
+            Mobility.Active = newKeyState.IsKeyDown(Mobility.Key);
 
             _oldKeyState = newKeyState;
         }
@@ -241,16 +240,16 @@ namespace Sand
             var sandGame = Game as Sand;
             var timestep = (float)(gameTime.ElapsedGameTime.TotalMilliseconds / (1000 / 60));
 
-            _acceleration.X -= _drag.X * _velocity.X;
-            _acceleration.Y -= _drag.Y * _velocity.Y;
+            Acceleration.X -= Drag.X * _velocity.X;
+            Acceleration.Y -= Drag.Y * _velocity.Y;
 
-            _velocity.X += _acceleration.X;
-            _velocity.Y += _acceleration.Y;
+            _velocity.X += Acceleration.X;
+            _velocity.Y += Acceleration.Y;
 
             newPosition.X += _velocity.X * timestep;
             newPosition.Y += _velocity.Y * timestep;
 
-            _acceleration.X = _acceleration.Y = 0.0f;
+            Acceleration.X = Acceleration.Y = 0.0f;
 
             if(!sandGame.GameMap.CollisionTest(_texture,
                                                new Rectangle((int)(newPosition.X - (Width / 2.0)),
