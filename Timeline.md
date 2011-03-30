@@ -20,9 +20,9 @@ March 9
 March 16
 --------
 
-* Make sure that 3v3 works
+* [POSTPONE] Make sure that 3v3 works
 * [DONE] Teaming
-* Get loadout selection working fully (with icons from Pete)
+* [POSTPONE] Get loadout selection working fully (with icons from Pete)
 * [TRUE] Spring break, won't have a computer for most of it
 
 March 23
@@ -32,24 +32,46 @@ March 23
 * [DONE] Map collision
 * Visualization of sand and synchronization between machines
 * Begin implementing tools (primaries first)
-* Implement cooldown mechanics in a pluggable way
+* [WIP] Implement cooldown mechanics in a pluggable way
+* [DONE] Get sound working
+* [DONE] Loadout + tool frameworks
 
 March 30
 --------
 
+* Implement more tools
+
 April 6
 -------
+
+* All tools except sand manipulation tools working
+* Start sand manipulation/stage 1
+* Stage 2 working
+* Playtest stage 2
 
 April 13
 --------
 
+* Work on sand manipulation/stage 1
+* Balance + playtesting of stage 2
+* All sounds ready
+
 April 20
 --------
+
+* Sand manipulation/stage 1 done
+* Balance + playtesting of stage 1
 
 April 27
 --------
 
-May 6
+* Balance + playtesting of stage 1
+
+May 4
 -----
 
 * Game is due
+* MOV is due
+* Game design document is due
+* Short page is due
+* Poster is due
