@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 
@@ -13,7 +14,16 @@ namespace Sand
         private readonly EaseFunctionDelegate _easeFunc;
         private readonly EasingType _easeType;
 
+        public AnimationCompletedDelegate CompletedDelegate { get; set; }
+
         public delegate float EaseFunctionDelegate(double linearStep, EasingType type);
+
+        public delegate void AnimationCompletedDelegate();
+
+        public Animation()
+        {
+            _obj = null;
+        }
 
         public Animation(object obj, string propName, double startValue, double endValue)
             : this(obj, propName, startValue, endValue, Easing.EaseInOut, EasingType.Sine)
@@ -45,12 +55,15 @@ namespace Sand
 
         public void Update(double newProgress)
         {
-            Type propertyType = _property.PropertyType;
-            var easingProgress = _easeFunc(newProgress, _easeType);
-            _property.SetValue(_obj,
-                               Convert.ChangeType(_startValue + (easingProgress * (_endValue - _startValue)),
-                                                  propertyType),
-                               null);
+            if(_obj != null)
+            {
+                Type propertyType = _property.PropertyType;
+                var easingProgress = _easeFunc(newProgress, _easeType);
+                _property.SetValue(_obj,
+                                   Convert.ChangeType(_startValue + (easingProgress * (_endValue - _startValue)),
+                                                      propertyType),
+                                   null);
+            }
         }
     }
 
@@ -60,19 +73,37 @@ namespace Sand
         private double _progress;
 
         public bool Running;
+        public bool Paused;
         public double StartTime;
         public double Duration;
+        public bool Loops;
+        public double LastUpdate;
 
         public double Progress
         {
-            get { return _progress; }
+            get
+            {
+                return _progress;
+            }
             set
             {
                 _progress = value;
 
                 if(_progress >= 1.0)
                 {
-                    Running = false;
+                    foreach(var animation in Animations.Where(animation => animation.CompletedDelegate != null))
+                    {
+                        animation.CompletedDelegate();
+                    }
+
+                    if(Loops)
+                    {
+                        _progress = 0.0;
+                    }
+                    else
+                    {
+                        Running = false;
+                    }
                 }
 
                 UpdateAnimations();
@@ -138,9 +169,18 @@ namespace Sand
                 }
                 else
                 {
-                    animationGroup.Progress =
-                        (gameTime.TotalGameTime.TotalMilliseconds - animationGroup.StartTime) /
-                        animationGroup.Duration;
+                    if(animationGroup.Paused)
+                    {
+                        animationGroup.StartTime += gameTime.TotalGameTime.TotalMilliseconds - animationGroup.LastUpdate;
+                        animationGroup.LastUpdate = gameTime.TotalGameTime.TotalMilliseconds;
+                    }
+                    else
+                    {
+                        animationGroup.Progress =
+                            (gameTime.TotalGameTime.TotalMilliseconds - animationGroup.StartTime) /
+                            animationGroup.Duration;
+                        animationGroup.LastUpdate = gameTime.TotalGameTime.TotalMilliseconds;
+                    }
                 }
             }
         }

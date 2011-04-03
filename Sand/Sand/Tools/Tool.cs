@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Sand.Tools
@@ -9,7 +10,7 @@ namespace Sand.Tools
         Instant
     } ;
 
-    public abstract class Tool
+    public class Tool
     {
         public string Name { get; protected set; }
         public string Description { get; protected set; }
@@ -22,18 +23,23 @@ namespace Sand.Tools
 
         public bool Active
         {
-            get { return _active; }
+            get
+            {
+                return _active;
+            }
             set
             {
                 var oldValue = _active;
 
                 _active = value;
 
+                Console.WriteLine("From {0} to {1}", oldValue, _active);
+
                 if(oldValue != _active)
                 {
                     if(_active)
                     {
-                        Activate(); 
+                        Activate();
                     }
                     else
                     {
@@ -43,16 +49,69 @@ namespace Sand.Tools
             }
         }
 
+        public double Energy { get; protected set; }
         public double TotalEnergy { get; protected set; }
         public EnergyConsumptionMode EnergyConsumptionMode { get; protected set; }
         public double EnergyConsumptionRate { get; protected set; }
+        public double EnergyRechargeRate { get; protected set; }
+
+        private readonly Animation _energyAnimation;
+        private readonly AnimationGroup _energyAnimationGroup;
 
         protected Tool(LocalPlayer player)
         {
             Player = player;
+
+            _energyAnimation = new Animation { CompletedDelegate = EnergyTick };
+
+            _energyAnimationGroup = new AnimationGroup(_energyAnimation, 100) { Loops = true };
+
+            Storage.AnimationController.AddGroup(_energyAnimationGroup);
         }
 
-        protected abstract void Activate();
-        protected abstract void Deactivate();
+        private void EnergyTick()
+        {
+            switch(EnergyConsumptionMode)
+            {
+                case EnergyConsumptionMode.Drain:
+                    if(Active)
+                    {
+                        if(Energy == 0.0f)
+                        {
+                            return;
+                        }
+
+                        Energy -= EnergyConsumptionRate;
+
+                        if(Energy <= 0.0f)
+                        {
+                            Energy = 0.0f;
+
+                            Active = false;
+                        }
+                    }
+                    else
+                    {
+                        Energy += EnergyRechargeRate;
+
+                        if(Energy > TotalEnergy)
+                        {
+                            Energy = TotalEnergy;
+                        }
+                    }
+
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        protected virtual void Activate()
+        {
+        }
+
+        protected virtual void Deactivate()
+        {
+        }
     }
 }

@@ -110,15 +110,29 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sounds\boostdrive_start.wav">
-      <Name>boostdrive_start</Name>
+    <Compile Include="Sounds\BoostDrive_Start.wav">
+      <Name>BoostDrive_Start</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Compile Include="Sounds\boostdrive_stop.wav">
-      <Name>boostdrive_stop</Name>
+    <Compile Include="Sounds\BoostDrive_Stop.wav">
+      <Name>BoostDrive_Stop</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sounds\BoostDrive_Engine.wav">
+      <Name>BoostDrive_Engine</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Tools\Mobilities\BoostDrive.png">
+      <Name>BoostDrive</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

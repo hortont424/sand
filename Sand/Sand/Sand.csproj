@@ -133,6 +133,7 @@
     <Compile Include="Sand.cs" />
     <Compile Include="SandColor.cs" />
     <Compile Include="Storage.cs" />
+    <Compile Include="ToolIcon.cs" />
     <Compile Include="Tools\Mobilities\BoostDrive.cs" />
     <Compile Include="Tools\Tool.cs" />
   </ItemGroup>

@@ -220,7 +220,10 @@ namespace Sand
                 Class = Class.Support;
             }
 
-            Mobility.Active = newKeyState.IsKeyDown(Mobility.Key);
+            if(newKeyState.IsKeyDown(Mobility.Key) != _oldKeyState.IsKeyDown(Mobility.Key))
+            {
+                Mobility.Active = newKeyState.IsKeyDown(Mobility.Key);
+            }
 
             _oldKeyState = newKeyState;
         }

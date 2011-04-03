@@ -11,7 +11,7 @@ namespace Sand
 {
     public class Sand : Game
     {
-        private GraphicsDeviceManager _graphics;
+        public GraphicsDeviceManager Graphics;
         public SpriteBatch SpriteBatch;
 
         private KeyboardState _oldKeyState;
@@ -31,7 +31,7 @@ namespace Sand
         {
             BaseScreenSize = new Vector2(1920, 1200);
 
-            _graphics = new GraphicsDeviceManager(this)
+            Graphics = new GraphicsDeviceManager(this)
                         {
                             PreferredBackBufferWidth = 1440,
                             // TODO: these should be figured out dynamically
@@ -91,8 +91,10 @@ namespace Sand
             Storage.AddSprite("OffenseClass", Content.Load<Texture2D>("Textures/Classes/offense"));
             Storage.AddSprite("SupportClass", Content.Load<Texture2D>("Textures/Classes/support"));
 
-            Storage.AddSound("boostdrive_start", Content.Load<SoundEffect>("Sounds/boostdrive_start"));
-            Storage.AddSound("boostdrive_stop", Content.Load<SoundEffect>("Sounds/boostdrive_stop"));
+            Storage.AddSprite("BoostDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BoostDrive"));
+            Storage.AddSound("BoostDrive_Start", Content.Load<SoundEffect>("Sounds/BoostDrive_Start"));
+            Storage.AddSound("BoostDrive_Stop", Content.Load<SoundEffect>("Sounds/BoostDrive_Stop"));
+            Storage.AddSound("BoostDrive_Engine", Content.Load<SoundEffect>("Sounds/BoostDrive_Engine"));
 
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace Sand.GameState
 {
@@ -20,6 +21,13 @@ namespace Sand.GameState
             sandGame.GameMap = new Map(Game, "01");
 
             Game.Components.Add(sandGame.GameMap);
+
+            var mobilityIcon = new ToolIcon(Game, (Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer).Mobility)
+            {
+                Position = new Vector2(sandGame.GameMap.Width + 10.0f + 148.0f, 10.0f + 148.0f)
+            };
+
+            Game.Components.Add(mobilityIcon);
         }
 
         public override void Update()
