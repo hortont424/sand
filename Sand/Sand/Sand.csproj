@@ -135,7 +135,9 @@
     <Compile Include="Storage.cs" />
     <Compile Include="ToolIcon.cs" />
     <Compile Include="Tools\Mobilities\BoostDrive.cs" />
+    <Compile Include="Tools\Mobilities\WinkDrive.cs" />
     <Compile Include="Tools\Tool.cs" />
+    <Compile Include="Tools\Weapons\Cannon.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
@@ -177,7 +179,6 @@
   <ItemGroup>
     <Folder Include="Tools\Primaries\" />
     <Folder Include="Tools\Utilities\" />
-    <Folder Include="Tools\Weapons\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

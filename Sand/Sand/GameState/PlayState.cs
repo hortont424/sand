@@ -28,6 +28,13 @@ namespace Sand.GameState
             };
 
             Game.Components.Add(mobilityIcon);
+
+            var weaponIcon = new ToolIcon(Game, (Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer).Weapon)
+            {
+                Position = new Vector2(mobilityIcon.Position.X + 10.0f + 148.0f, 10.0f + 148.0f)
+            };
+
+            Game.Components.Add(weaponIcon);
         }
 
         public override void Update()

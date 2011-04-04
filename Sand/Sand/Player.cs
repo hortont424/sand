@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Sand.Tools;
 using Sand.Tools.Mobilities;
+using Sand.Tools.Weapons;
 
 namespace Sand
 {
@@ -37,6 +38,7 @@ namespace Sand
 
         private Class _class;
         private Team _team;
+        private bool _invisible;
         private Texture2D _sprite;
 
         public Team Team
@@ -71,6 +73,23 @@ namespace Sand
                 if(this is LocalPlayer)
                 {
                     Messages.SendUpdatePlayerClassMessage(this, Gamer.Id, true);
+                }
+            }
+        }
+
+        public bool Invisible
+        {
+            get
+            {
+                return _invisible;
+            }
+            set
+            {
+                _invisible = value;
+
+                if(this is LocalPlayer)
+                {
+                    Messages.SendInvisiblePlayerMessage(this, Gamer.Id, true);
                 }
             }
         }
@@ -128,8 +147,19 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            Color teamColor =
-                Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
+            var teamColor = Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
+
+            if(Invisible)
+            {
+                if(this is RemotePlayer)
+                {
+                    return;
+                }
+                else
+                {
+                    teamColor = Color.White;
+                }
+            }
 
             _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 1, 3000), null,
                               teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
@@ -164,6 +194,7 @@ namespace Sand
         public readonly Tool Weapon;
         public readonly Tool Utility;
 
+        private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
         private Vector2 _velocity;
 
@@ -174,6 +205,7 @@ namespace Sand
             MovementAcceleration = DefaultAcceleration;
 
             Mobility = new BoostDrive(this);
+            Weapon = new Cannon(this);
         }
 
         public override void Update(GameTime gameTime)
@@ -188,6 +220,7 @@ namespace Sand
         private void UpdateInput()
         {
             var newKeyState = Keyboard.GetState();
+            var newMouseState = Mouse.GetState();
 
             if(newKeyState.IsKeyDown(Keys.A))
             {
@@ -225,7 +258,13 @@ namespace Sand
                 Mobility.Active = newKeyState.IsKeyDown(Mobility.Key);
             }
 
+            if(newMouseState.LeftButton != _oldMouseState.LeftButton)
+            {
+                Weapon.Active = (newMouseState.LeftButton == ButtonState.Pressed);
+            }
+
             _oldKeyState = newKeyState;
+            _oldMouseState = newMouseState;
         }
 
         private void UpdateAngle()

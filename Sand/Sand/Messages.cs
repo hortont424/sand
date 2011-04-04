@@ -7,7 +7,8 @@ namespace Sand
     {
         UpdatePlayerState,
         UpdatePlayerClass,
-        UpdatePlayerTeam
+        UpdatePlayerTeam,
+        InvisiblePlayer
     } ;
 
     internal class Messages
@@ -122,6 +123,32 @@ namespace Sand
 
         #endregion
 
+        #region InvisiblePlayer Message
+
+        public static void SendInvisiblePlayerMessage(Player player, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.InvisiblePlayer, id);
+
+            Storage.PacketWriter.Write(player.Invisible);
+
+            if(immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static void ProcessInvisiblePlayerMessage(Player player)
+        {
+            player.Invisible = Storage.PacketReader.ReadBoolean();
+        }
+
+        private static void DiscardInvisiblePlayerMessage()
+        {
+            Storage.PacketReader.ReadBoolean();
+        }
+
+        #endregion
+
         private static bool NextPacketIsValid()
         {
             bool goodPacket = true;
@@ -188,6 +215,9 @@ namespace Sand
                             case MessageType.UpdatePlayerTeam:
                                 DiscardUpdatePlayerTeamMessage();
                                 break;
+                            case MessageType.InvisiblePlayer:
+                                DiscardInvisiblePlayerMessage();
+                                break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -207,6 +237,9 @@ namespace Sand
                             break;
                         case MessageType.UpdatePlayerTeam:
                             ProcessUpdatePlayerTeamMessage(player);
+                            break;
+                        case MessageType.InvisiblePlayer:
+                            ProcessInvisiblePlayerMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -249,7 +282,7 @@ namespace Sand
                         case MessageType.UpdatePlayerClass:
                             ProcessUpdatePlayerClassMessage(player);
 
-                            foreach(NetworkGamer clientGamer in Storage.NetworkSession.AllGamers)
+                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
                             {
                                 var clientPlayer = clientGamer.Tag as Player;
 
@@ -263,11 +296,25 @@ namespace Sand
                         case MessageType.UpdatePlayerTeam:
                             ProcessUpdatePlayerTeamMessage(player);
 
-                            foreach (NetworkGamer clientGamer in Storage.NetworkSession.AllGamers)
+                            foreach (var clientGamer in Storage.NetworkSession.AllGamers)
                             {
                                 var clientPlayer = clientGamer.Tag as Player;
 
                                 SendUpdatePlayerTeamMessage(gamer.Tag as Player, gamerId, false);
+                            }
+
+                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+
+                            break;
+                        case MessageType.InvisiblePlayer:
+                            ProcessInvisiblePlayerMessage(player);
+
+                            foreach (var clientGamer in Storage.NetworkSession.AllGamers)
+                            {
+                                var clientPlayer = clientGamer.Tag as Player;
+
+                                SendInvisiblePlayerMessage(gamer.Tag as Player, gamerId, false);
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;

@@ -39,7 +39,20 @@ namespace Sand.Tools
                 {
                     if(_active)
                     {
-                        Activate();
+                        if(Energy > EnergyConsumptionRate)
+                        {
+                            Activate();
+
+                            if(EnergyConsumptionMode == EnergyConsumptionMode.Instant)
+                            {
+                                Energy -= EnergyConsumptionRate;
+                            }
+                        }
+
+                        if(EnergyConsumptionMode == EnergyConsumptionMode.Instant)
+                        {
+                            Active = false;
+                        }
                     }
                     else
                     {
@@ -98,6 +111,15 @@ namespace Sand.Tools
                         {
                             Energy = TotalEnergy;
                         }
+                    }
+
+                    break;
+                case EnergyConsumptionMode.Instant:
+                    Energy += EnergyRechargeRate;
+
+                    if(Energy > TotalEnergy)
+                    {
+                        Energy = TotalEnergy;
                     }
 
                     break;

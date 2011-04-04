@@ -48,6 +48,7 @@ namespace Sand.Tools.Mobilities
             Player.MovementAcceleration = Player.DefaultAcceleration;
 
             //_engineSound.Stop();
+            _startSound.Stop();
             _stopSound.Play();
         }
     }
