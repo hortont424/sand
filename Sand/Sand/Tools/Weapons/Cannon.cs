@@ -14,7 +14,7 @@ namespace Sand.Tools.Weapons
         {
             Name = "Cannon";
             Description = "Shoot Stuff!";
-            Icon = Storage.Sprite("BoostDrive");
+            Icon = Storage.Sprite("Cannon");
             Modifier = 0.5;
             Key = Keys.Space;
 

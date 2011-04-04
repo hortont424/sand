@@ -33,8 +33,6 @@ namespace Sand.Tools
 
                 _active = value;
 
-                Console.WriteLine("From {0} to {1}", oldValue, _active);
-
                 if(oldValue != _active)
                 {
                     if(_active)

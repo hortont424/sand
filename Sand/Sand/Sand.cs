@@ -96,6 +96,7 @@ namespace Sand
             Storage.AddSound("BoostDrive_Stop", Content.Load<SoundEffect>("Sounds/BoostDrive_Stop"));
             Storage.AddSound("BoostDrive_Engine", Content.Load<SoundEffect>("Sounds/BoostDrive_Engine"));
 
+            Storage.AddSprite("Cannon", Content.Load<Texture2D>("Textures/Tools/Weapons/Cannon"));
             Storage.AddSound("Cannon", Content.Load<SoundEffect>("Sounds/Cannon"));
 
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
