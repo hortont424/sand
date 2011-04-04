@@ -6,6 +6,7 @@ namespace Sand
     public enum MessageType
     {
         UpdatePlayerState,
+        UpdatePlayerMenuState,
         UpdatePlayerClass,
         UpdatePlayerTeam,
         InvisiblePlayer
@@ -25,11 +26,11 @@ namespace Sand
 
         private static void SendOneOffMessage(Player player)
         {
-            if (!Storage.NetworkSession.IsHost)
+            if(!Storage.NetworkSession.IsHost)
             {
                 var gamer = player.Gamer as LocalNetworkGamer;
 
-                if (gamer != null)
+                if(gamer != null)
                 {
                     gamer.SendData(Storage.PacketWriter, SendDataOptions.Reliable, Storage.NetworkSession.Host);
                 }
@@ -38,7 +39,7 @@ namespace Sand
             {
                 var server = Storage.NetworkSession.Host as LocalNetworkGamer;
 
-                if (server != null)
+                if(server != null)
                 {
                     server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
                 }
@@ -67,6 +68,36 @@ namespace Sand
         {
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadDouble();
+        }
+
+        #endregion
+
+        #region UpdatePlayerMenuState Message
+
+        public static void SendUpdatePlayerMenuStateMessage(Player player, byte id)
+        {
+            SendMessageHeader(MessageType.UpdatePlayerMenuState, id);
+
+            Storage.PacketWriter.Write(player.Position);
+            Storage.PacketWriter.Write((double)player.Angle);
+            Storage.PacketWriter.Write((Byte)player.Class);
+            Storage.PacketWriter.Write((Byte)player.Team);
+        }
+
+        private static void ProcessUpdatePlayerMenuStateMessage(Player player)
+        {
+            player.Position = Storage.PacketReader.ReadVector2();
+            player.Angle = (float)Storage.PacketReader.ReadDouble();
+            player.Class = (Class)Storage.PacketReader.ReadByte();
+            player.Team = (Team)Storage.PacketReader.ReadByte();
+        }
+
+        private static void DiscardUpdatePlayerMenuStateMessage()
+        {
+            Storage.PacketReader.ReadVector2();
+            Storage.PacketReader.ReadDouble();
+            Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadByte();
         }
 
         #endregion
@@ -105,7 +136,7 @@ namespace Sand
 
             Storage.PacketWriter.Write((Byte)player.Team);
 
-            if (immediate)
+            if(immediate)
             {
                 SendOneOffMessage(player);
             }
@@ -204,10 +235,13 @@ namespace Sand
 
                     if(remoteGamer == null || remoteGamer.IsLocal)
                     {
-                        switch (type)
+                        switch(type)
                         {
                             case MessageType.UpdatePlayerState:
                                 DiscardUpdatePlayerStateMessage();
+                                break;
+                            case MessageType.UpdatePlayerMenuState:
+                                DiscardUpdatePlayerMenuStateMessage();
                                 break;
                             case MessageType.UpdatePlayerClass:
                                 DiscardUpdatePlayerClassMessage();
@@ -231,6 +265,9 @@ namespace Sand
                     {
                         case MessageType.UpdatePlayerState:
                             ProcessUpdatePlayerStateMessage(player);
+                            break;
+                        case MessageType.UpdatePlayerMenuState:
+                            ProcessUpdatePlayerMenuStateMessage(player);
                             break;
                         case MessageType.UpdatePlayerClass:
                             ProcessUpdatePlayerClassMessage(player);
@@ -273,11 +310,14 @@ namespace Sand
                     var player = sender.Tag as Player;
 
                     LocalNetworkGamer server;
-                    
+
                     switch(type)
                     {
                         case MessageType.UpdatePlayerState:
                             ProcessUpdatePlayerStateMessage(player);
+                            break;
+                        case MessageType.UpdatePlayerMenuState:
+                            ProcessUpdatePlayerMenuStateMessage(player);
                             break;
                         case MessageType.UpdatePlayerClass:
                             ProcessUpdatePlayerClassMessage(player);
@@ -296,7 +336,7 @@ namespace Sand
                         case MessageType.UpdatePlayerTeam:
                             ProcessUpdatePlayerTeamMessage(player);
 
-                            foreach (var clientGamer in Storage.NetworkSession.AllGamers)
+                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
                             {
                                 var clientPlayer = clientGamer.Tag as Player;
 
@@ -310,7 +350,7 @@ namespace Sand
                         case MessageType.InvisiblePlayer:
                             ProcessInvisiblePlayerMessage(player);
 
-                            foreach (var clientGamer in Storage.NetworkSession.AllGamers)
+                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
                             {
                                 var clientPlayer = clientGamer.Tag as Player;
 
@@ -336,7 +376,14 @@ namespace Sand
 
                 if(!Storage.NetworkSession.IsHost)
                 {
-                    SendUpdatePlayerStateMessage(player, gamer.Id);
+                    if(Storage.NetworkSession.IsEveryoneReady)
+                    {
+                        SendUpdatePlayerStateMessage(player, gamer.Id);
+                    }
+                    else
+                    {
+                        SendUpdatePlayerMenuStateMessage(player, gamer.Id);
+                    }
 
                     gamer.SendData(Storage.PacketWriter, SendDataOptions.InOrder, Storage.NetworkSession.Host);
                 }
@@ -353,7 +400,14 @@ namespace Sand
                         continue;
                     }
 
-                    SendUpdatePlayerStateMessage(player, gamer.Id);
+                    if(Storage.NetworkSession.IsEveryoneReady)
+                    {
+                        SendUpdatePlayerStateMessage(player, gamer.Id);
+                    }
+                    else
+                    {
+                        SendUpdatePlayerMenuStateMessage(player, gamer.Id);
+                    }
                 }
 
                 var server = Storage.NetworkSession.Host as LocalNetworkGamer;
