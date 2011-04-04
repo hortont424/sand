@@ -15,14 +15,23 @@ namespace Sand
         private SpriteBatch _spriteBatch;
         private Texture2D _drainTexture;
         private double _drainValue;
+        private Bitmap _bitmap;
+        private Graphics _graphics;
+        private byte [] _bitmapBytes;
 
         public Vector2 Position { get; set; }
 
         public ToolIcon(Game game, Tool tool) : base(game)
         {
-            _tool = tool;
             DrawOrder = 100;
+
+            _tool = tool;
             _drainValue = 0.0f;
+
+            _bitmap = new Bitmap(148, 148);
+            _graphics = Graphics.FromImage(_bitmap);
+            _drainTexture = null;
+            _bitmapBytes = null;
         }
 
         protected override void LoadContent()
@@ -35,26 +44,28 @@ namespace Sand
             {
                 _spriteBatch = sandGame.SpriteBatch;
             }
+
+            _drainTexture = new Texture2D(GraphicsDevice, _bitmap.Width, _bitmap.Height, false, SurfaceFormat.Color);
         }
 
         private void UpdateDrainMeter()
         {
-            var bitmap = new Bitmap(148, 148);
+            _graphics.Clear(Color.Transparent);
+            _graphics.FillPie(Brushes.White, new Rectangle(0, 0, 148, 148), 270.0f,
+                              (float)(360.0f * (_tool.Energy / _tool.TotalEnergy)));
+            _graphics.Flush();
 
-            var bitmapGraphics = Graphics.FromImage(bitmap);
-            bitmapGraphics.Clear(Color.Transparent);
-            bitmapGraphics.FillPie(Brushes.White, new Rectangle(0, 0, 148, 148), 270.0f,
-                                   (float)(360.0f * (_tool.Energy / _tool.TotalEnergy)));
-            bitmapGraphics.Dispose();
+            var data = _bitmap.LockBits(new Rectangle(0, 0, _bitmap.Width, _bitmap.Height),
+                                        ImageLockMode.ReadOnly, _bitmap.PixelFormat);
 
-            _drainTexture = new Texture2D(GraphicsDevice, bitmap.Width, bitmap.Height, false, SurfaceFormat.Color);
-            var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                                       ImageLockMode.ReadOnly, bitmap.PixelFormat);
-            var bufferSize = data.Height * data.Stride;
-            var bytes = new byte[bufferSize];
-            Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
-            _drainTexture.SetData(bytes);
-            bitmap.UnlockBits(data);
+            if(_bitmapBytes == null)
+            {
+                _bitmapBytes = new byte[data.Height * data.Stride];
+            }
+
+            Marshal.Copy(data.Scan0, _bitmapBytes, 0, _bitmapBytes.Length);
+            _drainTexture.SetData(_bitmapBytes);
+            _bitmap.UnlockBits(data);
         }
 
         public override void Draw(GameTime gameTime)
@@ -64,9 +75,13 @@ namespace Sand
                 UpdateDrainMeter();
             }
 
-            _spriteBatch.Draw(_drainTexture, Position, null, Microsoft.Xna.Framework.Color.White, 0.0f,
+            if(_drainTexture != null)
+            {
+                _spriteBatch.Draw(_drainTexture, Position, null, Microsoft.Xna.Framework.Color.White, 0.0f,
                               new Vector2(_drainTexture.Width / 2.0f, _drainTexture.Height / 2.0f), 1.0f,
                               SpriteEffects.None, 0);
+            }
+            
             _spriteBatch.Draw(_tool.Icon, Position, null, Microsoft.Xna.Framework.Color.White, 0.0f,
                               new Vector2(_tool.Icon.Width / 2.0f, _tool.Icon.Height / 2.0f), 1.0f, SpriteEffects.None,
                               0);
