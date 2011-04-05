@@ -27,9 +27,9 @@ namespace Sand.Tools.Weapons
         protected override void Activate()
         {
             base.Activate();
-
             
             Storage.Sound("Cannon").CreateInstance().Play();
+            Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
         }
     }
 }

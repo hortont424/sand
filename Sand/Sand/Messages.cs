@@ -9,7 +9,8 @@ namespace Sand
         UpdatePlayerMenuState,
         UpdatePlayerClass,
         UpdatePlayerTeam,
-        InvisiblePlayer
+        InvisiblePlayer,
+        PlaySound
     } ;
 
     internal class Messages
@@ -180,9 +181,37 @@ namespace Sand
 
         #endregion
 
+        #region PlaySound Message
+
+        public static void SendPlaySoundMessage(Player player, string soundName, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.PlaySound, id);
+
+            Storage.PacketWriter.Write(soundName);
+
+            if(immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static string ProcessPlaySoundMessage(Player player)
+        {
+            var soundName = Storage.PacketReader.ReadString();
+
+            return soundName;
+        }
+
+        private static void DiscardPlaySoundMessage()
+        {
+            Storage.PacketReader.ReadString();
+        }
+
+        #endregion
+
         private static bool NextPacketIsValid()
         {
-            bool goodPacket = true;
+            var goodPacket = true;
             var magic = Storage.PacketReader.ReadBytes(2);
 
             if(magic.Length != 2 || magic[0] != 42 || magic[1] != 24)
@@ -252,6 +281,9 @@ namespace Sand
                             case MessageType.InvisiblePlayer:
                                 DiscardInvisiblePlayerMessage();
                                 break;
+                            case MessageType.PlaySound:
+                                DiscardPlaySoundMessage();
+                                break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -277,6 +309,10 @@ namespace Sand
                             break;
                         case MessageType.InvisiblePlayer:
                             ProcessInvisiblePlayerMessage(player);
+                            break;
+                        case MessageType.PlaySound:
+                            var soundName = ProcessPlaySoundMessage(player);
+                            Storage.Sound(soundName).Play();
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -355,6 +391,20 @@ namespace Sand
                                 var clientPlayer = clientGamer.Tag as Player;
 
                                 SendInvisiblePlayerMessage(gamer.Tag as Player, gamerId, false);
+                            }
+
+                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+
+                            break;
+                        case MessageType.PlaySound:
+                            var soundName = ProcessPlaySoundMessage(player);
+
+                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
+                            {
+                                var clientPlayer = clientGamer.Tag as Player;
+
+                                SendPlaySoundMessage(gamer.Tag as Player, soundName, gamerId, false);
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
