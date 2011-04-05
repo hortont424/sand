@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
@@ -17,7 +18,7 @@ namespace Sand
         private double _drainValue;
         private Bitmap _bitmap;
         private Graphics _graphics;
-        private byte [] _bitmapBytes;
+        private byte[] _bitmapBytes;
 
         public Vector2 Position { get; set; }
 
@@ -30,6 +31,7 @@ namespace Sand
 
             _bitmap = new Bitmap(148, 148);
             _graphics = Graphics.FromImage(_bitmap);
+            _graphics.SmoothingMode = SmoothingMode.HighQuality;
             _drainTexture = null;
             _bitmapBytes = null;
         }
@@ -51,7 +53,7 @@ namespace Sand
         private void UpdateDrainMeter()
         {
             _graphics.Clear(Color.Transparent);
-            _graphics.FillPie(Brushes.White, new Rectangle(0, 0, 148, 148), 270.0f,
+            _graphics.FillPie(Brushes.White, new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), 270.0f,
                               (float)(360.0f * (_tool.Energy / _tool.TotalEnergy)));
             _graphics.Flush();
 
@@ -77,11 +79,14 @@ namespace Sand
 
             if(_drainTexture != null)
             {
-                _spriteBatch.Draw(_drainTexture, Position, null, Microsoft.Xna.Framework.Color.White, 0.0f,
-                              new Vector2(_drainTexture.Width / 2.0f, _drainTexture.Height / 2.0f), 1.0f,
-                              SpriteEffects.None, 0);
+                _spriteBatch.Draw(_drainTexture,
+                                  Position,
+                                  null, Microsoft.Xna.Framework.Color.White, 0.0f,
+                                  new Vector2(_drainTexture.Width / 2.0f, _drainTexture.Height / 2.0f),
+                                  1.0f,
+                                  SpriteEffects.None, 0);
             }
-            
+
             _spriteBatch.Draw(_tool.Icon, Position, null, Microsoft.Xna.Framework.Color.White, 0.0f,
                               new Vector2(_tool.Icon.Width / 2.0f, _tool.Icon.Height / 2.0f), 1.0f, SpriteEffects.None,
                               0);
