@@ -27,9 +27,7 @@ namespace Sand.Tools.Weapons
             Storage.Sound("Cannon").CreateInstance().Play();
             Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
 
-            var cannonDirection = new Vector3((float)Math.Cos(Player.Angle - (Math.PI / 2.0f)), (float)Math.Sin(Player.Angle - (Math.PI / 2.0f)), 0.0f);
-            cannonDirection.Normalize();
-            var cannonRay = new Ray(new Vector3(Player.Position, 0.0f), cannonDirection);
+            var cannonRay = Player.ForwardRay();
             Player.Invisible = false;
             
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
@@ -41,11 +39,7 @@ namespace Sand.Tools.Weapons
                     continue;
                 }
 
-                var intersectionPosition =
-                    cannonRay.Intersects(new BoundingBox(
-                            new Vector3(remotePlayer.Position.X - 16.0f, remotePlayer.Position.Y - 16.0f, -1.0f),
-                            new Vector3(remotePlayer.Position.X + 16.0f,
-                                        remotePlayer.Position.Y + 16.0f, 1.0f)));
+                var intersectionPosition = remotePlayer.Intersects(cannonRay);
 
                 if(intersectionPosition != null)
                 {

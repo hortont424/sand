@@ -43,10 +43,7 @@ namespace Sand
 
         public Team Team
         {
-            get
-            {
-                return _team;
-            }
+            get { return _team; }
             set
             {
                 _team = value;
@@ -60,10 +57,7 @@ namespace Sand
 
         public Class Class
         {
-            get
-            {
-                return _class;
-            }
+            get { return _class; }
             set
             {
                 _class = value;
@@ -79,10 +73,7 @@ namespace Sand
 
         public bool Invisible
         {
-            get
-            {
-                return _invisible;
-            }
+            get { return _invisible; }
             set
             {
                 _invisible = value;
@@ -147,7 +138,8 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            var teamColor = Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
+            var teamColor =
+                Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
 
             if(Invisible)
             {
@@ -167,6 +159,21 @@ namespace Sand
             _spriteBatch.Draw(_sprite, new Rectangle((int)Position.X, (int)Position.Y, Width, Height),
                               null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
+        }
+
+        public float? Intersects(Ray ray)
+        {
+            return ray.Intersects(new BoundingBox(
+                                      new Vector3(Position.X - (Width / 2.0f), Position.Y - (Height / 2.0f), -1.0f),
+                                      new Vector3(Position.X + (Width / 2.0f),
+                                                  Position.Y + (Height / 2.0f), 1.0f)));
+        }
+
+        public Ray ForwardRay()
+        {
+            var cannonDirection = new Vector3((float)Math.Cos(Angle - (Math.PI / 2.0f)), (float)Math.Sin(Angle - (Math.PI / 2.0f)), 0.0f);
+            cannonDirection.Normalize();
+            return new Ray(new Vector3(Position, 0.0f), cannonDirection);
         }
     }
 
