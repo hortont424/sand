@@ -22,19 +22,31 @@ namespace Sand.GameState
 
             Game.Components.Add(sandGame.GameMap);
 
-            var mobilityIcon = new ToolIcon(Game, (Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer).Mobility)
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            if(localPlayer != null)
             {
-                Position = new Vector2(sandGame.GameMap.Width + 10.0f + 148.0f, 10.0f + 148.0f)
-            };
+                var mobilityIcon = new ToolIcon(Game, localPlayer.Mobility)
+                                   {
+                                       Position = new Vector2(sandGame.GameMap.Width + 10.0f + 148.0f, 10.0f + 148.0f)
+                                   };
 
-            Game.Components.Add(mobilityIcon);
+                Game.Components.Add(mobilityIcon);
 
-            var weaponIcon = new ToolIcon(Game, (Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer).Weapon)
-            {
-                Position = new Vector2(mobilityIcon.Position.X + 10.0f + 148.0f, 10.0f + 148.0f)
-            };
+                var weaponIcon = new ToolIcon(Game, localPlayer.Weapon)
+                                 {
+                                     Position = new Vector2(mobilityIcon.Position.X + 60.0f + 148.0f, 10.0f + 148.0f)
+                                 };
 
-            Game.Components.Add(weaponIcon);
+                Game.Components.Add(weaponIcon);
+
+                var utilityIcon = new ToolIcon(Game, localPlayer.Weapon)
+                                  {
+                                      Position = new Vector2(weaponIcon.Position.X + 60.0f + 148.0f, 10.0f + 148.0f)
+                                  };
+
+                Game.Components.Add(utilityIcon);
+            }
         }
 
         public override void Update()

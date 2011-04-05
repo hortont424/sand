@@ -33,15 +33,13 @@ namespace Sand
 
             Graphics = new GraphicsDeviceManager(this)
                         {
-                            PreferredBackBufferWidth = 1440,
-                            // TODO: these should be figured out dynamically
-                            PreferredBackBufferHeight = 900,
+                            PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width,
+                            PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height,
                             GraphicsProfile = GraphicsProfile.Reach,
                             PreferMultiSampling = true
                         };
 
-            // TODO: when going fullscreen, determine the size of the screen!
-            //_graphics.ToggleFullScreen();
+            Graphics.ToggleFullScreen();
 
             Content.RootDirectory = "Content";
 
