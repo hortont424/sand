@@ -29,7 +29,7 @@ namespace Sand
             _tool = tool;
             _drainValue = 0.0f;
 
-            _bitmap = new Bitmap(148, 148);
+            _bitmap = new Bitmap(128 + 20 + 6, 128 + 20 + 6);
             _graphics = Graphics.FromImage(_bitmap);
             _graphics.SmoothingMode = SmoothingMode.HighQuality;
             _drainTexture = null;
@@ -53,7 +53,7 @@ namespace Sand
         private void UpdateDrainMeter()
         {
             _graphics.Clear(Color.Transparent);
-            _graphics.FillPie(Brushes.White, new Rectangle(0, 0, _bitmap.Width, _bitmap.Height), 270.0f,
+            _graphics.FillPie(Brushes.White, new Rectangle(3, 3, _bitmap.Width - 6, _bitmap.Height - 6), 270.0f,
                               (float)(360.0f * (_tool.Energy / _tool.TotalEnergy)));
             _graphics.Flush();
 
