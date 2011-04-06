@@ -179,8 +179,16 @@ namespace Sand
 
             if(this is LocalPlayer)
             {
-                _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 1, 3000), null,
+                if(Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
+                {
+                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 1, 3000), null,
                               teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+                }
+                else
+                {
+                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 2, 3000), null,
+                              teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+                }
             }
 
             _spriteBatch.Draw(_sprite, new Rectangle((int)Position.X, (int)Position.Y, Width, Height),
