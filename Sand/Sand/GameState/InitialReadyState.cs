@@ -25,9 +25,6 @@ namespace Sand.GameState
 
             Game.Components.Add(_sandLogo);
             Game.Components.Add(_readyLabel);
-
-            var playerbutton = new PlayerClassButton(Game, new Vector2(10.0f, 10.0f), Class.Support, Team.Red);
-            Game.Components.Add(playerbutton);
         }
 
         public override void Update()
