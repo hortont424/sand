@@ -60,7 +60,7 @@ namespace Sand.GameState
             _readyButton = new Button(Game, readyButtonRect, "Ready", new Color(0.1f, 0.7f, 0.1f));
             _readyButton.SetAction((a, userInfo) => Game.TransitionState(States.ReadyWait), null);
 
-            _lobbyListNone = new LobbyList(Game, Team.None) { X = 20, Y = noTeamButtonRect.Y + 40 };
+            _lobbyListNone = new LobbyList(Game, Team.None) { X = 20, Y = (int)(logoSprite.Height + sandLogoOrigin.Y + 30) + 40 };
 
             var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 128,
                                                 sandLogoOrigin.Y + logoSprite.Height + 32);
