@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand
 {
-    public class Map : DrawableGameComponent
+    public class Map : Actor
     {
         public string Name { get; set; }
 

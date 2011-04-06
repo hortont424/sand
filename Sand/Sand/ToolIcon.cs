@@ -10,7 +10,7 @@ using Rectangle = System.Drawing.Rectangle;
 
 namespace Sand
 {
-    internal class ToolIcon : DrawableGameComponent
+    internal class ToolIcon : Actor
     {
         private readonly Tool _tool;
         private SpriteBatch _spriteBatch;

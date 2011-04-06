@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand
 {
-    public class Label : DrawableGameComponent
+    public class Label : Actor
     {
         public float X { get; set; }
         public float Y { get; set; }

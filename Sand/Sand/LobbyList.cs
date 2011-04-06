@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand
 {
-    internal class LobbyList : DrawableGameComponent
+    internal class LobbyList : Actor
     {
         private SpriteBatch _spriteBatch;
         private Team _team;

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Sand
 {
-    internal class Button : DrawableGameComponent
+    internal class Button : Actor
     {
         private Rectangle _bounds;
         private SpriteBatch _spriteBatch;
@@ -19,6 +19,7 @@ namespace Sand
         private Color _highlightColor;
         private Color _borderColor;
         private Texture2D _sprite;
+        private Color _teamColor;
 
         public delegate void Action(object sender, object userInfo);
 
@@ -40,8 +41,8 @@ namespace Sand
         {
             _bounds.X = (int)origin.X;
             _bounds.Y = (int)origin.Y;
-            _bounds.Width = sprite.Width;
-            _bounds.Height = sprite.Height;
+            _bounds.Width = sprite.Width + 12;
+            _bounds.Height = sprite.Height + 12;
 
             _sprite = sprite;
 
@@ -54,6 +55,11 @@ namespace Sand
         public Button(Game game, Vector2 origin, Texture2D sprite, Color baseColor) : this(game, origin, sprite)
         {
             _baseColor = baseColor;
+        }
+
+        public Button(Game game, Vector2 origin, Texture2D sprite, Color teamColor, Color baseColor) : this(game, origin, sprite, baseColor)
+        {
+            _teamColor = teamColor;
         }
 
         public void SetAction(Action action, object userInfo)
@@ -135,7 +141,7 @@ namespace Sand
            
             if(_sprite != null)
             {
-                _spriteBatch.Draw(_sprite, new Vector2(_bounds.X, _bounds.Y), Color.White);
+                _spriteBatch.Draw(_sprite, new Vector2(_bounds.X + 6, _bounds.Y + 6), _teamColor);
             }
         }
     }

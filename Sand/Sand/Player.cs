@@ -26,7 +26,7 @@ namespace Sand
         Support
     } ;
 
-    public class Player : DrawableGameComponent
+    public class Player : Actor
     {
         public NetworkGamer Gamer;
         private SpriteBatch _spriteBatch;
@@ -123,7 +123,7 @@ namespace Sand
             Class = Class.None;
         }
 
-        private static Texture2D SpriteForClass(Class cls)
+        public static Texture2D SpriteForClass(Class cls)
         {
             string spriteName;
 

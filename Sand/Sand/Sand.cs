@@ -33,14 +33,14 @@ namespace Sand
             IsFixedTimeStep = false;
 
             Graphics = new GraphicsDeviceManager(this)
-                        {
-                            PreferredBackBufferWidth = (int)(0.5f * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width),
-                            PreferredBackBufferHeight = (int)(0.5f * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height),
-                            GraphicsProfile = GraphicsProfile.Reach,
-                            PreferMultiSampling = true
-                        };
+                       {
+                           PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width,
+                           PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height,
+                           GraphicsProfile = GraphicsProfile.Reach,
+                           PreferMultiSampling = true
+                       };
 
-            //Graphics.ToggleFullScreen();
+            Graphics.ToggleFullScreen();
 
             Content.RootDirectory = "Content";
 
@@ -56,10 +56,39 @@ namespace Sand
             _gameStateInstances[States.ReadyWait] = new ReadyWaitState(this);
             _gameStateInstances[States.Play] = new PlayState(this);
 
+            Components.ComponentAdded += ComponentAdded;
+            Components.ComponentRemoved += ComponentRemoved;
+
             Components.Add(new GamerServicesComponent(this));
 
             Storage.AnimationController = new AnimationController(this);
             Components.Add(Storage.AnimationController);
+        }
+
+        private void ComponentAdded(object sender, GameComponentCollectionEventArgs e)
+        {
+            var actor = e.GameComponent as Actor;
+
+            if(actor != null)
+            {
+                foreach(var child in actor.Children)
+                {
+                    Components.Add(child);
+                }
+            }
+        }
+
+        private void ComponentRemoved(object sender, GameComponentCollectionEventArgs e)
+        {
+            var actor = e.GameComponent as Actor;
+
+            if(actor != null)
+            {
+                foreach(var child in actor.Children)
+                {
+                    Components.Remove(child);
+                }
+            }
         }
 
         protected override void Initialize()
@@ -89,6 +118,10 @@ namespace Sand
             Storage.AddSprite("DefenseClass", Content.Load<Texture2D>("Textures/Classes/defense"));
             Storage.AddSprite("OffenseClass", Content.Load<Texture2D>("Textures/Classes/offense"));
             Storage.AddSprite("SupportClass", Content.Load<Texture2D>("Textures/Classes/support"));
+
+            Storage.AddSprite("DefenseClassLarge", Content.Load<Texture2D>("Textures/Classes/DefenseLarge"));
+            Storage.AddSprite("OffenseClassLarge", Content.Load<Texture2D>("Textures/Classes/OffenseLarge"));
+            Storage.AddSprite("SupportClassLarge", Content.Load<Texture2D>("Textures/Classes/SupportLarge"));
 
             Storage.AddSprite("BoostDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BoostDrive"));
             Storage.AddSound("BoostDrive_Start", Content.Load<SoundEffect>("Sounds/BoostDrive_Start"));
