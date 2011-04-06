@@ -77,7 +77,7 @@ namespace Sand
                 UpdateDrainMeter();
             }
 
-            if(_drainTexture != null)
+            if(_drainTexture != null && _tool.Energy > 0.0f)
             {
                 _spriteBatch.Draw(_drainTexture,
                                   Position,

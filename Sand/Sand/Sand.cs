@@ -34,13 +34,13 @@ namespace Sand
 
             Graphics = new GraphicsDeviceManager(this)
                        {
-                           PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width,
-                           PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height,
+                           PreferredBackBufferWidth = (int)(0.9 * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width),
+                           PreferredBackBufferHeight = (int)(0.9 * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height),
                            GraphicsProfile = GraphicsProfile.Reach,
                            PreferMultiSampling = true
                        };
 
-            Graphics.ToggleFullScreen();
+            //Graphics.ToggleFullScreen();
 
             Content.RootDirectory = "Content";
 

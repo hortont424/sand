@@ -12,3 +12,5 @@ obj/
 *.ReSharper.user
 *.suo
 *.cachefile
+publish*
+*.pfx

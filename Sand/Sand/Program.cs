@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Forms;
+
 namespace Sand
 {
     internal class Program
@@ -6,7 +9,14 @@ namespace Sand
         {
             using(var game = new Sand())
             {
-                game.Run();
+                try
+                {
+                    game.Run();
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show(e.Message + e.StackTrace);
+                }
             }
         }
     }
