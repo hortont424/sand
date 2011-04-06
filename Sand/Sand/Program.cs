@@ -9,14 +9,15 @@ namespace Sand
         {
             using(var game = new Sand())
             {
-                try
-                {
+                /*try
+                {*/
                     game.Run();
-                }
+                /*}
                 catch(Exception e)
                 {
+                    throw;
                     MessageBox.Show(e.Message + e.StackTrace);
-                }
+                }*/
             }
         }
     }

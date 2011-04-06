@@ -70,7 +70,7 @@ namespace Sand
             set
             {
                 _class = value;
-                _sprite = SpriteForClass(_class);
+                _sprite = Teams.SpriteForClass(_class);
                 _sprite.GetData(_texture);
 
                 if(this is LocalPlayer)
@@ -121,31 +121,6 @@ namespace Sand
 
             _texture = new Color[Width * Height];
             Class = Class.None;
-        }
-
-        public static Texture2D SpriteForClass(Class cls)
-        {
-            string spriteName;
-
-            switch(cls) // TODO: I hear you like dictionaries?
-            {
-                case Class.None:
-                    spriteName = "DefenseClass"; // TODO: questionmark class?
-                    break;
-                case Class.Defense:
-                    spriteName = "DefenseClass";
-                    break;
-                case Class.Offense:
-                    spriteName = "OffenseClass";
-                    break;
-                case Class.Support:
-                    spriteName = "SupportClass";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("cls");
-            }
-
-            return Storage.Sprite(spriteName);
         }
 
         protected override void LoadContent()
