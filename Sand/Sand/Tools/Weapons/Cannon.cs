@@ -28,7 +28,6 @@ namespace Sand.Tools.Weapons
             Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
 
             var cannonRay = Player.ForwardRay();
-            Player.Invisible = false;
             
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {
@@ -45,12 +44,9 @@ namespace Sand.Tools.Weapons
                 {
                     // TODO: find closest player intersection, instead of taking the first one we find!
                     // TODO: make sure closest player intersection is closer than closest wall intersection
-                    //Storage.Sound("BoostDrive_Engine").Play();
-                    //Console.WriteLine("whee");
-                    Player.Invisible = true;
+                    
+                    Messages.SendStunMessage(Player, remotePlayer, Player.Gamer.Id, true);
                 }
-
-                //if(remotePlayer.Position)
             }
         }
     }
