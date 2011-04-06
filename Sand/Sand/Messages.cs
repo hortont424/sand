@@ -198,7 +198,11 @@ namespace Sand
 
         private static string ProcessPlaySoundMessage(Player player)
         {
-            return Storage.PacketReader.ReadString();
+            var soundName = Storage.PacketReader.ReadString();
+
+            Storage.Sound(soundName).Play();
+            
+            return soundName;
         }
 
         private static void DiscardPlaySoundMessage()
@@ -360,8 +364,7 @@ namespace Sand
                             ProcessInvisiblePlayerMessage(player);
                             break;
                         case MessageType.PlaySound:
-                            var soundName = ProcessPlaySoundMessage(player);
-                            Storage.Sound(soundName).Play();
+                            ProcessPlaySoundMessage(player);
                             break;
                         case MessageType.Stun:
                             ProcessStunMessage(player);
