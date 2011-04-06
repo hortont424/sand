@@ -45,6 +45,8 @@ namespace Sand.Tools
                             if(EnergyConsumptionMode == EnergyConsumptionMode.Instant)
                             {
                                 Energy -= EnergyConsumptionRate;
+
+                                // TODO: cooldown??
                             }
                         }
 
@@ -69,6 +71,8 @@ namespace Sand.Tools
 
         private readonly Animation _energyAnimation;
         private readonly AnimationGroup _energyAnimationGroup;
+        private TimeSpan _cooldownTime;
+        private bool _inCooldown;
 
         protected Tool(LocalPlayer player)
         {
@@ -100,31 +104,44 @@ namespace Sand.Tools
                             Energy = 0.0f;
 
                             Active = false;
+
+                            _inCooldown = true;
+                            _cooldownTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, 2));
                         }
                     }
                     else
                     {
-                        Energy += EnergyRechargeRate;
-
-                        if(Energy > TotalEnergy)
-                        {
-                            Energy = TotalEnergy;
-                        }
+                        RechargeTick();
                     }
 
                     break;
                 case EnergyConsumptionMode.Instant:
                 case EnergyConsumptionMode.Custom:
-                    Energy += EnergyRechargeRate;
-
-                    if(Energy > TotalEnergy)
-                    {
-                        Energy = TotalEnergy;
-                    }
+                    RechargeTick();
 
                     break;
                 default:
                     throw new NotImplementedException();
+            }
+        }
+
+        private void RechargeTick()
+        {
+            if (_inCooldown)
+            {
+                if (Storage.CurrentTime.TotalGameTime.Ticks > _cooldownTime.Ticks)
+                {
+                    _inCooldown = false;
+                }
+            }
+            else
+            {
+                Energy += EnergyRechargeRate;
+
+                if (Energy > TotalEnergy)
+                {
+                    Energy = TotalEnergy;
+                }
             }
         }
 
