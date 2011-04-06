@@ -44,6 +44,7 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
+            // If we change drawing location, we need to change ray intersection offset
             _spriteBatch.Draw(_mapImage, new Vector2(0.0f, 0.0f), Color.White);
         }
 
@@ -77,6 +78,28 @@ namespace Sand
             }
 
             return false;
+        }
+
+        public float? Intersects(Ray ray)
+        {
+            float ? distance = null;
+
+            var point = ray.Position;
+
+            while(point.X < _mapImage.Width && point.Y < _mapImage.Height && point.X >= 0 && point.Y >= 0)
+            {
+                point.X += ray.Direction.X;
+                point.Y += ray.Direction.Y;
+
+                Color color = _mapTexture[(int)((int)Math.Floor(point.X) + (Math.Floor(point.Y) * _mapImage.Width))];
+
+                if(color == Color.White)
+                {
+                    return (point - ray.Position).Length();
+                }
+            }
+
+            return distance;
         }
     }
 }

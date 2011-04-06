@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
 namespace Sand.Tools.Weapons
 {
@@ -28,7 +26,9 @@ namespace Sand.Tools.Weapons
             Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
 
             var cannonRay = Player.ForwardRay();
-            
+            Player closestIntersectionPlayer = null;
+            float ? closestIntersectionDistance = null;
+
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {
                 var remotePlayer = remoteGamer.Tag as Player;
@@ -42,11 +42,24 @@ namespace Sand.Tools.Weapons
 
                 if(intersectionPosition != null)
                 {
-                    // TODO: find closest player intersection, instead of taking the first one we find!
-                    // TODO: make sure closest player intersection is closer than closest wall intersection
-                    
-                    Messages.SendStunMessage(Player, remotePlayer, Player.Gamer.Id, true);
+                    if(closestIntersectionDistance == null || intersectionPosition < closestIntersectionDistance)
+                    {
+                        closestIntersectionDistance = intersectionPosition;
+                        closestIntersectionPlayer = remotePlayer;
+                    }
                 }
+            }
+
+            var wallIntersection = (Player.Game as Sand).GameMap.Intersects(cannonRay);
+
+            if(wallIntersection != null && wallIntersection < closestIntersectionDistance)
+            {
+                closestIntersectionDistance = null;
+            }
+
+            if(closestIntersectionDistance != null)
+            {
+                Messages.SendStunMessage(Player, closestIntersectionPlayer, Player.Gamer.Id, true);
             }
         }
     }
