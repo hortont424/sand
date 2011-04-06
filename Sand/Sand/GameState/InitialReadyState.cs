@@ -25,6 +25,8 @@ namespace Sand.GameState
 
             Game.Components.Add(_sandLogo);
             Game.Components.Add(_readyLabel);
+
+            //Game.Components.Add(new Label(Game, Game.BaseScreenSize.X * 0.5f, 20.0f, string.Format("Adapter: {0}", Game.Graphics.GraphicsDevice.Adapter.DeviceId), "Calibri24"));
         }
 
         public override void Update()
