@@ -14,12 +14,12 @@ namespace Sand
         private object _actionUserInfo;
         private Action _action;
         private string _text;
-        private Color _baseColor;
+        public Color BaseColor;
         private Color _clickColor;
         private Color _highlightColor;
         private Color _borderColor;
         private Texture2D _sprite;
-        private Color _teamColor;
+        public Color TeamColor;
 
         public delegate void Action(object sender, object userInfo);
 
@@ -29,12 +29,12 @@ namespace Sand
             _text = text;
             _sprite = null;
             _action = null;
-            _baseColor = Storage.Color("WidgetFill");
+            BaseColor = Storage.Color("WidgetFill");
         }
 
         public Button(Game game, Rectangle bounds, string text, Color baseColor) : this(game, bounds, text)
         {
-            _baseColor = baseColor;
+            BaseColor = baseColor;
         }
 
         public Button(Game game, Vector2 origin, Texture2D sprite) : base(game)
@@ -49,17 +49,17 @@ namespace Sand
             _text = null;
             _action = null;
 
-            _baseColor = Storage.Color("WidgetFill");
+            BaseColor = Storage.Color("WidgetFill");
         }
 
         public Button(Game game, Vector2 origin, Texture2D sprite, Color baseColor) : this(game, origin, sprite)
         {
-            _baseColor = baseColor;
+            BaseColor = baseColor;
         }
 
         public Button(Game game, Vector2 origin, Texture2D sprite, Color teamColor, Color baseColor) : this(game, origin, sprite, baseColor)
         {
-            _teamColor = teamColor;
+            TeamColor = teamColor;
         }
 
         public void SetAction(Action action, object userInfo)
@@ -80,7 +80,7 @@ namespace Sand
             }
 
             double hue, saturation, value;
-            SandColor.ToHSV(_baseColor, out hue, out saturation, out value);
+            SandColor.ToHSV(BaseColor, out hue, out saturation, out value);
 
             _borderColor = SandColor.FromHSV(hue, saturation, Math.Max(value - 0.3, 0.0));
             _clickColor = SandColor.FromHSV(hue, Math.Max(saturation - 0.2, 0.0), Math.Min(value + 0.4, 1.0));
@@ -118,7 +118,7 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            Color fillColor = _clicked ? _clickColor : (_hovered ? _highlightColor : _baseColor);
+            Color fillColor = _clicked ? _clickColor : (_hovered ? _highlightColor : BaseColor);
             Color borderColor = _borderColor;
             const int borderRadius = 3;
 
@@ -141,7 +141,7 @@ namespace Sand
            
             if(_sprite != null)
             {
-                _spriteBatch.Draw(_sprite, new Vector2(_bounds.X + 6, _bounds.Y + 6), _teamColor);
+                _spriteBatch.Draw(_sprite, new Vector2(_bounds.X + 6, _bounds.Y + 6), TeamColor);
             }
         }
     }

@@ -9,7 +9,7 @@ namespace Sand
 {
     class PlayerClassButton : Actor
     {
-        private readonly Button _classButton;
+        public readonly Button Button;
         private readonly Class _class;
         private readonly Team _team;
 
@@ -52,9 +52,59 @@ namespace Sand
 
             _class = cls;
             _team = team;
-            _classButton = new Button(game, origin, Storage.Sprite(spriteName), Storage.Color(colorName), Storage.Color("NeutralTeam"));
 
-            Children.Add(_classButton);
+            Button = new Button(game, origin, Storage.Sprite(spriteName), Storage.Color(colorName), Storage.Color("NeutralTeam"));
+
+            Children.Add(Button);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            bool taken = false;
+
+            base.Update(gameTime);
+
+            foreach (var gamer in Storage.NetworkSession.AllGamers)
+            {
+                var player = gamer.Tag as Player;
+
+                if (player == null)
+                    continue;
+
+                if (player.Team == _team && player.Class == _class)
+                {
+                    taken = true;
+                    break;
+                }
+            }
+
+            if(taken)
+            {
+                Button.TeamColor = Storage.Color("NeutralTeam");
+            }
+            else
+            {
+                string colorName;
+
+                // TODO: this code is everywhere, fix that.
+
+                switch (_team)
+                {
+                    case Team.None:
+                        colorName = "NeutralTeam";
+                        break;
+                    case Team.Red:
+                        colorName = "RedTeam";
+                        break;
+                    case Team.Blue:
+                        colorName = "BlueTeam";
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("team");
+                }
+
+                Button.TeamColor = Storage.Color(colorName);
+            }
         }
     }
 }

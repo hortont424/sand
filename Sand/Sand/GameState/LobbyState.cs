@@ -68,20 +68,65 @@ namespace Sand.GameState
 
             _lobbyListNone = new LobbyList(Game, Team.None) { X = 20, Y = noTeamButtonRect.Y + 40 };
 
-            var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 128, sandLogoOrigin.Y + logoSprite.Height + 32);
+            var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 128,
+                                                sandLogoOrigin.Y + logoSprite.Height + 32);
 
-            _redDefenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X - 256, playerClassOrigin.Y), Class.Defense, Team.Red);
+            _redDefenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X - 256, playerClassOrigin.Y),
+                                                      Class.Defense, Team.Red);
+            _redDefenseButton.Button.SetAction((a, userInfo) =>
+                                               {
+                                                   player.Team = Team.Red;
+                                                   player.Class = Class.Defense;
+                                               }, null);
             Game.Components.Add(_redDefenseButton);
-            _redOffenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X - 256, playerClassOrigin.Y + 256 + 32), Class.Offense, Team.Red);
+            _redOffenseButton = new PlayerClassButton(Game,
+                                                      new Vector2(playerClassOrigin.X - 256,
+                                                                  playerClassOrigin.Y + 256 + 32), Class.Offense,
+                                                      Team.Red);
+            _redOffenseButton.Button.SetAction((a, userInfo) =>
+                                               {
+                                                   player.Team = Team.Red;
+                                                   player.Class = Class.Offense;
+                                               }, null);
             Game.Components.Add(_redOffenseButton);
-            _redSupportButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X - 256, playerClassOrigin.Y + 512 + 64), Class.Support, Team.Red);
+            _redSupportButton = new PlayerClassButton(Game,
+                                                      new Vector2(playerClassOrigin.X - 256,
+                                                                  playerClassOrigin.Y + 512 + 64), Class.Support,
+                                                      Team.Red);
+            _redSupportButton.Button.SetAction((a, userInfo) =>
+                                               {
+                                                   player.Team = Team.Red;
+                                                   player.Class = Class.Support;
+                                               }, null);
             Game.Components.Add(_redSupportButton);
 
-            _blueDefenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X + 256, playerClassOrigin.Y), Class.Defense, Team.Blue);
+            _blueDefenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X + 256, playerClassOrigin.Y),
+                                                       Class.Defense, Team.Blue);
+            _blueDefenseButton.Button.SetAction((a, userInfo) =>
+                                                {
+                                                    player.Team = Team.Blue;
+                                                    player.Class = Class.Defense;
+                                                }, null);
             Game.Components.Add(_blueDefenseButton);
-            _blueOffenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X + 256, playerClassOrigin.Y + 256 + 32), Class.Offense, Team.Blue);
+            _blueOffenseButton = new PlayerClassButton(Game,
+                                                       new Vector2(playerClassOrigin.X + 256,
+                                                                   playerClassOrigin.Y + 256 + 32), Class.Offense,
+                                                       Team.Blue);
+            _blueOffenseButton.Button.SetAction((a, userInfo) =>
+                                                {
+                                                    player.Team = Team.Blue;
+                                                    player.Class = Class.Offense;
+                                                }, null);
             Game.Components.Add(_blueOffenseButton);
-            _blueSupportButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X + 256, playerClassOrigin.Y + 512 + 64), Class.Support, Team.Blue);
+            _blueSupportButton = new PlayerClassButton(Game,
+                                                       new Vector2(playerClassOrigin.X + 256,
+                                                                   playerClassOrigin.Y + 512 + 64), Class.Support,
+                                                       Team.Blue);
+            _blueSupportButton.Button.SetAction((a, userInfo) =>
+                                                {
+                                                    player.Team = Team.Blue;
+                                                    player.Class = Class.Support;
+                                                }, null);
             Game.Components.Add(_blueSupportButton);
 
             Game.Components.Add(_sandLogo);

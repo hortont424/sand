@@ -121,9 +121,9 @@ namespace Sand
             Storage.AddFont("Gotham24", Content.Load<SpriteFont>("Fonts/Gotham24"));
 
             Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));
-            Storage.AddColor("RedTeam", new Color(0.65f, 0.1f, 0.1f));
-            Storage.AddColor("BlueTeam", new Color(0.1f, 0.37f, 0.65f));
-            Storage.AddColor("NeutralTeam", new Color(0.6f, 0.6f, 0.6f));
+            Storage.AddColor("RedTeam", new Color(0.760f, 0.207f, 1.0f));
+            Storage.AddColor("BlueTeam", new Color(0.207f, 0.741f, 0.215f));
+            Storage.AddColor("NeutralTeam", new Color(0.3f, 0.3f, 0.3f));
 
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
             Storage.AddSprite("DefenseClass", Content.Load<Texture2D>("Textures/Classes/defense"));
