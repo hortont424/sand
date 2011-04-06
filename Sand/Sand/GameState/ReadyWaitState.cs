@@ -7,6 +7,8 @@ namespace Sand.GameState
 {
     public class ReadyWaitState : GameState
     {
+        private Label _readyLabel;
+
         public ReadyWaitState(Sand game) : base(game)
         {
         }
@@ -17,6 +19,10 @@ namespace Sand.GameState
 
             Storage.NetworkSession.GameStarted += GameStarted;
             Storage.NetworkSession.GameEnded += GameEnded;
+
+            _readyLabel = new Label(Game, Game.BaseScreenSize.X / 2.0f, Game.BaseScreenSize.Y / 2.0f, "Waiting for Players",
+                                           "Calibri48Bold") { DrawOrder = 1000 };
+            Game.Components.Add(_readyLabel);
         }
 
         private void GameStarted(object sender, GameStartedEventArgs e)
@@ -47,6 +53,12 @@ namespace Sand.GameState
                     }
                 }
             }
+        }
+
+        public override Dictionary<string, object> Leave()
+        {
+            Game.Components.Remove(_readyLabel);
+            return null;
         }
     }
 }
