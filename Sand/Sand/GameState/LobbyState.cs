@@ -68,7 +68,7 @@ namespace Sand.GameState
 
             _lobbyListNone = new LobbyList(Game, Team.None) { X = 20, Y = noTeamButtonRect.Y + 40 };
 
-            var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 256, sandLogoOrigin.Y + logoSprite.Height + 32);
+            var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 128, sandLogoOrigin.Y + logoSprite.Height + 32);
 
             _redDefenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X - 256, playerClassOrigin.Y), Class.Defense, Team.Red);
             Game.Components.Add(_redDefenseButton);

@@ -15,7 +15,7 @@ namespace Sand
 
         public PlayerClassButton(Game game, Vector2 origin, Class cls, Team team) : base(game)
         {
-            string spriteName;
+            string spriteName, colorName;
 
             switch(cls) // TODO: I hear you like dictionaries?
             {
@@ -35,9 +35,24 @@ namespace Sand
                     throw new ArgumentOutOfRangeException("cls");
             }
 
+            switch(team)
+            {
+                case Team.None:
+                    colorName = "NeutralTeam";
+                    break;
+                case Team.Red:
+                    colorName = "RedTeam";
+                    break;
+                case Team.Blue:
+                    colorName = "BlueTeam";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("team");
+            }
+
             _class = cls;
             _team = team;
-            _classButton = new Button(game, origin, Storage.Sprite(spriteName), Storage.Color("RedTeam"), Storage.Color("NeutralTeam"));
+            _classButton = new Button(game, origin, Storage.Sprite(spriteName), Storage.Color(colorName), Storage.Color("NeutralTeam"));
 
             Children.Add(_classButton);
         }
