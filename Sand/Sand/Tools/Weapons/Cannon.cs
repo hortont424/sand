@@ -44,6 +44,7 @@ namespace Sand.Tools.Weapons
                 if(intersectionPosition != null)
                 {
                     // TODO: find closest player intersection, instead of taking the first one we find!
+                    // TODO: make sure closest player intersection is closer than closest wall intersection
                     //Storage.Sound("BoostDrive_Engine").Play();
                     //Console.WriteLine("whee");
                     Player.Invisible = true;

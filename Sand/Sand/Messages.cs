@@ -10,7 +10,8 @@ namespace Sand
         UpdatePlayerClass,
         UpdatePlayerTeam,
         InvisiblePlayer,
-        PlaySound
+        PlaySound,
+        Stun
     } ;
 
     internal class Messages
@@ -197,14 +198,38 @@ namespace Sand
 
         private static string ProcessPlaySoundMessage(Player player)
         {
-            var soundName = Storage.PacketReader.ReadString();
-
-            return soundName;
+            return Storage.PacketReader.ReadString();
         }
 
         private static void DiscardPlaySoundMessage()
         {
             Storage.PacketReader.ReadString();
+        }
+
+        #endregion
+
+        #region Stun Message
+
+        public static void SendStunMessage(Player player, Player stunnedPlayer, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.Stun, id);
+
+            Storage.PacketWriter.Write(stunnedPlayer.Gamer.Id);
+
+            if(immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static byte ProcessStunMessage(Player player)
+        {
+            return Storage.PacketReader.ReadByte();
+        }
+
+        private static void DiscardStunMessage()
+        {
+            Storage.PacketReader.ReadByte();
         }
 
         #endregion
@@ -284,6 +309,10 @@ namespace Sand
                             case MessageType.PlaySound:
                                 DiscardPlaySoundMessage();
                                 break;
+                            case MessageType.Stun:
+                                DiscardStunMessage();
+                                break;
+
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -313,6 +342,17 @@ namespace Sand
                         case MessageType.PlaySound:
                             var soundName = ProcessPlaySoundMessage(player);
                             Storage.Sound(soundName).Play();
+                            break;
+                        case MessageType.Stun:
+                            var stunId = ProcessStunMessage(player);
+                            var localGamer = Storage.NetworkSession.LocalGamers[0];
+
+                            if(stunId == localGamer.Id)
+                            {
+                                var localPlayer = localGamer.Tag as Player;
+                                localPlayer.Stun(player);
+                            }
+
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -405,6 +445,23 @@ namespace Sand
                                 var clientPlayer = clientGamer.Tag as Player;
 
                                 SendPlaySoundMessage(gamer.Tag as Player, soundName, gamerId, false);
+                            }
+
+                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+
+                            break;
+                        case MessageType.Stun:
+                            var stunId = ProcessStunMessage(player);
+
+                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
+                            {
+                                var clientPlayer = clientGamer.Tag as Player;
+
+                                if(clientGamer.Id == stunId)
+                                {
+                                    SendStunMessage(gamer.Tag as Player, clientPlayer, gamerId, false);
+                                }
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
