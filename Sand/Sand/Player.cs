@@ -40,6 +40,8 @@ namespace Sand
         private Team _team;
         private bool _invisible;
         private Texture2D _sprite;
+        protected TimeSpan _unstunTime;
+        private bool _stunned;
 
         public Team Team
         {
@@ -94,7 +96,18 @@ namespace Sand
             }
         }
 
-        public bool Stunned { get; set; }
+        public bool Stunned
+        {
+            get
+            {
+                return _stunned;
+            }
+            set
+            {
+                _stunned = value;
+                _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, 5));
+            }
+        }
 
         public Player(Game game, NetworkGamer gamer) : base(game)
         {
@@ -224,7 +237,7 @@ namespace Sand
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
-            Drag = new Vector2(0.1f, 0.1f);
+            Drag = new Vector2(1.5f, 1.5f);
             DefaultAcceleration = new Vector2(600.0f, 600.0f);
             MovementAcceleration = DefaultAcceleration;
 
@@ -239,12 +252,32 @@ namespace Sand
             UpdateInput(gameTime);
             UpdateAngle();
             UpdatePosition(gameTime);
+            UpdateStun(gameTime);
+        }
+
+        private void UpdateStun(GameTime gameTime)
+        {
+            if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
+            {
+                Stunned = false;
+
+            }
         }
 
         private void UpdateInput(GameTime gameTime)
         {
             var newKeyState = Keyboard.GetState();
             var newMouseState = Mouse.GetState();
+
+            if(!Storage.AcceptInput)
+            {
+                _oldKeyState = newKeyState;
+                _oldMouseState = newMouseState;
+
+                return;
+            }
+
+            Acceleration.X = Acceleration.Y = 0.0f;
 
             if(newKeyState.IsKeyDown(Keys.A))
             {
@@ -314,8 +347,6 @@ namespace Sand
 
             newPosition.X += _velocity.X * timestep;
             newPosition.Y += _velocity.Y * timestep;
-
-            Acceleration.X = Acceleration.Y = 0.0f;
 
             if(!Stunned)
             {

@@ -222,9 +222,25 @@ namespace Sand
             }
         }
 
-        private static byte ProcessStunMessage(Player player)
+        private static byte? ProcessStunMessage(Player player)
         {
-            return Storage.PacketReader.ReadByte();
+            var stunId = Storage.PacketReader.ReadByte();
+
+            var localGamer = Storage.NetworkSession.LocalGamers[0];
+
+            if (stunId == localGamer.Id)
+            {
+                var localPlayer = localGamer.Tag as Player;
+
+                if(localPlayer != null)
+                {
+                    localPlayer.Stun(player);
+                }
+
+                return null;
+            }
+
+            return stunId;
         }
 
         private static void DiscardStunMessage()
@@ -344,15 +360,7 @@ namespace Sand
                             Storage.Sound(soundName).Play();
                             break;
                         case MessageType.Stun:
-                            var stunId = ProcessStunMessage(player);
-                            var localGamer = Storage.NetworkSession.LocalGamers[0];
-
-                            if(stunId == localGamer.Id)
-                            {
-                                var localPlayer = localGamer.Tag as Player;
-                                localPlayer.Stun(player);
-                            }
-
+                            ProcessStunMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -454,18 +462,21 @@ namespace Sand
                         case MessageType.Stun:
                             var stunId = ProcessStunMessage(player);
 
-                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
+                            if(stunId != null)
                             {
-                                var clientPlayer = clientGamer.Tag as Player;
-
-                                if(clientGamer.Id == stunId)
+                                foreach (var clientGamer in Storage.NetworkSession.AllGamers)
                                 {
-                                    SendStunMessage(gamer.Tag as Player, clientPlayer, gamerId, false);
-                                }
-                            }
+                                    var clientPlayer = clientGamer.Tag as Player;
 
-                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                                    if (clientGamer.Id == stunId)
+                                    {
+                                        SendStunMessage(gamer.Tag as Player, clientPlayer, gamerId, false);
+                                    }
+                                }
+
+                                server = (LocalNetworkGamer)Storage.NetworkSession.Host;
+                                server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                            }
 
                             break;
                         default:

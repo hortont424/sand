@@ -135,6 +135,8 @@ namespace Sand
 
         protected override void Update(GameTime gameTime)
         {
+            Storage.CurrentTime = gameTime;
+
             MouseState mouse = Mouse.GetState();
             MouseLocation = Vector2.Transform(new Vector2(mouse.X, mouse.Y),
                                               Matrix.Invert(GlobalTransformMatrix)); // TODO: cache inverse?

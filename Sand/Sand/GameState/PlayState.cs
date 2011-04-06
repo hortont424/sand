@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Sand.GameState
 {
     public class PlayState : GameState
     {
+        private Label _countdownLabel;
+
         public PlayState(Sand game) : base(game)
         {
         }
@@ -47,6 +50,19 @@ namespace Sand.GameState
 
                 Game.Components.Add(utilityIcon);
             }
+
+            var acceptInputAnimation = new Animation { CompletedDelegate = BeginAcceptingInput };
+            Storage.AnimationController.Add(acceptInputAnimation, 1500);
+
+            _countdownLabel = new Label(Game, Game.BaseScreenSize.X / 2.0f, Game.BaseScreenSize.Y / 2.0f, "Ready...",
+                                           "Calibri48Bold") { DrawOrder = 1000 };
+            Game.Components.Add(_countdownLabel);
+        }
+
+        private void BeginAcceptingInput()
+        {
+            Storage.AcceptInput = true;
+            Game.Components.Remove(_countdownLabel);
         }
 
         public override void Update()

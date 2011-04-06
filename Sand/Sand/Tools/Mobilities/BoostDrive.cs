@@ -35,7 +35,7 @@ namespace Sand.Tools.Mobilities
         {
             base.Activate();
 
-            Player.MovementAcceleration = new Vector2(1.5f, 1.5f);
+            Player.MovementAcceleration = new Vector2(1200.0f, 1200.0f);
 
             _startSound.Play();
             //_engineSound.Play(); // TODO: start this after the start sound finishes

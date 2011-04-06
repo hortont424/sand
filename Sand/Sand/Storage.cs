@@ -18,6 +18,9 @@ namespace Sand
         public static PacketReader PacketReader = new PacketReader();
         public static PacketWriter PacketWriter = new PacketWriter();
 
+        public static bool AcceptInput;
+        public static GameTime CurrentTime;
+
         public static void AddSprite(string name, Texture2D texture)
         {
             _sprites.Add(name, texture);
