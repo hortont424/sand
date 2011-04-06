@@ -225,7 +225,7 @@ namespace Sand
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             Drag = new Vector2(0.1f, 0.1f);
-            DefaultAcceleration = new Vector2(0.3f, 0.3f);
+            DefaultAcceleration = new Vector2(600.0f, 600.0f);
             MovementAcceleration = DefaultAcceleration;
 
             Mobility = new BoostDrive(this);
@@ -236,32 +236,32 @@ namespace Sand
         {
             base.Update(gameTime);
 
-            UpdateInput();
+            UpdateInput(gameTime);
             UpdateAngle();
             UpdatePosition(gameTime);
         }
 
-        private void UpdateInput()
+        private void UpdateInput(GameTime gameTime)
         {
             var newKeyState = Keyboard.GetState();
             var newMouseState = Mouse.GetState();
 
             if(newKeyState.IsKeyDown(Keys.A))
             {
-                Acceleration.X += -MovementAcceleration.X;
+                Acceleration.X = -MovementAcceleration.X;
             }
             else if(newKeyState.IsKeyDown(Keys.D))
             {
-                Acceleration.X += MovementAcceleration.X;
+                Acceleration.X = MovementAcceleration.X;
             }
 
             if(newKeyState.IsKeyDown(Keys.W))
             {
-                Acceleration.Y += -MovementAcceleration.Y;
+                Acceleration.Y = -MovementAcceleration.Y;
             }
             else if(newKeyState.IsKeyDown(Keys.S))
             {
-                Acceleration.Y += MovementAcceleration.Y;
+                Acceleration.Y = MovementAcceleration.Y;
             }
 
             if(newKeyState.IsKeyDown(Keys.D1))
@@ -304,7 +304,7 @@ namespace Sand
         {
             Vector2 newPosition = new Vector2(Position.X, Position.Y);
             var sandGame = Game as Sand;
-            var timestep = (float)(gameTime.ElapsedGameTime.TotalMilliseconds / (1000 / 60));
+            var timestep = (float)(gameTime.ElapsedGameTime.TotalSeconds);
 
             Acceleration.X -= Drag.X * _velocity.X;
             Acceleration.Y -= Drag.Y * _velocity.Y;

@@ -16,7 +16,7 @@ namespace Sand
 
         private KeyboardState _oldKeyState;
         private States _gameState;
-        private Dictionary<States, GameState.GameState> _gameStateInstances;
+        private readonly Dictionary<States, GameState.GameState> _gameStateInstances;
 
         public Vector2 BaseScreenSize;
         private Matrix GlobalTransformMatrix;
@@ -30,6 +30,7 @@ namespace Sand
         public Sand()
         {
             BaseScreenSize = new Vector2(1920, 1200);
+            IsFixedTimeStep = false;
 
             Graphics = new GraphicsDeviceManager(this)
                         {
