@@ -7,12 +7,12 @@ namespace Sand.GameState
 {
     public class LobbyState : GameState
     {
-        private LobbyList _lobbyListRed, _lobbyListBlue, _lobbyListNone;
+        private LobbyList _lobbyListNone;
         private Button _readyButton;
         private Button _noTeamButton;
-        private Button _redTeamButton;
-        private Button _blueTeamButton;
         private Billboard _sandLogo;
+        private PlayerClassButton _redSupportButton, _redDefenseButton, _redOffenseButton;
+        private PlayerClassButton _blueSupportButton, _blueDefenseButton, _blueOffenseButton;
 
         public LobbyState(Sand game) : base(game)
         {
@@ -66,30 +66,27 @@ namespace Sand.GameState
             noTeamButtonRect.Y = (int)(logoSprite.Height + sandLogoOrigin.Y + 30);
             _noTeamButton = new Button(Game, noTeamButtonRect, "No Team", Storage.Color("NeutralTeam"));
 
-            var redTeamButtonRect = new Rectangle(0, 0, 200, 50);
-            redTeamButtonRect.X = (int)(Game.BaseScreenSize.X / 3.0f) - (redTeamButtonRect.Width / 2);
-            redTeamButtonRect.Y = noTeamButtonRect.Y;
-            _redTeamButton = new Button(Game, redTeamButtonRect, "Choose Team", Storage.Color("RedTeam"));
-            _redTeamButton.SetAction((a, userInfo) => player.Team = Team.Red, null);
+            _lobbyListNone = new LobbyList(Game, Team.None) { X = 20, Y = noTeamButtonRect.Y + 40 };
 
-            var blueTeamButtonRect = new Rectangle(0, 0, 200, 50);
-            blueTeamButtonRect.X = (int)(2.0f * Game.BaseScreenSize.X / 3.0f) - (blueTeamButtonRect.Width / 2);
-            blueTeamButtonRect.Y = noTeamButtonRect.Y;
-            _blueTeamButton = new Button(Game, blueTeamButtonRect, "Choose Team", Storage.Color("BlueTeam"));
-            _blueTeamButton.SetAction((a, userInfo) => player.Team = Team.Blue, null);
+            var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 256, sandLogoOrigin.Y + logoSprite.Height + 32);
 
-            _lobbyListNone = new LobbyList(Game, Team.None) { X = 20, Y = redTeamButtonRect.Y + 40 };
-            _lobbyListRed = new LobbyList(Game, Team.Red) { X = redTeamButtonRect.X, Y = redTeamButtonRect.Y + 40 };
-            _lobbyListBlue = new LobbyList(Game, Team.Blue) { X = blueTeamButtonRect.X, Y = blueTeamButtonRect.Y + 40 };
+            _redDefenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X - 256, playerClassOrigin.Y), Class.Defense, Team.Red);
+            Game.Components.Add(_redDefenseButton);
+            _redOffenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X - 256, playerClassOrigin.Y + 256 + 32), Class.Offense, Team.Red);
+            Game.Components.Add(_redOffenseButton);
+            _redSupportButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X - 256, playerClassOrigin.Y + 512 + 64), Class.Support, Team.Red);
+            Game.Components.Add(_redSupportButton);
+
+            _blueDefenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X + 256, playerClassOrigin.Y), Class.Defense, Team.Blue);
+            Game.Components.Add(_blueDefenseButton);
+            _blueOffenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X + 256, playerClassOrigin.Y + 256 + 32), Class.Offense, Team.Blue);
+            Game.Components.Add(_blueOffenseButton);
+            _blueSupportButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X + 256, playerClassOrigin.Y + 512 + 64), Class.Support, Team.Blue);
+            Game.Components.Add(_blueSupportButton);
 
             Game.Components.Add(_sandLogo);
-            Game.Components.Add(_lobbyListNone);
-            Game.Components.Add(_lobbyListRed);
-            Game.Components.Add(_lobbyListBlue);
             Game.Components.Add(_readyButton);
             Game.Components.Add(_noTeamButton);
-            Game.Components.Add(_redTeamButton);
-            Game.Components.Add(_blueTeamButton);
         }
 
         public override void Update()
@@ -101,12 +98,16 @@ namespace Sand.GameState
         {
             Game.Components.Remove(_sandLogo);
             Game.Components.Remove(_lobbyListNone);
-            Game.Components.Remove(_lobbyListRed);
-            Game.Components.Remove(_lobbyListBlue);
             Game.Components.Remove(_readyButton);
             Game.Components.Remove(_noTeamButton);
-            Game.Components.Remove(_redTeamButton);
-            Game.Components.Remove(_blueTeamButton);
+
+            Game.Components.Remove(_redDefenseButton);
+            Game.Components.Remove(_redOffenseButton);
+            Game.Components.Remove(_redSupportButton);
+
+            Game.Components.Remove(_blueDefenseButton);
+            Game.Components.Remove(_blueOffenseButton);
+            Game.Components.Remove(_blueSupportButton);
 
             return null;
         }
