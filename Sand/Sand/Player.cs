@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Sand.Tools;
 using Sand.Tools.Mobilities;
+using Sand.Tools.Utilities;
 using Sand.Tools.Weapons;
 
 namespace Sand
@@ -105,7 +106,6 @@ namespace Sand
             set
             {
                 _stunned = value;
-                _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, 5));
             }
         }
 
@@ -177,8 +177,11 @@ namespace Sand
                 }
             }
 
-            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 1, 3000), null,
+            if(this is LocalPlayer)
+            {
+                _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 1, 3000), null,
                               teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+            }
 
             _spriteBatch.Draw(_sprite, new Rectangle((int)Position.X, (int)Position.Y, Width, Height),
                               null,
@@ -201,9 +204,9 @@ namespace Sand
             return new Ray(new Vector3(Position, 0.0f), cannonDirection);
         }
 
-        public void Stun(Player player)
+        public virtual void Stun(float energy)
         {
-            Stunned = true;
+            throw new NotImplementedException();
         }
     }
 
@@ -243,6 +246,7 @@ namespace Sand
 
             Mobility = new BoostDrive(this);
             Weapon = new Cannon(this);
+            Utility = new Shield(this);
         }
 
         public override void Update(GameTime gameTime)
@@ -382,6 +386,22 @@ namespace Sand
                     }
                 }
             }
+        }
+
+        public override void Stun(float energy)
+        {
+            var shield = Utility as Shield;
+
+            if(shield != null)
+            {
+                energy = shield.DeflectShock(energy);
+            }
+            else
+            {
+                Stunned = true;
+            }
+
+            _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, (int)(energy / 5)));
         }
     }
 }

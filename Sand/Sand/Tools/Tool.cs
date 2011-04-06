@@ -7,7 +7,8 @@ namespace Sand.Tools
     public enum EnergyConsumptionMode
     {
         Drain,
-        Instant
+        Instant,
+        Custom
     } ;
 
     public class Tool
@@ -113,6 +114,7 @@ namespace Sand.Tools
 
                     break;
                 case EnergyConsumptionMode.Instant:
+                case EnergyConsumptionMode.Custom:
                     Energy += EnergyRechargeRate;
 
                     if(Energy > TotalEnergy)

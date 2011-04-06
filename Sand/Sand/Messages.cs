@@ -210,11 +210,13 @@ namespace Sand
 
         #region Stun Message
 
-        public static void SendStunMessage(Player player, Player stunnedPlayer, byte id, bool immediate)
+        public static void SendStunMessage(Player player, Player stunnedPlayer, Int32 stunEnergy, byte id,
+                                           bool immediate)
         {
             SendMessageHeader(MessageType.Stun, id);
 
             Storage.PacketWriter.Write(stunnedPlayer.Gamer.Id);
+            Storage.PacketWriter.Write(stunEnergy);
 
             if(immediate)
             {
@@ -222,30 +224,32 @@ namespace Sand
             }
         }
 
-        private static byte? ProcessStunMessage(Player player)
+        private static Tuple<byte, int> ProcessStunMessage(Player player)
         {
             var stunId = Storage.PacketReader.ReadByte();
+            var stunEnergy = Storage.PacketReader.ReadInt32();
 
             var localGamer = Storage.NetworkSession.LocalGamers[0];
 
-            if (stunId == localGamer.Id)
+            if(stunId == localGamer.Id)
             {
                 var localPlayer = localGamer.Tag as Player;
 
                 if(localPlayer != null)
                 {
-                    localPlayer.Stun(player);
+                    localPlayer.Stun(stunEnergy);
                 }
 
                 return null;
             }
 
-            return stunId;
+            return Tuple.Create(stunId, stunEnergy);
         }
 
         private static void DiscardStunMessage()
         {
             Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadInt32();
         }
 
         #endregion
@@ -460,23 +464,28 @@ namespace Sand
 
                             break;
                         case MessageType.Stun:
-                            var stunId = ProcessStunMessage(player);
+                            var stunInfo = ProcessStunMessage(player);
 
-                            if(stunId != null)
+                            if(stunInfo == null)
                             {
-                                foreach (var clientGamer in Storage.NetworkSession.AllGamers)
-                                {
-                                    var clientPlayer = clientGamer.Tag as Player;
-
-                                    if (clientGamer.Id == stunId)
-                                    {
-                                        SendStunMessage(gamer.Tag as Player, clientPlayer, gamerId, false);
-                                    }
-                                }
-
-                                server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                                server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                                break;
                             }
+
+                            var stunId = stunInfo.Item1;
+                            var stunEnergy = stunInfo.Item2;
+
+                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
+                            {
+                                var clientPlayer = clientGamer.Tag as Player;
+
+                                if(clientGamer.Id == stunId)
+                                {
+                                    SendStunMessage(gamer.Tag as Player, clientPlayer, stunEnergy, gamerId, false);
+                                }
+                            }
+
+                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
                         default:

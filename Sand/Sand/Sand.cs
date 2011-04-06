@@ -34,13 +34,13 @@ namespace Sand
 
             Graphics = new GraphicsDeviceManager(this)
                         {
-                            PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width,
-                            PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height,
+                            PreferredBackBufferWidth = (int)(0.5f * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width),
+                            PreferredBackBufferHeight = (int)(0.5f * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height),
                             GraphicsProfile = GraphicsProfile.Reach,
                             PreferMultiSampling = true
                         };
 
-            Graphics.ToggleFullScreen();
+            //Graphics.ToggleFullScreen();
 
             Content.RootDirectory = "Content";
 
@@ -97,6 +97,8 @@ namespace Sand
 
             Storage.AddSprite("Cannon", Content.Load<Texture2D>("Textures/Tools/Weapons/Cannon"));
             Storage.AddSound("Cannon", Content.Load<SoundEffect>("Sounds/Cannon"));
+
+            Storage.AddSprite("Shield", Content.Load<Texture2D>("Textures/Tools/Utilities/Shield"));
 
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });

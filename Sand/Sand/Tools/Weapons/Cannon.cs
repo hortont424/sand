@@ -59,7 +59,7 @@ namespace Sand.Tools.Weapons
 
             if(closestIntersectionDistance != null)
             {
-                Messages.SendStunMessage(Player, closestIntersectionPlayer, Player.Gamer.Id, true);
+                Messages.SendStunMessage(Player, closestIntersectionPlayer, (int)EnergyConsumptionRate, Player.Gamer.Id, true);
             }
         }
     }

@@ -43,7 +43,7 @@ namespace Sand.GameState
 
                 Game.Components.Add(weaponIcon);
 
-                var utilityIcon = new ToolIcon(Game, localPlayer.Weapon)
+                var utilityIcon = new ToolIcon(Game, localPlayer.Utility)
                                   {
                                       Position = new Vector2(weaponIcon.Position.X + 60.0f + 148.0f, 10.0f + 148.0f)
                                   };
