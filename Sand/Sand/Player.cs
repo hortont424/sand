@@ -238,7 +238,7 @@ namespace Sand
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             Drag = new Vector2(1.5f, 1.5f);
-            DefaultAcceleration = new Vector2(600.0f, 600.0f);
+            DefaultAcceleration = new Vector2(450.0f, 450.0f);
             MovementAcceleration = DefaultAcceleration;
 
             Mobility = new BoostDrive(this);
