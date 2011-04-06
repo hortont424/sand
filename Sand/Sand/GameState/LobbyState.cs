@@ -9,7 +9,6 @@ namespace Sand.GameState
     {
         private LobbyList _lobbyListNone;
         private Button _readyButton;
-        private Button _noTeamButton;
         private Billboard _sandLogo;
         private PlayerClassButton _redSupportButton, _redDefenseButton, _redOffenseButton;
         private PlayerClassButton _blueSupportButton, _blueDefenseButton, _blueOffenseButton;
@@ -60,11 +59,6 @@ namespace Sand.GameState
             readyButtonRect.Y = (int)Game.BaseScreenSize.Y - readyButtonRect.Height - 50;
             _readyButton = new Button(Game, readyButtonRect, "Ready", new Color(0.1f, 0.7f, 0.1f));
             _readyButton.SetAction((a, userInfo) => Game.TransitionState(States.ReadyWait), null);
-
-            var noTeamButtonRect = new Rectangle(0, 0, 200, 50);
-            noTeamButtonRect.X = 20;
-            noTeamButtonRect.Y = (int)(logoSprite.Height + sandLogoOrigin.Y + 30);
-            _noTeamButton = new Button(Game, noTeamButtonRect, "No Team", Storage.Color("NeutralTeam"));
 
             _lobbyListNone = new LobbyList(Game, Team.None) { X = 20, Y = noTeamButtonRect.Y + 40 };
 
@@ -134,7 +128,6 @@ namespace Sand.GameState
 
             Game.Components.Add(_sandLogo);
             Game.Components.Add(_readyButton);
-            Game.Components.Add(_noTeamButton);
         }
 
         public override void Update()
@@ -147,7 +140,6 @@ namespace Sand.GameState
             Game.Components.Remove(_sandLogo);
             Game.Components.Remove(_lobbyListNone);
             Game.Components.Remove(_readyButton);
-            Game.Components.Remove(_noTeamButton);
 
             Game.Components.Remove(_redDefenseButton);
             Game.Components.Remove(_redOffenseButton);

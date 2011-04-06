@@ -20,6 +20,7 @@ namespace Sand
         private Color _borderColor;
         private Texture2D _sprite;
         public Color TeamColor;
+        private bool _haveInitialized;
 
         public delegate void Action(object sender, object userInfo);
 
@@ -95,6 +96,7 @@ namespace Sand
         private void UpdateInput()
         {
             MouseState mouse = Mouse.GetState();
+
             var sandGame = Game as Sand;
 
             _hovered = false;
@@ -111,9 +113,19 @@ namespace Sand
 
                 if(!oldClicked && _clicked)
                 {
-                    _action(this, _actionUserInfo);
+                    if (_haveInitialized)
+                    {
+                        _action(this, _actionUserInfo);
+                    }
+                    else
+                    {
+                        _hovered = false;
+                    }
+                    
                 }
             }
+
+            _haveInitialized = true;
         }
 
         public override void Draw(GameTime gameTime)
