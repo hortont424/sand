@@ -309,8 +309,8 @@ namespace Sand
             Acceleration.X -= Drag.X * _velocity.X;
             Acceleration.Y -= Drag.Y * _velocity.Y;
 
-            _velocity.X += Acceleration.X;
-            _velocity.Y += Acceleration.Y;
+            _velocity.X += Acceleration.X * timestep;
+            _velocity.Y += Acceleration.Y * timestep;
 
             newPosition.X += _velocity.X * timestep;
             newPosition.Y += _velocity.Y * timestep;
