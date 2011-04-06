@@ -71,6 +71,9 @@ namespace Sand.GameState
             var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 128,
                                                 sandLogoOrigin.Y + logoSprite.Height + 32);
 
+            // TODO: this code needs to be cleaned up a lot
+            // TODO: make sure we aren't clicking on a taken combination
+
             _redDefenseButton = new PlayerClassButton(Game, new Vector2(playerClassOrigin.X - 256, playerClassOrigin.Y),
                                                       Class.Defense, Team.Red);
             _redDefenseButton.Button.SetAction((a, userInfo) =>
