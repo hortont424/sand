@@ -21,7 +21,7 @@ namespace Sand.GameState
                 Game.Components.Add((Player)gamer.Tag);
             }
 
-            sandGame.GameMap = new Map(Game, "01");
+            sandGame.GameMap = new Map(Game, "02");
 
             Game.Components.Add(sandGame.GameMap);
 

@@ -151,6 +151,11 @@ namespace Sand
             _animationGroups.Add(animationGroup);
         }
 
+        public void RemoveGroup(AnimationGroup animationGroup)
+        {
+            _animationGroups.Remove(animationGroup);
+        }
+
         public override void Update(GameTime gameTime)
         {
             for(int index = 0; index < _animationGroups.Count; ++index)

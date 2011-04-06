@@ -11,6 +11,8 @@ namespace Sand.Tools.Mobilities
     public class BoostDrive : Tool
     {
         private SoundEffectInstance _startSound, _stopSound, _engineSound;
+        private Animation _startFinishedAnimation;
+        private AnimationGroup _startFinishedAnimationGroup;
 
         public BoostDrive(LocalPlayer player) : base(player)
         {
@@ -38,7 +40,26 @@ namespace Sand.Tools.Mobilities
             Player.MovementAcceleration = new Vector2(1200.0f, 1200.0f);
 
             _startSound.Play();
-            //_engineSound.Play(); // TODO: start this after the start sound finishes
+            
+            _startFinishedAnimation = new Animation { CompletedDelegate = CheckStartFinished };
+
+            _startFinishedAnimationGroup = new AnimationGroup(_startFinishedAnimation, 1) { Loops = true };
+
+            Storage.AnimationController.AddGroup(_startFinishedAnimationGroup);
+        }
+
+        private void CheckStartFinished()
+        {
+            if(_startSound.State == SoundState.Stopped)
+            {
+                Storage.AnimationController.RemoveGroup(_startFinishedAnimationGroup);
+
+                if(Active)
+                {
+                    _engineSound.Play();
+                }
+                
+            }
         }
 
         protected override void Deactivate()
@@ -47,7 +68,7 @@ namespace Sand.Tools.Mobilities
 
             Player.MovementAcceleration = Player.DefaultAcceleration;
 
-            //_engineSound.Stop();
+            _engineSound.Stop();
             _startSound.Stop();
             _stopSound.Play();
         }
