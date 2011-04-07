@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Sand
 {
@@ -17,8 +18,16 @@ namespace Sand
             Button = new Button(game, origin, Teams.SpriteForClass(cls, true), Teams.ColorForTeam(team),
                                 Storage.Color("NeutralTeam"));
 
-            Label = new Label(game, origin.X + (Button.Bounds.Width / 2.0f), origin.Y + (Button.Bounds.Height / 2.0f),
-                              "", "Calibri24Bold") { DrawOrder = 10000, PositionGravity = Gravity.Center };
+            if(team == Team.Red)
+            {
+                Label = new Label(game, origin.X - 10, origin.Y + (Button.Bounds.Height / 2.0f),
+                              "", "Calibri24Bold") { DrawOrder = 10000, PositionGravity = new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Center, Gravity.Horizontal.Right) };
+            }
+            else
+            {
+                Label = new Label(game, origin.X + Button.Bounds.Width + 10, origin.Y + (Button.Bounds.Height / 2.0f),
+                              "", "Calibri24Bold") { DrawOrder = 10000, PositionGravity = new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Center, Gravity.Horizontal.Left)};
+            }
 
             Children.Add(Button);
             Children.Add(Label);
