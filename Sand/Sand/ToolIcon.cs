@@ -15,8 +15,8 @@ namespace Sand
         private readonly Tool _tool;
         private Texture2D _drainTexture;
         private double _drainValue;
-        private Bitmap _bitmap;
-        private Graphics _graphics;
+        private readonly Bitmap _bitmap;
+        private readonly Graphics _graphics;
         private byte[] _bitmapBytes;
 
         public Vector2 Position { get; set; }
@@ -44,6 +44,8 @@ namespace Sand
 
         private void UpdateDrainMeter()
         {
+            _drainValue = _tool.Energy;
+
             _graphics.Clear(Color.Transparent);
             _graphics.FillPie(Brushes.White, new Rectangle(3, 3, _bitmap.Width - 6, _bitmap.Height - 6), 270.0f,
                               (float)(360.0f * (_tool.Energy / _tool.TotalEnergy)));

@@ -45,9 +45,11 @@ namespace Sand.Tools
                             if(EnergyConsumptionMode == EnergyConsumptionMode.Instant)
                             {
                                 Energy -= EnergyConsumptionRate;
-
-                                // TODO: cooldown??
                             }
+                        }
+                        else
+                        {
+                            Active = false;
                         }
 
                         if(EnergyConsumptionMode == EnergyConsumptionMode.Instant)
