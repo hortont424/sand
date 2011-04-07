@@ -6,8 +6,6 @@ namespace Sand.GameState
 {
     public class PlayState : GameState
     {
-        private Label _countdownLabel;
-
         public PlayState(Sand game) : base(game)
         {
         }

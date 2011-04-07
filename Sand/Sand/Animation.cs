@@ -10,7 +10,7 @@ namespace Sand
     {
         private readonly PropertyInfo _property;
         private readonly object _obj;
-        private readonly double _startValue, _endValue;
+        private readonly float _startValue, _endValue;
         private readonly EaseFunctionDelegate _easeFunc;
         private readonly EasingType _easeType;
 
@@ -25,24 +25,24 @@ namespace Sand
             _obj = null;
         }
 
-        public Animation(object obj, string propName, double startValue, double endValue)
+        public Animation(object obj, string propName, float startValue, float endValue)
             : this(obj, propName, startValue, endValue, Easing.EaseInOut, EasingType.Sine)
         {
         }
 
-        public Animation(object obj, string propName, double endValue)
-            : this(obj, propName, 0.0, endValue, Easing.EaseInOut, EasingType.Sine)
+        public Animation(object obj, string propName, float endValue)
+            : this(obj, propName, 0.0f, endValue, Easing.EaseInOut, EasingType.Sine)
         {
-            _startValue = Convert.ToDouble(_property.GetValue(obj, null));
+            _startValue = Convert.ToSingle(_property.GetValue(obj, null));
         }
 
-        public Animation(object obj, string propName, double endValue, EaseFunctionDelegate easeFunc,
-                         EasingType easeType) : this(obj, propName, 0.0, endValue, easeFunc, easeType)
+        public Animation(object obj, string propName, float endValue, EaseFunctionDelegate easeFunc,
+                         EasingType easeType) : this(obj, propName, 0.0f, endValue, easeFunc, easeType)
         {
-            _startValue = Convert.ToDouble(_property.GetValue(obj, null));
+            _startValue = Convert.ToSingle(_property.GetValue(obj, null));
         }
 
-        public Animation(object obj, string propName, double startValue, double endValue, EaseFunctionDelegate easeFunc,
+        public Animation(object obj, string propName, float startValue, float endValue, EaseFunctionDelegate easeFunc,
                          EasingType easeType)
         {
             _property = obj.GetType().GetProperty(propName);

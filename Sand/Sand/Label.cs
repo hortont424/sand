@@ -5,14 +5,13 @@ namespace Sand
 {
     public class Label : Actor
     {
-        private SpriteBatch _spriteBatch;
         public string Text;
         private readonly string _fontName;
 
         public Label(Game game, float x, float y, string text) : base(game)
         {
-            Bounds.X = (int)x;
-            Bounds.Y = (int)y;
+            X = x;
+            Y = y;
 
             Text = text;
             _fontName = "Calibri24";
@@ -21,18 +20,6 @@ namespace Sand
         public Label(Game game, float x, float y, string text, string font) : this(game, x, y, text)
         {
             _fontName = font;
-        }
-
-        protected override void LoadContent()
-        {
-            base.LoadContent();
-
-            var sandGame = Game as Sand;
-
-            if(sandGame != null)
-            {
-                _spriteBatch = sandGame.SpriteBatch;
-            }
         }
 
         public override void Update(GameTime gameTime)

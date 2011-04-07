@@ -56,19 +56,22 @@ namespace Sand
         {
             SendMessageHeader(MessageType.UpdatePlayerState, id);
 
-            Storage.PacketWriter.Write(player.Position);
+            Storage.PacketWriter.Write(player.X);
+            Storage.PacketWriter.Write(player.Y);
             Storage.PacketWriter.Write((double)player.Angle);
         }
 
         private static void ProcessUpdatePlayerStateMessage(Player player)
         {
-            player.Position = Storage.PacketReader.ReadVector2();
+            player.X = Storage.PacketReader.ReadSingle();
+            player.Y = Storage.PacketReader.ReadSingle();
             player.Angle = (float)Storage.PacketReader.ReadDouble();
         }
 
         private static void DiscardUpdatePlayerStateMessage()
         {
-            Storage.PacketReader.ReadVector2();
+            Storage.PacketReader.ReadSingle();
+            Storage.PacketReader.ReadSingle();
             Storage.PacketReader.ReadDouble();
         }
 
@@ -80,24 +83,18 @@ namespace Sand
         {
             SendMessageHeader(MessageType.UpdatePlayerMenuState, id);
 
-            Storage.PacketWriter.Write(player.Position);
-            Storage.PacketWriter.Write((double)player.Angle);
             Storage.PacketWriter.Write((Byte)player.Class);
             Storage.PacketWriter.Write((Byte)player.Team);
         }
 
         private static void ProcessUpdatePlayerMenuStateMessage(Player player)
         {
-            player.Position = Storage.PacketReader.ReadVector2();
-            player.Angle = (float)Storage.PacketReader.ReadDouble();
             player.Class = (Class)Storage.PacketReader.ReadByte();
             player.Team = (Team)Storage.PacketReader.ReadByte();
         }
 
         private static void DiscardUpdatePlayerMenuStateMessage()
         {
-            Storage.PacketReader.ReadVector2();
-            Storage.PacketReader.ReadDouble();
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
         }

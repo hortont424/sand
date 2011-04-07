@@ -14,13 +14,10 @@ namespace Sand
     public class Player : Actor
     {
         public NetworkGamer Gamer;
-        private SpriteBatch _spriteBatch;
 
         protected Color[] _texture;
 
-        public Vector2 Position;
         public float Angle;
-        public int Width, Height;
 
         private Class _class;
         private Team _team;
@@ -101,23 +98,11 @@ namespace Sand
             Width = Storage.Sprite("DefenseClass").Width;
             Height = Storage.Sprite("DefenseClass").Height;
 
-            Position.X = 60;
-            Position.Y = 60;
+            X = 60;
+            Y = 60;
 
-            _texture = new Color[Width * Height];
+            _texture = new Color[(int)(Width * Height)];
             Class = Class.None;
-        }
-
-        protected override void LoadContent()
-        {
-            base.LoadContent();
-
-            var sandGame = Game as Sand;
-
-            if(sandGame != null)
-            {
-                _spriteBatch = sandGame.SpriteBatch;
-            }
         }
 
         public override void Draw(GameTime gameTime)
@@ -144,17 +129,17 @@ namespace Sand
             {
                 if(Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
                 {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 1, 3000), null,
+                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)X, (int)Y, 1, 3000), null,
                               teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
                 else
                 {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Position.X, (int)Position.Y, 2, 3000), null,
+                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)X, (int)Y, 2, 3000), null,
                               teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
             }
 
-            _spriteBatch.Draw(_sprite, new Rectangle((int)Position.X, (int)Position.Y, Width, Height),
+            _spriteBatch.Draw(_sprite, new Rectangle((int)X, (int)Y, (int)Width, (int)Height),
                               null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
         }
@@ -162,9 +147,9 @@ namespace Sand
         public float ? Intersects(Ray ray)
         {
             return ray.Intersects(new BoundingBox(
-                                      new Vector3(Position.X - (Width / 2.0f), Position.Y - (Height / 2.0f), -1.0f),
-                                      new Vector3(Position.X + (Width / 2.0f),
-                                                  Position.Y + (Height / 2.0f), 1.0f)));
+                                      new Vector3(X - (Width / 2.0f), Y - (Height / 2.0f), -1.0f),
+                                      new Vector3(X + (Width / 2.0f),
+                                                  Y + (Height / 2.0f), 1.0f)));
         }
 
         public Ray ForwardRay()
@@ -172,7 +157,7 @@ namespace Sand
             var cannonDirection = new Vector3((float)Math.Cos(Angle - (Math.PI / 2.0f)),
                                               (float)Math.Sin(Angle - (Math.PI / 2.0f)), 0.0f);
             cannonDirection.Normalize();
-            return new Ray(new Vector3(Position, 0.0f), cannonDirection);
+            return new Ray(new Vector3(X, Y, 0.0f), cannonDirection);
         }
 
         public virtual void Stun(float energy)
@@ -304,13 +289,13 @@ namespace Sand
             var mouse = Mouse.GetState();
             var sandGame = Game as Sand;
 
-            Angle = (float)Math.Atan2(sandGame.MouseLocation.Y - Position.Y, sandGame.MouseLocation.X - Position.X) +
+            Angle = (float)Math.Atan2(sandGame.MouseLocation.Y - Y, sandGame.MouseLocation.X - X) +
                     ((float)Math.PI / 2.0f);
         }
 
         private void UpdatePosition(GameTime gameTime)
         {
-            Vector2 newPosition = new Vector2(Position.X, Position.Y);
+            Vector2 newPosition = new Vector2(X, Y);
             var sandGame = Game as Sand;
             var timestep = (float)(gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -328,27 +313,27 @@ namespace Sand
                 if(!sandGame.GameMap.CollisionTest(_texture,
                                                    new Rectangle((int)(newPosition.X - (Width / 2.0)),
                                                                  (int)(newPosition.Y - (Height / 2.0)),
-                                                                 Width, Height)))
+                                                                 (int)Width, (int)Height)))
                 {
-                    Position.X = newPosition.X;
-                    Position.Y = newPosition.Y;
+                    X = newPosition.X;
+                    Y = newPosition.Y;
                 }
                 else
                 {
                     if(!sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(newPosition.X - (Width / 2.0)),
-                                                                               (int)(Position.Y - (Height / 2.0)), Width,
-                                                                               Height)))
+                                                                               (int)(Y - (Height / 2.0)), (int)Width,
+                                                                               (int)Height)))
                     {
                         _velocity.Y = -_velocity.Y;
-                        Position.X = newPosition.X;
+                        X = newPosition.X;
                     }
-                    else if(!sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(Position.X - (Width / 2.0)),
+                    else if(!sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(X - (Width / 2.0)),
                                                                                     (int)
                                                                                     (newPosition.Y - (Height / 2.0)),
-                                                                                    Width, Height)))
+                                                                                    (int)Width, (int)Height)))
                     {
                         _velocity.X = -_velocity.X;
-                        Position.Y = newPosition.Y;
+                        Y = newPosition.Y;
                     }
                     else
                     {

@@ -13,7 +13,6 @@ namespace Sand
     internal class ToolIcon : Actor
     {
         private readonly Tool _tool;
-        private SpriteBatch _spriteBatch;
         private Texture2D _drainTexture;
         private double _drainValue;
         private Bitmap _bitmap;
@@ -39,13 +38,6 @@ namespace Sand
         protected override void LoadContent()
         {
             base.LoadContent();
-
-            var sandGame = Game as Sand;
-
-            if(sandGame != null)
-            {
-                _spriteBatch = sandGame.SpriteBatch;
-            }
 
             _drainTexture = new Texture2D(GraphicsDevice, _bitmap.Width, _bitmap.Height, false, SurfaceFormat.Color);
         }

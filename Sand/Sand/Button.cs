@@ -7,7 +7,6 @@ namespace Sand
 {
     internal class Button : Actor
     {
-        private SpriteBatch _spriteBatch;
         private bool _hovered;
         private bool _clicked;
         private object _actionUserInfo;
@@ -26,7 +25,11 @@ namespace Sand
 
         public Button(Game game, Rectangle bounds, string text) : base(game)
         {
-            Bounds = bounds;
+            X = bounds.X;
+            Y = bounds.Y;
+            Width = bounds.Width;
+            Height = bounds.Height;
+
             _text = text;
             _sprite = null;
             _action = null;
@@ -40,10 +43,10 @@ namespace Sand
 
         public Button(Game game, Vector2 origin, Texture2D sprite) : base(game)
         {
-            Bounds.X = (int)origin.X;
-            Bounds.Y = (int)origin.Y;
-            Bounds.Width = sprite.Width + 12;
-            Bounds.Height = sprite.Height + 12;
+            X = origin.X;
+            Y = origin.Y;
+            Width = sprite.Width + 12;
+            Height = sprite.Height + 12;
 
             _sprite = sprite;
 
@@ -73,13 +76,6 @@ namespace Sand
         protected override void LoadContent()
         {
             base.LoadContent();
-
-            var sandGame = Game as Sand;
-
-            if(sandGame != null)
-            {
-                _spriteBatch = sandGame.SpriteBatch;
-            }
 
             double hue, saturation, value;
             SandColor.ToHSV(BaseColor, out hue, out saturation, out value);

@@ -7,7 +7,6 @@ namespace Sand.GameState
 {
     public class LobbyState : GameState
     {
-        private LobbyList _lobbyListNone;
         private Button _readyButton;
         private Billboard _sandLogo;
         private PlayerClassButton _redSupportButton, _redDefenseButton, _redOffenseButton;
@@ -59,8 +58,6 @@ namespace Sand.GameState
             readyButtonRect.Y = (int)Game.BaseScreenSize.Y - readyButtonRect.Height - 50;
             _readyButton = new Button(Game, readyButtonRect, "Ready", new Color(0.1f, 0.7f, 0.1f));
             _readyButton.SetAction((a, userInfo) => Game.TransitionState(States.ReadyWait), null);
-
-            _lobbyListNone = new LobbyList(Game, Team.None) { X = 20, Y = (int)(logoSprite.Height + sandLogoOrigin.Y + 30) + 40 };
 
             var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 128,
                                                 sandLogoOrigin.Y + logoSprite.Height + 32);
@@ -138,7 +135,6 @@ namespace Sand.GameState
         public override Dictionary<string, object> Leave()
         {
             Game.Components.Remove(_sandLogo);
-            Game.Components.Remove(_lobbyListNone);
             Game.Components.Remove(_readyButton);
 
             Game.Components.Remove(_redDefenseButton);

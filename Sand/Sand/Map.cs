@@ -11,9 +11,6 @@ namespace Sand
         private Texture2D _map;
         private Texture2D _mapImage;
         private Color[] _mapTexture;
-        private SpriteBatch _spriteBatch;
-
-        public int Width, Height;
 
         public Map(Game game, string name) : base(game)
         {
@@ -25,20 +22,13 @@ namespace Sand
         {
             base.LoadContent();
 
-            var sandGame = Game as Sand;
-
-            if(sandGame != null)
-            {
-                _spriteBatch = sandGame.SpriteBatch;
-            }
-
-            _map = sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}", Name));
-            _mapImage = sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}-image", Name));
+            _map = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}", Name));
+            _mapImage = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}-image", Name));
 
             Width = _map.Width;
             Height = _map.Height;
 
-            _mapTexture = new Color[Width * Height];
+            _mapTexture = new Color[(int)(Width * Height)];
             _map.GetData(_mapTexture);
         }
 
@@ -51,7 +41,7 @@ namespace Sand
         // (C) Microsoft, Corp (see License.md)
         public bool CollisionTest(Color[] pTexture, Rectangle rectangleA)
         {
-            var rectangleB = new Rectangle(0, 0, Width, Height);
+            var rectangleB = new Rectangle(0, 0, (int)Width, (int)Height);
 
             int top = Math.Max(rectangleA.Top, rectangleB.Top);
             int bottom = Math.Min(rectangleA.Bottom, rectangleB.Bottom);
