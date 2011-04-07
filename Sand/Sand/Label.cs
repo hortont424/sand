@@ -9,7 +9,7 @@ namespace Sand
         public float Y { get; set; }
 
         private SpriteBatch _spriteBatch;
-        private readonly string _text;
+        public string Text;
         private readonly string _fontName;
 
         public Label(Game game, float x, float y, string text) : base(game)
@@ -17,7 +17,7 @@ namespace Sand
             X = x;
             Y = y;
 
-            _text = text;
+            Text = text;
             _fontName = "Calibri24";
         }
 
@@ -44,9 +44,9 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            Vector2 textSize = Storage.Font(_fontName).MeasureString(_text);
+            Vector2 textSize = Storage.Font(_fontName).MeasureString(Text);
             Vector2 textOrigin = textSize / 2;
-            _spriteBatch.DrawString(Storage.Font(_fontName), _text,
+            _spriteBatch.DrawString(Storage.Font(_fontName), Text,
                                     new Vector2(X, Y),
                                     Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
         }

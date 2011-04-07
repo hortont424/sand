@@ -7,7 +7,7 @@ namespace Sand
 {
     internal class Button : Actor
     {
-        private Rectangle _bounds;
+        public Rectangle Bounds;
         private SpriteBatch _spriteBatch;
         private bool _hovered;
         private bool _clicked;
@@ -26,7 +26,7 @@ namespace Sand
 
         public Button(Game game, Rectangle bounds, string text) : base(game)
         {
-            _bounds = bounds;
+            Bounds = bounds;
             _text = text;
             _sprite = null;
             _action = null;
@@ -40,10 +40,10 @@ namespace Sand
 
         public Button(Game game, Vector2 origin, Texture2D sprite) : base(game)
         {
-            _bounds.X = (int)origin.X;
-            _bounds.Y = (int)origin.Y;
-            _bounds.Width = sprite.Width + 12;
-            _bounds.Height = sprite.Height + 12;
+            Bounds.X = (int)origin.X;
+            Bounds.Y = (int)origin.Y;
+            Bounds.Width = sprite.Width + 12;
+            Bounds.Height = sprite.Height + 12;
 
             _sprite = sprite;
 
@@ -103,7 +103,7 @@ namespace Sand
 
             if(_action != null)
             {
-                if(_bounds.Intersects(new Rectangle((int)sandGame.MouseLocation.X, (int)sandGame.MouseLocation.Y, 1, 1)))
+                if(Bounds.Intersects(new Rectangle((int)sandGame.MouseLocation.X, (int)sandGame.MouseLocation.Y, 1, 1)))
                 {
                     _hovered = true;
                 }
@@ -135,10 +135,10 @@ namespace Sand
             const int borderRadius = 3;
 
             _spriteBatch.Draw(Storage.Sprite("pixel"),
-                              new Rectangle(_bounds.X, _bounds.Y, _bounds.Width, _bounds.Height), borderColor);
+                              new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height), borderColor);
             _spriteBatch.Draw(Storage.Sprite("pixel"),
-                              new Rectangle(_bounds.X + borderRadius, _bounds.Y + borderRadius,
-                                            _bounds.Width - (2 * borderRadius), _bounds.Height - (2 * borderRadius)),
+                              new Rectangle(Bounds.X + borderRadius, Bounds.Y + borderRadius,
+                                            Bounds.Width - (2 * borderRadius), Bounds.Height - (2 * borderRadius)),
                               fillColor);
 
             if(_text != null)
@@ -146,14 +146,14 @@ namespace Sand
                 Vector2 textSize = Storage.Font("Calibri24").MeasureString(_text);
                 Vector2 textOrigin = textSize / 2;
                 _spriteBatch.DrawString(Storage.Font("Calibri24"), _text,
-                                        new Vector2(_bounds.X + (_bounds.Width / 2),
-                                                    _bounds.Y + (_bounds.Height / 2) + 2),
+                                        new Vector2(Bounds.X + (Bounds.Width / 2),
+                                                    Bounds.Y + (Bounds.Height / 2) + 2),
                                         Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
             }
            
             if(_sprite != null)
             {
-                _spriteBatch.Draw(_sprite, new Vector2(_bounds.X + 6, _bounds.Y + 6), TeamColor);
+                _spriteBatch.Draw(_sprite, new Vector2(Bounds.X + 6, Bounds.Y + 6), TeamColor);
             }
         }
     }
