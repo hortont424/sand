@@ -133,7 +133,10 @@ namespace Sand
                 }
                 else
                 {
-                    teamColor = Color.White;
+                    double hue, saturation, value;
+                    SandColor.ToHSV(teamColor, out hue, out saturation, out value);
+
+                    teamColor = SandColor.FromHSV(hue, saturation, Math.Max(value - 0.5, 0.0));
                 }
             }
 
