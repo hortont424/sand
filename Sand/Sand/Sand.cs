@@ -117,6 +117,7 @@ namespace Sand
             GlobalTransformMatrix = Matrix.CreateScale(screenScalingFactor);
 
             Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
+            Storage.AddFont("Calibri24Bold", Content.Load<SpriteFont>("Fonts/Calibri24Bold"));
             Storage.AddFont("Calibri48Bold", Content.Load<SpriteFont>("Fonts/Calibri48Bold"));
             Storage.AddFont("Gotham24", Content.Load<SpriteFont>("Fonts/Gotham24"));
 

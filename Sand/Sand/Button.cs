@@ -21,6 +21,7 @@ namespace Sand
         private Texture2D _sprite;
         public Color TeamColor;
         private bool _haveInitialized;
+        public bool AcceptsClick = true;
 
         public delegate void Action(object sender, object userInfo);
 
@@ -58,7 +59,8 @@ namespace Sand
             BaseColor = baseColor;
         }
 
-        public Button(Game game, Vector2 origin, Texture2D sprite, Color teamColor, Color baseColor) : this(game, origin, sprite, baseColor)
+        public Button(Game game, Vector2 origin, Texture2D sprite, Color teamColor, Color baseColor)
+            : this(game, origin, sprite, baseColor)
         {
             TeamColor = teamColor;
         }
@@ -108,20 +110,28 @@ namespace Sand
                     _hovered = true;
                 }
 
-                var oldClicked = _clicked;
-                _clicked = _hovered && (mouse.LeftButton == ButtonState.Pressed);
-
-                if(!oldClicked && _clicked)
+                if (AcceptsClick)
                 {
-                    if (_haveInitialized)
+                    var oldClicked = _clicked;
+                    _clicked = _hovered && (mouse.LeftButton == ButtonState.Pressed);
+
+                    if(!oldClicked && _clicked)
                     {
-                        _action(this, _actionUserInfo);
+                        if(_haveInitialized)
+                        {
+
+                            _action(this, _actionUserInfo);
+
+                        }
+                        else
+                        {
+                            _hovered = false;
+                        }
                     }
-                    else
-                    {
-                        _hovered = false;
-                    }
-                    
+                }
+                else
+                {
+                    _clicked = false;
                 }
             }
 
@@ -150,7 +160,7 @@ namespace Sand
                                                     Bounds.Y + (Bounds.Height / 2) + 2),
                                         Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
             }
-           
+
             if(_sprite != null)
             {
                 _spriteBatch.Draw(_sprite, new Vector2(Bounds.X + 6, Bounds.Y + 6), TeamColor);
