@@ -106,7 +106,8 @@ namespace Sand.Tools
                             Active = false;
 
                             _inCooldown = true;
-                            _cooldownTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, 2));
+                            _cooldownTime =
+                                new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, 2));
                         }
                     }
                     else
@@ -127,9 +128,9 @@ namespace Sand.Tools
 
         private void RechargeTick()
         {
-            if (_inCooldown)
+            if(_inCooldown)
             {
-                if (Storage.CurrentTime.TotalGameTime.Ticks > _cooldownTime.Ticks)
+                if(Storage.CurrentTime.TotalGameTime.Ticks > _cooldownTime.Ticks)
                 {
                     _inCooldown = false;
                 }
@@ -138,7 +139,7 @@ namespace Sand.Tools
             {
                 Energy += EnergyRechargeRate;
 
-                if (Energy > TotalEnergy)
+                if(Energy > TotalEnergy)
                 {
                     Energy = TotalEnergy;
                 }
@@ -146,6 +147,10 @@ namespace Sand.Tools
         }
 
         protected virtual void Activate()
+        {
+        }
+
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
         }
 

@@ -24,7 +24,6 @@ namespace Sand
         private bool _invisible;
         private Texture2D _sprite;
         protected TimeSpan _unstunTime;
-        private bool _stunned;
 
         public Team Team
         {
@@ -79,17 +78,7 @@ namespace Sand
             }
         }
 
-        public bool Stunned
-        {
-            get
-            {
-                return _stunned;
-            }
-            set
-            {
-                _stunned = value;
-            }
-        }
+        public bool Stunned { get; set; }
 
         public Player(Game game, NetworkGamer gamer) : base(game)
         {
@@ -130,12 +119,12 @@ namespace Sand
                 if(Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
                 {
                     _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)X, (int)Y, 1, 3000), null,
-                              teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+                                      teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
                 else
                 {
                     _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)X, (int)Y, 2, 3000), null,
-                              teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+                                      teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
             }
 
@@ -220,7 +209,6 @@ namespace Sand
             if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
             {
                 Stunned = false;
-
             }
         }
 
@@ -277,7 +265,13 @@ namespace Sand
 
             if(newMouseState.LeftButton != _oldMouseState.LeftButton)
             {
+                // TODO: make sure cursor is in our window!!
                 Weapon.Active = (newMouseState.LeftButton == ButtonState.Pressed);
+            }
+
+            if(newKeyState.IsKeyDown(Utility.Key) != _oldKeyState.IsKeyDown(Utility.Key))
+            {
+                Utility.Active = newKeyState.IsKeyDown(Utility.Key);
             }
 
             _oldKeyState = newKeyState;
@@ -357,7 +351,30 @@ namespace Sand
                 Stunned = true;
             }
 
-            _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, (int)(energy / 5)));
+            _unstunTime =
+                new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, (int)(energy / 5)));
+        }
+
+        public override void Draw(GameTime gameTime)
+        {
+            base.Draw(gameTime);
+
+            if(Utility != null)
+            {
+                Utility.Draw(_spriteBatch);
+            }
+
+            if(Mobility != null)
+            {
+                Mobility.Draw(_spriteBatch);
+            }
+
+            if(Weapon != null)
+            {
+                Weapon.Draw(_spriteBatch);
+            }
+
+            // TODO: drawing for primaries
         }
     }
 }
