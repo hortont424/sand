@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Input;
@@ -21,12 +22,10 @@ namespace Sand.GameState
 
             _sandLogo = new Billboard(Game, sandLogoOrigin, logoSprite);
             _readyLabel = new Label(Game, Game.BaseScreenSize.X * 0.5f, Game.BaseScreenSize.Y * 0.5f,
-                                    "Click to Begin", "Calibri48Bold");
+                                    "Click to Begin", "Calibri48Bold") { PositionGravity = Gravity.Center };
 
             Game.Components.Add(_sandLogo);
             Game.Components.Add(_readyLabel);
-
-            //Game.Components.Add(new Label(Game, Game.BaseScreenSize.X * 0.5f, 20.0f, string.Format("Adapter: {0}", Game.Graphics.GraphicsDevice.Adapter.DeviceId), "Calibri24"));
         }
 
         public override void Update()

@@ -7,7 +7,6 @@ namespace Sand
 {
     internal class Button : Actor
     {
-        public Rectangle Bounds;
         private SpriteBatch _spriteBatch;
         private bool _hovered;
         private bool _clicked;

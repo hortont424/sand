@@ -5,17 +5,14 @@ namespace Sand
 {
     public class Label : Actor
     {
-        public float X { get; set; }
-        public float Y { get; set; }
-
         private SpriteBatch _spriteBatch;
         public string Text;
         private readonly string _fontName;
 
         public Label(Game game, float x, float y, string text) : base(game)
         {
-            X = x;
-            Y = y;
+            Bounds.X = (int)x;
+            Bounds.Y = (int)y;
 
             Text = text;
             _fontName = "Calibri24";
@@ -45,9 +42,9 @@ namespace Sand
         public override void Draw(GameTime gameTime)
         {
             Vector2 textSize = Storage.Font(_fontName).MeasureString(Text);
-            Vector2 textOrigin = textSize / 2;
+            Vector2 textOrigin = textSize * Gravity.Offset(PositionGravity);
             _spriteBatch.DrawString(Storage.Font(_fontName), Text,
-                                    new Vector2(X, Y),
+                                    new Vector2(Bounds.X, Bounds.Y), 
                                     Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
         }
     }

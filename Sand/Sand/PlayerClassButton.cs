@@ -17,7 +17,8 @@ namespace Sand
             Button = new Button(game, origin, Teams.SpriteForClass(cls, true), Teams.ColorForTeam(team),
                                 Storage.Color("NeutralTeam"));
 
-            Label = new Label(game, origin.X + (Button.Bounds.Width / 2.0f), origin.Y + (Button.Bounds.Height / 2.0f), "", "Calibri24Bold") { DrawOrder = 10000 };
+            Label = new Label(game, origin.X + (Button.Bounds.Width / 2.0f), origin.Y + (Button.Bounds.Height / 2.0f),
+                              "", "Calibri24Bold") { DrawOrder = 10000, PositionGravity = Gravity.Center };
 
             Children.Add(Button);
             Children.Add(Label);
