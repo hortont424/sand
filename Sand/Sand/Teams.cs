@@ -4,13 +4,28 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand
 {
+    public enum Team
+    {
+        None,
+        Red,
+        Blue
+    } ;
+
+    public enum Class
+    {
+        None,
+        Defense,
+        Offense,
+        Support
+    } ;
+
     public class Teams
     {
         public static Color ColorForTeam(Team team)
         {
             string colorName;
 
-            switch (team)
+            switch(team)
             {
                 case Team.None:
                     colorName = "NeutralTeam";
@@ -55,7 +70,7 @@ namespace Sand
 
         public static Texture2D SpriteForClass(Class cls)
         {
-            return Teams.SpriteForClass(cls, false);
+            return SpriteForClass(cls, false);
         }
     }
 }

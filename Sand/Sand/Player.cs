@@ -11,21 +11,6 @@ using Sand.Tools.Weapons;
 
 namespace Sand
 {
-    public enum Team
-    {
-        None,
-        Red,
-        Blue
-    } ;
-
-    public enum Class
-    {
-        None,
-        Defense,
-        Offense,
-        Support
-    } ;
-
     public class Player : Actor
     {
         public NetworkGamer Gamer;
