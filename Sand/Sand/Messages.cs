@@ -63,7 +63,7 @@ namespace Sand
 
             if(player.Stunned)
             {
-                Storage.PacketWriter.Write((UInt64)player.UnstunTime.Ticks);
+                Storage.PacketWriter.Write((UInt64)player.StunTimeRemaining.Ticks);
             }
         }
 
@@ -76,7 +76,7 @@ namespace Sand
 
             if(player.Stunned)
             {
-                player.UnstunTime = new TimeSpan((long)Storage.PacketReader.ReadUInt64());
+                player.StunTimeRemaining = new TimeSpan((long)Storage.PacketReader.ReadUInt64());
             }
         }
 
