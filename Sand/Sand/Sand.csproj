@@ -140,12 +140,14 @@
     <Compile Include="GameState\LoginState.cs" />
     <Compile Include="GameState\PlayState.cs" />
     <Compile Include="GameState\ReadyWaitState.cs" />
+    <Compile Include="LocalPlayer.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerClassButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="RemotePlayer.cs" />
     <Compile Include="Sand.cs" />
     <Compile Include="SandColor.cs" />
     <Compile Include="Storage.cs" />
