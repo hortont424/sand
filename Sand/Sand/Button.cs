@@ -94,6 +94,11 @@ namespace Sand
         {
             MouseState mouse = Mouse.GetState();
 
+            if (!Storage.AcceptInput)
+            {
+                return;
+            }
+
             var sandGame = Game as Sand;
 
             _hovered = false;

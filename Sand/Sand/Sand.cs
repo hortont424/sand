@@ -185,6 +185,7 @@ namespace Sand
         protected override void Update(GameTime gameTime)
         {
             Storage.CurrentTime = gameTime;
+            Storage.AcceptInput = IsActive;
 
             MouseState mouse = Mouse.GetState();
             MouseLocation = Vector2.Transform(new Vector2(mouse.X, mouse.Y),
