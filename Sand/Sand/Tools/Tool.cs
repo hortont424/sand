@@ -82,7 +82,7 @@ namespace Sand.Tools
 
             _energyAnimation = new Animation { CompletedDelegate = EnergyTick };
 
-            _energyAnimationGroup = new AnimationGroup(_energyAnimation, 100) { Loops = true };
+            _energyAnimationGroup = new AnimationGroup(_energyAnimation, 10) { Loops = true };
 
             Storage.AnimationController.AddGroup(_energyAnimationGroup);
         }

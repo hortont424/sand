@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -7,7 +8,11 @@ namespace Sand.Tools.Utilities
 {
     public class Shield : Tool
     {
-        private SoundEffectInstance _shieldSound;
+        private readonly SoundEffectInstance _shieldSound;
+        private Animation _animation;
+        private AnimationGroup _animationGroup;
+
+        public float GrayLevel { get; set; }
 
         public Shield(LocalPlayer player)
             : base(player)
@@ -25,6 +30,10 @@ namespace Sand.Tools.Utilities
 
             _shieldSound = Storage.Sound("Shield").CreateInstance();
             _shieldSound.IsLooped = true;
+
+            _animation = new Animation(this, "GrayLevel", 0.5f, 1.0f);
+            _animationGroup = new AnimationGroup(_animation, 200) { Loops = true };
+            Storage.AnimationController.AddGroup(_animationGroup);
         }
 
         protected override void Activate()
@@ -44,7 +53,8 @@ namespace Sand.Tools.Utilities
                 var sprite = Storage.Sprite("ShieldCircle");
 
                 spriteBatch.Draw(sprite, new Vector2((int)Player.X, (int)Player.Y), null,
-                                 Color.White, 0.0f, new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.0f,
+                                 new Color(GrayLevel, GrayLevel, GrayLevel), 0.0f,
+                                 new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.0f,
                                  SpriteEffects.None, 0.0f);
             }
         }

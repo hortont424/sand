@@ -14,6 +14,9 @@ namespace Sand
         private readonly EaseFunctionDelegate _easeFunc;
         private readonly EasingType _easeType;
 
+        public bool Reverse;
+        public string PropertyName;
+
         public AnimationCompletedDelegate CompletedDelegate { get; set; }
 
         public delegate float EaseFunctionDelegate(double linearStep, EasingType type);
@@ -46,6 +49,7 @@ namespace Sand
                          EasingType easeType)
         {
             _property = obj.GetType().GetProperty(propName);
+            PropertyName = propName;
             _obj = obj;
             _startValue = startValue;
             _endValue = endValue;
@@ -57,10 +61,23 @@ namespace Sand
         {
             if(_obj != null)
             {
+                float fromValue, toValue;
+
+                if(!Reverse)
+                {
+                    fromValue = _startValue;
+                    toValue = _endValue;
+                }
+                else
+                {
+                    fromValue = _endValue;
+                    toValue = _startValue;
+                }
+
                 Type propertyType = _property.PropertyType;
                 var easingProgress = _easeFunc(newProgress, _easeType);
                 _property.SetValue(_obj,
-                                   Convert.ChangeType(_startValue + (easingProgress * (_endValue - _startValue)),
+                                   Convert.ChangeType(fromValue + (easingProgress * (toValue - fromValue)),
                                                       propertyType),
                                    null);
             }
@@ -99,6 +116,12 @@ namespace Sand
                     if(Loops)
                     {
                         _progress = 0.0;
+                        StartTime = Storage.CurrentTime.TotalGameTime.TotalMilliseconds;
+
+                        foreach(var animation in Animations)
+                        {
+                            animation.Reverse = !animation.Reverse;
+                        }
                     }
                     else
                     {
@@ -177,15 +200,15 @@ namespace Sand
                     if(animationGroup.Paused)
                     {
                         animationGroup.StartTime += gameTime.TotalGameTime.TotalMilliseconds - animationGroup.LastUpdate;
-                        animationGroup.LastUpdate = gameTime.TotalGameTime.TotalMilliseconds;
                     }
                     else
                     {
                         animationGroup.Progress =
                             (gameTime.TotalGameTime.TotalMilliseconds - animationGroup.StartTime) /
                             animationGroup.Duration;
-                        animationGroup.LastUpdate = gameTime.TotalGameTime.TotalMilliseconds;
                     }
+
+                    animationGroup.LastUpdate = gameTime.TotalGameTime.TotalMilliseconds;
                 }
             }
         }
