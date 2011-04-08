@@ -204,6 +204,12 @@ namespace Sand
                 Stunned = true;
             }
 
+            if(Stunned)
+            {
+                Storage.Sound("Shock").CreateInstance().Play();
+                Messages.SendPlaySoundMessage(this, "Shock", this.Gamer.Id, true);
+            }
+
             StunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));
             _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
         }

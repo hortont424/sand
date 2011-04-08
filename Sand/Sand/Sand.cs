@@ -142,6 +142,7 @@ namespace Sand
 
             Storage.AddSprite("Cannon", Content.Load<Texture2D>("Textures/Tools/Weapons/Cannon"));
             Storage.AddSound("Cannon", Content.Load<SoundEffect>("Sounds/Cannon"));
+            Storage.AddSound("Shock", Content.Load<SoundEffect>("Sounds/Shock"));
 
             Storage.AddSprite("Shield", Content.Load<Texture2D>("Textures/Tools/Utilities/Shield"));
             Storage.AddSprite("ShieldCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/ShieldCircle"));
