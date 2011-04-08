@@ -358,8 +358,8 @@ namespace Sand
                 Stunned = true;
             }
 
-            _unstunTime =
-                new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, (int)(energy / 5)));
+            StunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));
+            _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
         }
 
         public override void Draw(GameTime gameTime)
