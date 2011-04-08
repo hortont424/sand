@@ -21,7 +21,7 @@ namespace Sand.GameState
             Storage.NetworkSession.GameEnded += GameEnded;
 
             _readyLabel = new Label(Game, Game.BaseScreenSize.X / 2.0f, Game.BaseScreenSize.Y / 2.0f, "Waiting for Players",
-                                           "Calibri48Bold") { DrawOrder = 1000 };
+                                           "Calibri48Bold") { DrawOrder = 1000, PositionGravity = Gravity.Center };
             Game.Components.Add(_readyLabel);
         }
 
