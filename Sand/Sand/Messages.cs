@@ -58,21 +58,24 @@ namespace Sand
 
             Storage.PacketWriter.Write(player.X);
             Storage.PacketWriter.Write(player.Y);
-            Storage.PacketWriter.Write((double)player.Angle);
+            Storage.PacketWriter.Write(player.Angle);
+            Storage.PacketWriter.Write(player.Stunned);
         }
 
         private static void ProcessUpdatePlayerStateMessage(Player player)
         {
             player.X = Storage.PacketReader.ReadSingle();
             player.Y = Storage.PacketReader.ReadSingle();
-            player.Angle = (float)Storage.PacketReader.ReadDouble();
+            player.Angle = Storage.PacketReader.ReadSingle();
+            player.Stunned = Storage.PacketReader.ReadBoolean();
         }
 
         private static void DiscardUpdatePlayerStateMessage()
         {
             Storage.PacketReader.ReadSingle();
             Storage.PacketReader.ReadSingle();
-            Storage.PacketReader.ReadDouble();
+            Storage.PacketReader.ReadSingle();
+            Storage.PacketReader.ReadBoolean();
         }
 
         #endregion
