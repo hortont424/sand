@@ -1,9 +1,13 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Sand.Tools.Weapons
 {
     public class Cannon : Tool
     {
+        private bool _drawCannonNextFrame;
+
         public Cannon(LocalPlayer player) : base(player)
         {
             Name = "Cannon";
@@ -28,6 +32,8 @@ namespace Sand.Tools.Weapons
             var cannonRay = Player.ForwardRay();
             Player closestIntersectionPlayer = null;
             float ? closestIntersectionDistance = null;
+
+            _drawCannonNextFrame = true;
 
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {
@@ -59,7 +65,27 @@ namespace Sand.Tools.Weapons
 
             if(closestIntersectionDistance != null)
             {
-                Messages.SendStunMessage(Player, closestIntersectionPlayer, (int)EnergyConsumptionRate, Player.Gamer.Id, true);
+                Messages.SendStunMessage(Player, closestIntersectionPlayer, (int)EnergyConsumptionRate, Player.Gamer.Id,
+                                         true);
+            }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if(_drawCannonNextFrame)
+            {
+                if(Player.Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
+                {
+                    spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Player.X, (int)Player.Y, 3, 3000), null,
+                                     Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+                }
+                else
+                {
+                    spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Player.X, (int)Player.Y, 4, 3000), null,
+                                     Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+                }
+
+                _drawCannonNextFrame = false;
             }
         }
     }
