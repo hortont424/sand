@@ -105,13 +105,11 @@ namespace Sand
                 {
                     return;
                 }
-                else
-                {
-                    double hue, saturation, value;
-                    SandColor.ToHSV(teamColor, out hue, out saturation, out value);
 
-                    teamColor = SandColor.FromHSV(hue, saturation, Math.Max(value - 0.5, 0.0));
-                }
+                double hue, saturation, value;
+                SandColor.ToHSV(teamColor, out hue, out saturation, out value);
+
+                teamColor = SandColor.FromHSV(hue, saturation, Math.Max(value - 0.5, 0.0));
             }
 
             if(this is LocalPlayer)
@@ -159,11 +157,6 @@ namespace Sand
     {
         public RemotePlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
         }
     }
 
@@ -274,13 +267,17 @@ namespace Sand
                 Utility.Active = newKeyState.IsKeyDown(Utility.Key);
             }
 
+            if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
+            {
+                Stun(25.0f);
+            }
+
             _oldKeyState = newKeyState;
             _oldMouseState = newMouseState;
         }
 
         private void UpdateAngle()
         {
-            var mouse = Mouse.GetState();
             var sandGame = Game as Sand;
 
             Angle = (float)Math.Atan2(sandGame.MouseLocation.Y - Y, sandGame.MouseLocation.X - X) +
@@ -289,7 +286,7 @@ namespace Sand
 
         private void UpdatePosition(GameTime gameTime)
         {
-            Vector2 newPosition = new Vector2(X, Y);
+            var newPosition = new Vector2(X, Y);
             var sandGame = Game as Sand;
             var timestep = (float)(gameTime.ElapsedGameTime.TotalSeconds);
 
