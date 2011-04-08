@@ -19,11 +19,12 @@ namespace Sand
 
         public float Angle;
 
+        public TimeSpan UnstunTime;
+
         private Class _class;
         private Team _team;
         private bool _invisible;
         private Texture2D _sprite;
-        protected TimeSpan _unstunTime;
         private readonly Random _random;
 
         public Team Team
@@ -101,7 +102,7 @@ namespace Sand
             var teamColor =
                 Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
 
-            var shakeAmplitude = (_unstunTime.TotalMilliseconds - Storage.CurrentTime.TotalGameTime.TotalMilliseconds) / 1000;
+            var shakeAmplitude = (UnstunTime.TotalMilliseconds - Storage.CurrentTime.TotalGameTime.TotalMilliseconds) / 1000;
             var virtualX = Stunned ? X + ((shakeAmplitude / 2.0f) - (_random.Next() % shakeAmplitude)) : X;
             var virtualY = Stunned ? Y + ((shakeAmplitude / 2.0f) - (_random.Next() % shakeAmplitude)) : Y;
 
@@ -205,7 +206,7 @@ namespace Sand
 
         private void UpdateStun(GameTime gameTime)
         {
-            if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
+            if(Stunned && gameTime.TotalGameTime.Ticks > UnstunTime.Ticks)
             {
                 Stunned = false;
             }
@@ -354,7 +355,7 @@ namespace Sand
                 Stunned = true;
             }
 
-            _unstunTime =
+            UnstunTime =
                 new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, (int)(energy / 5)));
         }
 

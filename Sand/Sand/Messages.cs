@@ -60,6 +60,11 @@ namespace Sand
             Storage.PacketWriter.Write(player.Y);
             Storage.PacketWriter.Write(player.Angle);
             Storage.PacketWriter.Write(player.Stunned);
+
+            if(player.Stunned)
+            {
+                Storage.PacketWriter.Write((UInt64)player.UnstunTime.Ticks);
+            }
         }
 
         private static void ProcessUpdatePlayerStateMessage(Player player)
@@ -68,6 +73,11 @@ namespace Sand
             player.Y = Storage.PacketReader.ReadSingle();
             player.Angle = Storage.PacketReader.ReadSingle();
             player.Stunned = Storage.PacketReader.ReadBoolean();
+
+            if(player.Stunned)
+            {
+                player.UnstunTime = new TimeSpan((long)Storage.PacketReader.ReadUInt64());
+            }
         }
 
         private static void DiscardUpdatePlayerStateMessage()
@@ -75,7 +85,12 @@ namespace Sand
             Storage.PacketReader.ReadSingle();
             Storage.PacketReader.ReadSingle();
             Storage.PacketReader.ReadSingle();
-            Storage.PacketReader.ReadBoolean();
+            var stunned = Storage.PacketReader.ReadBoolean();
+
+            if(stunned)
+            {
+                Storage.PacketReader.ReadUInt64();
+            }
         }
 
         #endregion
