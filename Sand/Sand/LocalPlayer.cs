@@ -49,7 +49,7 @@ namespace Sand
 
         private void UpdateStun(GameTime gameTime)
         {
-            StunTimeRemaining = new TimeSpan(gameTime.TotalGameTime.Ticks - _unstunTime.Ticks);
+            StunTimeRemaining = new TimeSpan(_unstunTime.Ticks - gameTime.TotalGameTime.Ticks);
 
             if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
             {

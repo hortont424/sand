@@ -97,9 +97,9 @@ namespace Sand
             var teamColor =
                 Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
 
-            var shakeAmplitude = StunTimeRemaining.TotalMilliseconds / 1000;
-            var virtualX = Stunned ? X + ((shakeAmplitude / 2.0f) - (_random.Next() % shakeAmplitude)) : X;
-            var virtualY = Stunned ? Y + ((shakeAmplitude / 2.0f) - (_random.Next() % shakeAmplitude)) : Y;
+            int shakeAmplitude = (int)(StunTimeRemaining.TotalMilliseconds / 1000) + 1;
+            var virtualX = Stunned ? X + _random.Next(-shakeAmplitude, shakeAmplitude) : X;
+            var virtualY = Stunned ? Y + _random.Next(-shakeAmplitude, shakeAmplitude) : Y;
 
             if(Invisible)
             {
