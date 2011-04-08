@@ -185,6 +185,10 @@ namespace Sand
                     }
                 }
             }
+            else
+            {
+                _velocity.X = _velocity.Y = 0;
+            }
         }
 
         public override void Stun(float energy)
