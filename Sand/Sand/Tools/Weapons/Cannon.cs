@@ -76,12 +76,12 @@ namespace Sand.Tools.Weapons
             {
                 if(Player.Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
                 {
-                    spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Player.X, (int)Player.Y, 3, 3000), null,
+                    spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Player.X, (int)Player.Y, 6, 3000), null,
                                      Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
                 else
                 {
-                    spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Player.X, (int)Player.Y, 4, 3000), null,
+                    spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Player.X, (int)Player.Y, 7, 3000), null,
                                      Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
 

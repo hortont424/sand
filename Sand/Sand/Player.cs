@@ -24,6 +24,7 @@ namespace Sand
         private bool _invisible;
         private Texture2D _sprite;
         protected TimeSpan _unstunTime;
+        private readonly Random _random;
 
         public Team Team
         {
@@ -92,12 +93,17 @@ namespace Sand
 
             _texture = new Color[(int)(Width * Height)];
             Class = Class.None;
+            _random = new Random();
         }
 
         public override void Draw(GameTime gameTime)
         {
             var teamColor =
                 Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
+
+            var shakeAmplitude = (_unstunTime.TotalMilliseconds - Storage.CurrentTime.TotalGameTime.TotalMilliseconds) / 1000;
+            var virtualX = Stunned ? X + ((shakeAmplitude / 2.0f) - (_random.Next() % shakeAmplitude)) : X;
+            var virtualY = Stunned ? Y + ((shakeAmplitude / 2.0f) - (_random.Next() % shakeAmplitude)) : Y;
 
             if(Invisible)
             {
@@ -116,17 +122,17 @@ namespace Sand
             {
                 if(Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
                 {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)X, (int)Y, 1, 3000), null,
+                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 1, 3000), null,
                                       teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
                 else
                 {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)X, (int)Y, 2, 3000), null,
+                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 2, 3000), null,
                                       teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
             }
 
-            _spriteBatch.Draw(_sprite, new Rectangle((int)X, (int)Y, (int)Width, (int)Height),
+            _spriteBatch.Draw(_sprite, new Rectangle((int)virtualX, (int)virtualY, (int)Width, (int)Height),
                               null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
         }
