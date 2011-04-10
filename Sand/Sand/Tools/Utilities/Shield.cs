@@ -39,6 +39,9 @@ namespace Sand.Tools.Utilities
         protected override void Activate()
         {
             _shieldSound.Play();
+            _shieldSound.Volume = 0.0f;
+
+            Storage.AnimationController.Add(new Animation(_shieldSound, "Volume", 0.0f, 1.0f), 600);
         }
 
         protected override void Deactivate()
