@@ -143,6 +143,7 @@
     <Compile Include="LocalPlayer.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Messages.cs" />
+    <Compile Include="ParticleSystem.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerClassButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

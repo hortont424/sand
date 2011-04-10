@@ -26,6 +26,8 @@ namespace Sand
         private KeyboardState _oldKeyState;
         private Vector2 _velocity;
 
+        private ParticleSystem _particles;
+
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             Drag = new Vector2(1.5f, 1.5f);
@@ -35,6 +37,9 @@ namespace Sand
             Mobility = new BoostDrive(this);
             Weapon = new Cannon(this);
             Utility = new Shield(this);
+
+            _particles = new ParticleSystem(game, this);
+            Children.Add(_particles);
         }
 
         public override void Update(GameTime gameTime)
@@ -45,6 +50,20 @@ namespace Sand
             UpdateInput(gameTime);
             UpdateAngle();
             UpdatePosition(gameTime);
+
+            // TODO: move into BoostDrive
+            if (Mobility is BoostDrive && Mobility.Active)
+            {
+                _particles.Emit(100, (p) =>
+                                     {
+                                         var velocity = new Vector2(-_velocity.X + _random.Next(-50, 50),
+                                                                    -_velocity.Y + _random.Next(-50, 50));
+
+                                         p.LifeRemaining = p.Lifetime = _random.Next(150, 350);
+                                         p.Position = new Vector2(X + _random.Next(-4, 4), Y + _random.Next(-4, 4));
+                                         p.Velocity = velocity;
+                                     });
+            }
         }
 
         private void UpdateStun(GameTime gameTime)

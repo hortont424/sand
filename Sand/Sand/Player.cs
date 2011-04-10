@@ -20,7 +20,7 @@ namespace Sand
         private Team _team;
         private bool _invisible;
         private Texture2D _sprite;
-        private readonly Random _random;
+        protected readonly Random _random;
 
         public Team Team
         {
@@ -94,8 +94,7 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            var teamColor =
-                Storage.Color(Team == Team.None ? "NeutralTeam" : ((Team == Team.Red) ? "RedTeam" : "BlueTeam"));
+            var teamColor = Teams.ColorForTeam(Team);
 
             int shakeAmplitude = (int)(StunTimeRemaining.TotalMilliseconds / 1000) + 1;
             var virtualX = Stunned ? X + _random.Next(-shakeAmplitude, shakeAmplitude) : X;
