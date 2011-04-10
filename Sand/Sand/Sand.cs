@@ -212,6 +212,11 @@ namespace Sand
                 Exit();
             }
 
+            if(newKeyState.IsKeyDown(Keys.F) && newKeyState.IsKeyDown(Keys.LeftControl) && !_oldKeyState.IsKeyDown(Keys.F))
+            {
+                Graphics.ToggleFullScreen();
+            }
+
             _oldKeyState = newKeyState;
         }
 
