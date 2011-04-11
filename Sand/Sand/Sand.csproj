@@ -129,6 +129,8 @@
     <Compile Include="Animation.cs" />
     <Compile Include="Billboard.cs" />
     <Compile Include="Button.cs" />
+    <Compile Include="Crosshair.cs" />
+    <Compile Include="GameState\LoadoutState.cs" />
     <Compile Include="Gravity.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="Easing.cs" />

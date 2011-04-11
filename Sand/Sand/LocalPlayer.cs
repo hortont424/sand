@@ -48,8 +48,8 @@ namespace Sand
 
             UpdateStun(gameTime);
             UpdateInput(gameTime);
-            UpdateAngle();
             UpdatePosition(gameTime);
+            UpdateAngle();
 
             // TODO: move into BoostDrive
             if (Mobility is BoostDrive && Mobility.Active)

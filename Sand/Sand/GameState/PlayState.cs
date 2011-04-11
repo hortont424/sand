@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Sand.GameState
 {
     public class PlayState : GameState
     {
+        private Crosshair _crosshair;
+
         public PlayState(Sand game) : base(game)
         {
         }
@@ -13,6 +17,10 @@ namespace Sand.GameState
         public override void Enter(Dictionary<string, object> data)
         {
             var sandGame = Game;
+
+            Cursor.Hide();
+            _crosshair = new Crosshair(Game);
+            Game.Components.Add(_crosshair);
 
             foreach(var gamer in Storage.NetworkSession.AllGamers)
             {
@@ -66,6 +74,9 @@ namespace Sand.GameState
         public override Dictionary<string, object> Leave()
         {
             var sandGame = Game;
+
+            Cursor.Show();
+            Game.Components.Remove(_crosshair);
 
             foreach(var gamer in Storage.NetworkSession.AllGamers)
             {

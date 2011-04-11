@@ -19,7 +19,7 @@ namespace Sand
         private readonly Dictionary<States, GameState.GameState> _gameStateInstances;
 
         public Vector2 BaseScreenSize;
-        private Matrix GlobalTransformMatrix;
+        private Matrix _globalTransformMatrix;
         public Vector2 MouseLocation;
 
         public Map GameMap;
@@ -56,6 +56,7 @@ namespace Sand
             _gameStateInstances[States.AcquireSession] = new AcquireSessionState(this);
             _gameStateInstances[States.InitialReady] = new InitialReadyState(this);
             _gameStateInstances[States.Lobby] = new LobbyState(this);
+            _gameStateInstances[States.Loadout] = new LoadoutState(this);
             _gameStateInstances[States.ReadyWait] = new ReadyWaitState(this);
             _gameStateInstances[States.Play] = new PlayState(this);
 
@@ -114,7 +115,7 @@ namespace Sand
             float horScaling = GraphicsDevice.PresentationParameters.BackBufferWidth / BaseScreenSize.X;
             float verScaling = GraphicsDevice.PresentationParameters.BackBufferHeight / BaseScreenSize.Y;
             var screenScalingFactor = new Vector3(horScaling, verScaling, 1);
-            GlobalTransformMatrix = Matrix.CreateScale(screenScalingFactor);
+            _globalTransformMatrix = Matrix.CreateScale(screenScalingFactor);
 
             Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
             Storage.AddFont("Calibri24Bold", Content.Load<SpriteFont>("Fonts/Calibri24Bold"));
@@ -125,6 +126,8 @@ namespace Sand
             Storage.AddColor("RedTeam", new Color(0.760f, 0.207f, 1.0f));
             Storage.AddColor("BlueTeam", new Color(0.207f, 0.741f, 0.215f));
             Storage.AddColor("NeutralTeam", new Color(0.3f, 0.3f, 0.3f));
+
+            Storage.AddSprite("Crosshair", Content.Load<Texture2D>("Textures/Crosshair"));
 
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
             Storage.AddSprite("DefenseClass", Content.Load<Texture2D>("Textures/Classes/defense"));
@@ -190,7 +193,7 @@ namespace Sand
 
             MouseState mouse = Mouse.GetState();
             MouseLocation = Vector2.Transform(new Vector2(mouse.X, mouse.Y),
-                                              Matrix.Invert(GlobalTransformMatrix)); // TODO: cache inverse?
+                                              Matrix.Invert(_globalTransformMatrix)); // TODO: cache inverse?
 
             UpdateInput();
             UpdateState();
@@ -234,7 +237,7 @@ namespace Sand
         {
             GraphicsDevice.Clear(Color.Black);
 
-            SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, GlobalTransformMatrix);
+            SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, _globalTransformMatrix);
 
             if(!Guide.IsVisible)
             {

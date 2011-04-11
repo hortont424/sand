@@ -9,6 +9,7 @@ namespace Sand.GameState
         AcquireSession,
         InitialReady,
         Lobby,
+        Loadout,
         ReadyWait,
         Play
     }
