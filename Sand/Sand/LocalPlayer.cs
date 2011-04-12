@@ -27,6 +27,7 @@ namespace Sand
         private Vector2 _velocity;
 
         private ParticleSystem _particles;
+        private Vector2 _pureAcceleration;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
@@ -52,11 +53,15 @@ namespace Sand
             {
                 _particles.Emit(100, (p) =>
                                      {
-                                         var velocity = new Vector2(-_velocity.X + _random.Next(-50, 50),
-                                                                    -_velocity.Y + _random.Next(-50, 50));
+                                         var velocity = new Vector2(-_pureAcceleration.X * 0.2f + _random.Next(-70, 70),
+                                                                    -_pureAcceleration.Y * 0.2f + _random.Next(-70, 70));
 
                                          p.LifeRemaining = p.Lifetime = _random.Next(150, 350);
-                                         p.Position = new Vector2(X + _random.Next(-4, 4), Y + _random.Next(-4, 4));
+
+                                         var angle = (float)_random.NextDouble()*(Math.PI * 2.0f);
+                                         var length = (float)_random.Next(0, 6);
+
+                                         p.Position = new Vector2((float)(X + (length * Math.Cos(angle))), (float)(Y + (length * Math.Sin(angle))));
                                          p.Velocity = velocity;
                                      });
             }
@@ -153,6 +158,8 @@ namespace Sand
         {
             var newPosition = new Vector2(X, Y);
             var timestep = (float)(gameTime.ElapsedGameTime.TotalSeconds);
+
+            _pureAcceleration = Acceleration;
 
             Acceleration.X -= Drag.X * _velocity.X;
             Acceleration.Y -= Drag.Y * _velocity.Y;
