@@ -209,6 +209,7 @@ namespace Sand
         public override void Stun(float energy)
         {
             var shield = Utility as Shield;
+            var wasStunned = Stunned;
 
             if(shield != null)
             {
@@ -225,8 +226,13 @@ namespace Sand
                 Messages.SendPlaySoundMessage(this, "Shock", this.Gamer.Id, true);
             }
 
-            StunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));
-            _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
+            var newStunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));
+
+            if(!wasStunned || newStunTimeRemaining > StunTimeRemaining)
+            {
+                StunTimeRemaining = newStunTimeRemaining;
+                _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
+            }
         }
 
         public override void Draw(GameTime gameTime)
