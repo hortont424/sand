@@ -34,15 +34,17 @@ namespace Sand
 
             Graphics = new GraphicsDeviceManager(this)
                        {
-                           PreferredBackBufferWidth = (int)(0.9 * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width),
-                           PreferredBackBufferHeight = (int)(0.9 * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height),
+                           PreferredBackBufferWidth =
+                               (int)(0.9 * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width),
+                           PreferredBackBufferHeight =
+                               (int)(0.9 * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height),
                            GraphicsProfile = GraphicsProfile.Reach,
                            PreferMultiSampling = true,
                            PreferredDepthStencilFormat = DepthFormat.None
                        };
 
-            Graphics.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(GraphicsPreparingDeviceSettings);
-            
+            Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
+
             //Graphics.ToggleFullScreen();
 
             Content.RootDirectory = "Content";
@@ -69,7 +71,7 @@ namespace Sand
             Components.Add(Storage.AnimationController);
         }
 
-        void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        private void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
             if(e.GraphicsDeviceInformation.Adapter.DeviceId == 1065)
             {
@@ -225,8 +227,13 @@ namespace Sand
                 Exit();
             }
 
-            if(newKeyState.IsKeyDown(Keys.F) && newKeyState.IsKeyDown(Keys.LeftControl) && !_oldKeyState.IsKeyDown(Keys.F))
+            if(newKeyState.IsKeyDown(Keys.F) && newKeyState.IsKeyDown(Keys.LeftControl) &&
+               !_oldKeyState.IsKeyDown(Keys.F))
             {
+                // TODO: recompute scale matrix, etc., set correct size based on wether we're entering or leaving fullscreen, etc.
+
+                /*Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;*/
                 Graphics.ToggleFullScreen();
             }
 
