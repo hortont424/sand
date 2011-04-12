@@ -20,6 +20,26 @@ namespace Sand
         public Color TeamColor;
         private bool _haveInitialized;
         public bool AcceptsClick = true;
+        private int _padding;
+
+        public int Padding
+        {
+            get
+            {
+                return _padding;
+            }
+
+            set
+            {
+                Width -= _padding * 2;
+                Height -= _padding * 2;
+
+                _padding = value;
+
+                Width += _padding * 2;
+                Height += _padding * 2;
+            }
+        }
 
         public delegate void Action(object sender, object userInfo);
 
@@ -33,7 +53,9 @@ namespace Sand
             _text = text;
             _sprite = null;
             _action = null;
+
             BaseColor = Storage.Color("WidgetFill");
+            TeamColor = Storage.Color("NeutralTeam");
         }
 
         public Button(Game game, Rectangle bounds, string text, Color baseColor) : this(game, bounds, text)
@@ -45,8 +67,8 @@ namespace Sand
         {
             X = origin.X;
             Y = origin.Y;
-            Width = sprite.Width + 12;
-            Height = sprite.Height + 12;
+            Width = sprite.Width + (Padding * 2);
+            Height = sprite.Height + (Padding * 2);
 
             _sprite = sprite;
 
@@ -163,7 +185,7 @@ namespace Sand
 
             if(_sprite != null)
             {
-                _spriteBatch.Draw(_sprite, new Vector2(Bounds.X + 6, Bounds.Y + 6), TeamColor);
+                _spriteBatch.Draw(_sprite, new Vector2(Bounds.X + Padding, Bounds.Y + Padding), TeamColor);
             }
         }
     }

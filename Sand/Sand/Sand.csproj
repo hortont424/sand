@@ -155,6 +155,7 @@
     <Compile Include="SandColor.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Teams.cs" />
+    <Compile Include="ToolChooserButton.cs" />
     <Compile Include="ToolIcon.cs" />
     <Compile Include="Tools\Mobilities\BoostDrive.cs" />
     <Compile Include="Tools\Mobilities\WinkDrive.cs" />

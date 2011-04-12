@@ -4,24 +4,21 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Sand.Tools.Mobilities
 {
     public class BoostDrive : Tool
     {
-        private SoundEffectInstance _startSound, _stopSound, _engineSound;
+        private readonly SoundEffectInstance _startSound, _stopSound, _engineSound;
         private Animation _startFinishedAnimation;
         private AnimationGroup _startFinishedAnimationGroup;
 
         public BoostDrive(LocalPlayer player) : base(player)
         {
-            Name = "Boost Drive";
-            Description = "Go faster!";
-            Icon = Storage.Sprite("BoostDrive");
             Modifier = 0.5;
-            Key = Keys.Space;
-
+            
             Energy = TotalEnergy = 100;
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
             EnergyConsumptionRate = 1;
@@ -31,6 +28,26 @@ namespace Sand.Tools.Mobilities
             _stopSound = Storage.Sound("BoostDrive_Stop").CreateInstance();
             _engineSound = Storage.Sound("BoostDrive_Engine").CreateInstance();
             _engineSound.IsLooped = true;
+        }
+
+        public static string _name()
+        {
+            return "Boost Drive";
+        }
+
+        public static string _description()
+        {
+            return "Go Faster!";
+        }
+
+        public static Texture2D _icon()
+        {
+            return Storage.Sprite("BoostDrive");
+        }
+
+        public static Keys _key()
+        {
+            return Keys.Space;
         }
 
         protected override void Activate()

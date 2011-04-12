@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -10,16 +11,32 @@ namespace Sand.Tools.Weapons
 
         public Cannon(LocalPlayer player) : base(player)
         {
-            Name = "Cannon";
-            Description = "Shoot Stuff!";
-            Icon = Storage.Sprite("Cannon");
             Modifier = 0.5;
-            Key = Keys.Space;
 
             Energy = TotalEnergy = 100;
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
             EnergyConsumptionRate = 25;
             EnergyRechargeRate = 0.2;
+        }
+
+        public static string _name()
+        {
+            return "Cannon";
+        }
+
+        public static string _description()
+        {
+            return "Shoot Stuff!";
+        }
+
+        public static Texture2D _icon()
+        {
+            return Storage.Sprite("Cannon");
+        }
+
+        public static Keys _key()
+        {
+            return Keys.Space;
         }
 
         protected override void Activate()

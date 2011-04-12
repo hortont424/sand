@@ -17,11 +17,7 @@ namespace Sand.Tools.Utilities
         public Shield(LocalPlayer player)
             : base(player)
         {
-            Name = "Shield";
-            Description = "Protect Yourself!";
-            Icon = Storage.Sprite("Shield");
             Modifier = 0.5;
-            Key = Keys.LeftShift;
 
             Energy = TotalEnergy = 200;
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
@@ -34,6 +30,26 @@ namespace Sand.Tools.Utilities
             _animation = new Animation(this, "GrayLevel", 0.5f, 1.0f);
             _animationGroup = new AnimationGroup(_animation, 200) { Loops = true };
             Storage.AnimationController.AddGroup(_animationGroup);
+        }
+
+        public static string _name()
+        {
+            return "Shield";
+        }
+
+        public static string _description()
+        {
+            return "Protect Yourself!";
+        }
+
+        public static Texture2D _icon()
+        {
+            return Storage.Sprite("Shield");
+        }
+
+        public static Keys _key()
+        {
+            return Keys.LeftShift;
         }
 
         protected override void Activate()

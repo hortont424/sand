@@ -11,14 +11,42 @@ namespace Sand.Tools
         Custom
     } ;
 
-    public class Tool
+    public abstract class Tool
     {
-        public string Name { get; protected set; }
-        public string Description { get; protected set; }
-        public Texture2D Icon { get; protected set; }
         public double Modifier { get; set; }
-        public Keys Key { get; protected set; }
         public LocalPlayer Player { get; protected set; }
+
+        public string Name
+        {
+            get
+            {
+                return this.GetType().GetMethod("_name").Invoke(null, null) as string;
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return this.GetType().GetMethod("_description").Invoke(null, null) as string;
+            }
+        }
+
+        public Texture2D Icon
+        {
+            get
+            {
+                return this.GetType().GetMethod("_icon").Invoke(null, null) as Texture2D;
+            }
+        }
+
+        public Keys Key
+        {
+            get
+            {
+                return (Keys)this.GetType().GetMethod("_key").Invoke(null, null);
+            }
+        }
 
         private bool _active;
 

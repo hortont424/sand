@@ -17,10 +17,10 @@ namespace Sand
         public Vector2 MovementAcceleration;
         public readonly Vector2 DefaultAcceleration;
 
-        public readonly List<Tool> Primaries;
-        public readonly Tool Mobility;
-        public readonly Tool Weapon;
-        public readonly Tool Utility;
+        public List<Tool> Primaries;
+        public Tool Mobility;
+        public Tool Weapon;
+        public Tool Utility;
 
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
@@ -33,10 +33,6 @@ namespace Sand
             Drag = new Vector2(1.5f, 1.5f);
             DefaultAcceleration = new Vector2(450.0f, 450.0f);
             MovementAcceleration = DefaultAcceleration;
-
-            Mobility = new BoostDrive(this);
-            Weapon = new Cannon(this);
-            Utility = new Shield(this);
 
             _particles = new ParticleSystem(game, this);
             Children.Add(_particles);
