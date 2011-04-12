@@ -8,6 +8,7 @@ namespace Sand.Tools.Weapons
     public class Cannon : Tool
     {
         private bool _drawCannonNextFrame;
+        private float _drawCannonLength;
 
         public Cannon(LocalPlayer player) : base(player)
         {
@@ -51,6 +52,7 @@ namespace Sand.Tools.Weapons
             float ? closestIntersectionDistance = null;
 
             _drawCannonNextFrame = true;
+            _drawCannonLength = 3000;
 
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {
@@ -73,11 +75,17 @@ namespace Sand.Tools.Weapons
                 }
             }
 
+            if(closestIntersectionDistance != null)
+            {
+                _drawCannonLength = closestIntersectionDistance.Value;
+            }
+
             var wallIntersection = (Player.Game as Sand).GameMap.Intersects(cannonRay);
 
-            if(wallIntersection != null && wallIntersection < closestIntersectionDistance)
+            if(wallIntersection != null && (wallIntersection < closestIntersectionDistance || closestIntersectionDistance == null))
             {
                 closestIntersectionDistance = null;
+                _drawCannonLength = wallIntersection.Value;
             }
 
             if(closestIntersectionDistance != null)
@@ -93,12 +101,14 @@ namespace Sand.Tools.Weapons
             {
                 if(Player.Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
                 {
-                    spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Player.X, (int)Player.Y, 6, 3000), null,
+                    spriteBatch.Draw(Storage.Sprite("pixel"),
+                                     new Rectangle((int)Player.X, (int)Player.Y, 6, (int)_drawCannonLength), null,
                                      Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
                 else
                 {
-                    spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)Player.X, (int)Player.Y, 7, 3000), null,
+                    spriteBatch.Draw(Storage.Sprite("pixel"),
+                                     new Rectangle((int)Player.X, (int)Player.Y, 7, (int)_drawCannonLength), null,
                                      Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
 
