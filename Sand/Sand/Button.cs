@@ -11,6 +11,8 @@ namespace Sand
         private bool _clicked;
         private object _actionUserInfo;
         private Action _action;
+        private object _hoverActionUserInfo;
+        private Action _hoverAction;
         private string _text;
         public Color BaseColor;
         private Color _clickColor;
@@ -95,6 +97,12 @@ namespace Sand
             _actionUserInfo = userInfo;
         }
 
+        public void SetHoverAction(Action action, object userInfo)
+        {
+            _hoverAction = action;
+            _hoverActionUserInfo = userInfo;
+        }
+
         protected override void LoadContent()
         {
             base.LoadContent();
@@ -116,12 +124,14 @@ namespace Sand
         {
             MouseState mouse = Mouse.GetState();
 
-            if (!Storage.AcceptInput)
+            if(!Storage.AcceptInput)
             {
                 return;
             }
 
             var sandGame = Game as Sand;
+
+            var oldHovered = _hovered;
 
             _hovered = false;
 
@@ -130,9 +140,14 @@ namespace Sand
                 if(Bounds.Intersects(new Rectangle((int)sandGame.MouseLocation.X, (int)sandGame.MouseLocation.Y, 1, 1)))
                 {
                     _hovered = true;
+
+                    if((_hoverAction != null) && _hovered && !oldHovered)
+                    {
+                        _hoverAction(this, _hoverActionUserInfo);
+                    }
                 }
 
-                if (AcceptsClick)
+                if(AcceptsClick)
                 {
                     var oldClicked = _clicked;
                     _clicked = _hovered && (mouse.LeftButton == ButtonState.Pressed);
@@ -141,9 +156,7 @@ namespace Sand
                     {
                         if(_haveInitialized)
                         {
-
                             _action(this, _actionUserInfo);
-
                         }
                         else
                         {
@@ -167,7 +180,9 @@ namespace Sand
             const int borderRadius = 5;
 
             _spriteBatch.Draw(Storage.Sprite("pixel"),
-                              new Rectangle(Bounds.X - borderRadius, Bounds.Y - borderRadius, Bounds.Width + (2 * borderRadius), Bounds.Height + (2 * borderRadius)), borderColor);
+                              new Rectangle(Bounds.X - borderRadius, Bounds.Y - borderRadius,
+                                            Bounds.Width + (2 * borderRadius), Bounds.Height + (2 * borderRadius)),
+                              borderColor);
             _spriteBatch.Draw(Storage.Sprite("pixel"),
                               new Rectangle(Bounds.X, Bounds.Y,
                                             Bounds.Width, Bounds.Height),

@@ -15,6 +15,7 @@ namespace Sand.GameState
         private ToolChooserButton _weaponsToolChooser;
         private ToolChooserButton _utilitiesToolChooser;
         private ToolChooserButton _mobilitiesToolChooser;
+        private Label _nameLabel, _descriptionLabel;
 
         public LoadoutState(Sand game) : base(game)
         {
@@ -40,11 +41,27 @@ namespace Sand.GameState
             _mobilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 700), "Mobilities",
                                                            mobilities);
 
+            _weaponsToolChooser.SetHoverAction(HoverTool, null);
+            _utilitiesToolChooser.SetHoverAction(HoverTool, null);
+            _mobilitiesToolChooser.SetHoverAction(HoverTool, null);
+
+            _nameLabel = new Label(Game, 1300, _sandLogo.Y + 300, "", "Calibri24Bold");
+            _descriptionLabel = new Label(Game, 1300, _sandLogo.Y + 350, "", "Calibri24");
+
             Game.Components.Add(_sandLogo);
             Game.Components.Add(_readyButton);
             Game.Components.Add(_weaponsToolChooser);
             Game.Components.Add(_utilitiesToolChooser);
             Game.Components.Add(_mobilitiesToolChooser);
+
+            Game.Components.Add(_nameLabel);
+            Game.Components.Add(_descriptionLabel);
+        }
+
+        private void HoverTool(Type toolclass, object userdata)
+        {
+            _nameLabel.Text = toolclass.GetMethod("_name").Invoke(null, null) as string;
+            _descriptionLabel.Text = toolclass.GetMethod("_description").Invoke(null, null) as string;
         }
 
         public override void Update()
@@ -76,6 +93,9 @@ namespace Sand.GameState
             Game.Components.Remove(_weaponsToolChooser);
             Game.Components.Remove(_utilitiesToolChooser);
             Game.Components.Remove(_mobilitiesToolChooser);
+
+            Game.Components.Remove(_nameLabel);
+            Game.Components.Remove(_descriptionLabel);
 
             return null;
         }

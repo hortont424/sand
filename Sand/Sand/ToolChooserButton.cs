@@ -10,6 +10,11 @@ namespace Sand
         private readonly string _toolSetName;
         private readonly Dictionary<Type, Button> _toolButtons;
 
+        public delegate void HoverDelegate(Type toolClass, object userData);
+
+        private HoverDelegate _hoverAction;
+        private object _hoverUserData;
+
         public Type SelectedTool;
 
         public ToolChooserButton(Game game, Vector2 origin, string toolSetName, List<Type> toolClasses) : base(game)
@@ -31,6 +36,7 @@ namespace Sand
                                             Color.White, Color.Black) { Padding = 6 };
                 toolButton.Y -= toolButton.Height / 2;
                 toolButton.SetAction(ChooseTool, toolClass);
+                toolButton.SetHoverAction(HoverTool, toolClass);
 
                 offsetX += toolButton.Width + 24;
 
@@ -39,6 +45,12 @@ namespace Sand
             }
 
             ChooseTool(null, toolClasses[0]);
+        }
+
+        public void SetHoverAction(HoverDelegate hoverAction, object hoverUserData)
+        {
+            _hoverAction = hoverAction;
+            _hoverUserData = hoverUserData;
         }
 
         public void ChooseTool(object sender, object userInfo)
@@ -52,6 +64,12 @@ namespace Sand
                                            ? new Color(0.2f, 0.2f, 0.2f)
                                            : Color.White;
             }
+        }
+
+        public void HoverTool(object sender, object userInfo)
+        {
+            var hoveredTool = userInfo as Type;
+            _hoverAction(hoveredTool, _hoverUserData);
         }
     }
 }
