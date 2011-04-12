@@ -114,10 +114,7 @@ namespace Sand
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            float horScaling = GraphicsDevice.PresentationParameters.BackBufferWidth / BaseScreenSize.X;
-            float verScaling = GraphicsDevice.PresentationParameters.BackBufferHeight / BaseScreenSize.Y;
-            var screenScalingFactor = new Vector3(horScaling, verScaling, 1);
-            _globalTransformMatrix = Matrix.CreateScale(screenScalingFactor);
+            ComputeTransform();
 
             Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
             Storage.AddFont("Calibri24Bold", Content.Load<SpriteFont>("Fonts/Calibri24Bold"));
@@ -166,6 +163,14 @@ namespace Sand
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });
             Storage.AddSprite("pixel", rectTexture);
+        }
+
+        private void ComputeTransform()
+        {
+            float horScaling = GraphicsDevice.PresentationParameters.BackBufferWidth / BaseScreenSize.X;
+            float verScaling = GraphicsDevice.PresentationParameters.BackBufferHeight / BaseScreenSize.Y;
+            var screenScalingFactor = new Vector3(horScaling, verScaling, 1);
+            _globalTransformMatrix = Matrix.CreateScale(screenScalingFactor);
         }
 
         protected override void UnloadContent()
@@ -230,11 +235,26 @@ namespace Sand
             if(newKeyState.IsKeyDown(Keys.F) && newKeyState.IsKeyDown(Keys.LeftControl) &&
                !_oldKeyState.IsKeyDown(Keys.F))
             {
-                // TODO: recompute scale matrix, etc., set correct size based on wether we're entering or leaving fullscreen, etc.
+                if(Graphics.IsFullScreen)
+                {
+                    // Going to non-fullscreen
 
-                /*Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;*/
+                    Graphics.PreferredBackBufferWidth =
+                        (int)(0.9f * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
+                    Graphics.PreferredBackBufferHeight =
+                        (int)(0.9f * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+                }
+                else
+                {
+                    // Going to fullscreen
+
+                    Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                    Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                }
+
                 Graphics.ToggleFullScreen();
+
+                ComputeTransform();
             }
 
             _oldKeyState = newKeyState;
