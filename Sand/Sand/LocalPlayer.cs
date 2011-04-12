@@ -145,16 +145,13 @@ namespace Sand
 
         private void UpdateAngle()
         {
-            var sandGame = Game as Sand;
-
-            Angle = (float)Math.Atan2(sandGame.MouseLocation.Y - Y, sandGame.MouseLocation.X - X) +
+            Angle = (float)Math.Atan2(_sandGame.MouseLocation.Y - Y, _sandGame.MouseLocation.X - X) +
                     ((float)Math.PI / 2.0f);
         }
 
         private void UpdatePosition(GameTime gameTime)
         {
             var newPosition = new Vector2(X, Y);
-            var sandGame = Game as Sand;
             var timestep = (float)(gameTime.ElapsedGameTime.TotalSeconds);
 
             Acceleration.X -= Drag.X * _velocity.X;
@@ -168,7 +165,7 @@ namespace Sand
 
             if(!Stunned)
             {
-                if(!sandGame.GameMap.CollisionTest(_texture,
+                if(!_sandGame.GameMap.CollisionTest(_texture,
                                                    new Rectangle((int)(newPosition.X - (Width / 2.0)),
                                                                  (int)(newPosition.Y - (Height / 2.0)),
                                                                  (int)Width, (int)Height)))
@@ -178,14 +175,14 @@ namespace Sand
                 }
                 else
                 {
-                    if(!sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(newPosition.X - (Width / 2.0)),
+                    if(!_sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(newPosition.X - (Width / 2.0)),
                                                                                (int)(Y - (Height / 2.0)), (int)Width,
                                                                                (int)Height)))
                     {
                         _velocity.Y = -_velocity.Y;
                         X = newPosition.X;
                     }
-                    else if(!sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(X - (Width / 2.0)),
+                    else if(!_sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(X - (Width / 2.0)),
                                                                                     (int)
                                                                                     (newPosition.Y - (Height / 2.0)),
                                                                                     (int)Width, (int)Height)))

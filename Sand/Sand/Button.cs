@@ -129,15 +129,13 @@ namespace Sand
                 return;
             }
 
-            var sandGame = Game as Sand;
-
             var oldHovered = _hovered;
 
             _hovered = false;
 
             if(_action != null)
             {
-                if(Bounds.Intersects(new Rectangle((int)sandGame.MouseLocation.X, (int)sandGame.MouseLocation.Y, 1, 1)))
+                if(Bounds.Intersects(new Rectangle((int)_sandGame.MouseLocation.X, (int)_sandGame.MouseLocation.Y, 1, 1)))
                 {
                     _hovered = true;
 
