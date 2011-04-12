@@ -231,8 +231,6 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
-
             if(Utility != null)
             {
                 Utility.Draw(_spriteBatch);
@@ -247,6 +245,8 @@ namespace Sand
             {
                 Weapon.Draw(_spriteBatch);
             }
+
+            base.Draw(gameTime);
 
             // TODO: drawing for primaries
         }
