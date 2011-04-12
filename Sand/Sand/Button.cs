@@ -102,7 +102,7 @@ namespace Sand
             double hue, saturation, value;
             SandColor.ToHSV(BaseColor, out hue, out saturation, out value);
 
-            _borderColor = SandColor.FromHSV(hue, saturation, Math.Max(value - 0.3, 0.0));
+            _borderColor = SandColor.FromHSV(hue, saturation, Math.Max(value - 0.2, 0.0));
             _clickColor = SandColor.FromHSV(hue, Math.Max(saturation - 0.2, 0.0), Math.Min(value + 0.4, 1.0));
             _highlightColor = SandColor.FromHSV(hue, Math.Max(saturation - 0.2, 0.0), Math.Min(value + 0.2, 1.0));
         }
@@ -164,13 +164,13 @@ namespace Sand
         {
             Color fillColor = _clicked ? _clickColor : (_hovered ? _highlightColor : BaseColor);
             Color borderColor = _borderColor;
-            const int borderRadius = 3;
+            const int borderRadius = 5;
 
             _spriteBatch.Draw(Storage.Sprite("pixel"),
-                              new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height), borderColor);
+                              new Rectangle(Bounds.X - borderRadius, Bounds.Y - borderRadius, Bounds.Width + (2 * borderRadius), Bounds.Height + (2 * borderRadius)), borderColor);
             _spriteBatch.Draw(Storage.Sprite("pixel"),
-                              new Rectangle(Bounds.X + borderRadius, Bounds.Y + borderRadius,
-                                            Bounds.Width - (2 * borderRadius), Bounds.Height - (2 * borderRadius)),
+                              new Rectangle(Bounds.X, Bounds.Y,
+                                            Bounds.Width, Bounds.Height),
                               fillColor);
 
             if(_text != null)

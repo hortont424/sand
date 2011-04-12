@@ -125,7 +125,7 @@ namespace Sand
             Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));
             Storage.AddColor("RedTeam", new Color(0.760f, 0.207f, 1.0f));
             Storage.AddColor("BlueTeam", new Color(0.207f, 0.741f, 0.215f));
-            Storage.AddColor("NeutralTeam", new Color(0.3f, 0.3f, 0.3f));
+            Storage.AddColor("NeutralTeam", new Color(0.4f, 0.4f, 0.4f));
 
             Storage.AddSprite("Crosshair", Content.Load<Texture2D>("Textures/Crosshair"));
 

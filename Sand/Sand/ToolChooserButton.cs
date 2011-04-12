@@ -28,7 +28,7 @@ namespace Sand
                 var toolIcon = toolClass.GetMethod("_icon").Invoke(null, null) as Texture2D;
                 var toolButton = new Button(game, new Vector2(offsetX, origin.Y),
                                             toolIcon,
-                                            Color.White, Color.LightGray) { Padding = 12 };
+                                            Color.White, Color.Black) { Padding = 6 };
                 toolButton.Y -= toolButton.Height / 2;
                 toolButton.SetAction(ChooseTool, toolClass);
 
@@ -49,7 +49,7 @@ namespace Sand
             {
                 pair.Value.AcceptsClick = pair.Key != SelectedTool;
                 pair.Value.TeamColor = (pair.Key != SelectedTool)
-                                           ? Storage.Color("NeutralTeam")
+                                           ? new Color(0.2f, 0.2f, 0.2f)
                                            : Color.White;
             }
         }
