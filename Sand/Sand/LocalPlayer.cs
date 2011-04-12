@@ -123,25 +123,28 @@ namespace Sand
                 Class = Class.Support;
             }
 
-            if(newKeyState.IsKeyDown(Mobility.Key) != _oldKeyState.IsKeyDown(Mobility.Key))
+            if(!Stunned)
             {
-                Mobility.Active = newKeyState.IsKeyDown(Mobility.Key);
-            }
+                if (newKeyState.IsKeyDown(Mobility.Key) != _oldKeyState.IsKeyDown(Mobility.Key))
+                {
+                    Mobility.Active = newKeyState.IsKeyDown(Mobility.Key);
+                }
 
-            if(newMouseState.LeftButton != _oldMouseState.LeftButton)
-            {
-                // TODO: make sure cursor is in our window!!
-                Weapon.Active = (newMouseState.LeftButton == ButtonState.Pressed);
-            }
+                if (newMouseState.LeftButton != _oldMouseState.LeftButton)
+                {
+                    // TODO: make sure cursor is in our window!!
+                    Weapon.Active = (newMouseState.LeftButton == ButtonState.Pressed);
+                }
 
-            if(newKeyState.IsKeyDown(Utility.Key) != _oldKeyState.IsKeyDown(Utility.Key))
-            {
-                Utility.Active = newKeyState.IsKeyDown(Utility.Key);
-            }
+                if (newKeyState.IsKeyDown(Utility.Key) != _oldKeyState.IsKeyDown(Utility.Key))
+                {
+                    Utility.Active = newKeyState.IsKeyDown(Utility.Key);
+                }
 
-            if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
-            {
-                Stun(25.0f);
+                if (newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
+                {
+                    Stun(25.0f);
+                }
             }
 
             _oldKeyState = newKeyState;
