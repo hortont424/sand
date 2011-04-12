@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
+﻿using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,6 +6,8 @@ namespace Sand.Tools.Mobilities
 {
     public class WinkDrive : Tool
     {
+        private SoundEffectInstance _startSound, _stopSound;
+
         public WinkDrive(LocalPlayer player) : base(player)
         {
             Modifier = 0.5;
@@ -19,6 +16,9 @@ namespace Sand.Tools.Mobilities
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
             EnergyConsumptionRate = 1;
             EnergyRechargeRate = 0.2;
+
+            _startSound = Storage.Sound("WinkDrive_Start").CreateInstance();
+            _stopSound = Storage.Sound("WinkDrive_Stop").CreateInstance();
         }
 
         public static string _name()
@@ -46,6 +46,8 @@ namespace Sand.Tools.Mobilities
             base.Activate();
 
             Player.Invisible = true;
+
+            _startSound.Play();
         }
 
         protected override void Deactivate()
@@ -53,6 +55,13 @@ namespace Sand.Tools.Mobilities
             base.Deactivate();
 
             Player.Invisible = false;
+
+            _startSound.Stop();
+
+            if(!_inCooldown)
+            {
+                _stopSound.Play();
+            }
         }
     }
 }

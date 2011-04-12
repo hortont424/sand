@@ -129,6 +129,8 @@ namespace Sand
 
             Storage.AddSprite("Crosshair", Content.Load<Texture2D>("Textures/Crosshair"));
 
+            Storage.AddSound("Drained", Content.Load<SoundEffect>("Sounds/Drained"));
+
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
             Storage.AddSprite("DefenseClass", Content.Load<Texture2D>("Textures/Classes/defense"));
             Storage.AddSprite("OffenseClass", Content.Load<Texture2D>("Textures/Classes/offense"));
@@ -138,12 +140,18 @@ namespace Sand
             Storage.AddSprite("OffenseClassLarge", Content.Load<Texture2D>("Textures/Classes/OffenseLarge"));
             Storage.AddSprite("SupportClassLarge", Content.Load<Texture2D>("Textures/Classes/SupportLarge"));
 
+            Storage.AddSound("DefenseClass", Content.Load<SoundEffect>("Sounds/Defense_1"));
+            Storage.AddSound("OffenseClass", Content.Load<SoundEffect>("Sounds/Offense_1"));
+            Storage.AddSound("SupportClass", Content.Load<SoundEffect>("Sounds/Support_1"));
+
             Storage.AddSprite("BoostDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BoostDrive"));
             Storage.AddSound("BoostDrive_Start", Content.Load<SoundEffect>("Sounds/BoostDrive_Start"));
             Storage.AddSound("BoostDrive_Stop", Content.Load<SoundEffect>("Sounds/BoostDrive_Stop"));
             Storage.AddSound("BoostDrive_Engine", Content.Load<SoundEffect>("Sounds/BoostDrive_Engine"));
 
             Storage.AddSprite("WinkDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/WinkDrive"));
+            Storage.AddSound("WinkDrive_Start", Content.Load<SoundEffect>("Sounds/WinkDrive_Start"));
+            Storage.AddSound("WinkDrive_Stop", Content.Load<SoundEffect>("Sounds/WinkDrive_Stop"));
 
             Storage.AddSprite("Cannon", Content.Load<Texture2D>("Textures/Tools/Weapons/Cannon"));
             Storage.AddSound("Cannon", Content.Load<SoundEffect>("Sounds/Cannon"));

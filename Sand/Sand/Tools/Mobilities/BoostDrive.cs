@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -18,7 +14,7 @@ namespace Sand.Tools.Mobilities
         public BoostDrive(LocalPlayer player) : base(player)
         {
             Modifier = 0.5;
-            
+
             Energy = TotalEnergy = 100;
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
             EnergyConsumptionRate = 1;
@@ -57,7 +53,7 @@ namespace Sand.Tools.Mobilities
             Player.MovementAcceleration = new Vector2(1200.0f, 1200.0f);
 
             _startSound.Play();
-            
+
             _startFinishedAnimation = new Animation { CompletedDelegate = CheckStartFinished };
 
             _startFinishedAnimationGroup = new AnimationGroup(_startFinishedAnimation, 1) { Loops = true };
@@ -75,7 +71,6 @@ namespace Sand.Tools.Mobilities
                 {
                     _engineSound.Play();
                 }
-                
             }
         }
 
@@ -87,7 +82,11 @@ namespace Sand.Tools.Mobilities
 
             _engineSound.Stop();
             _startSound.Stop();
-            _stopSound.Play();
+
+            if(!_inCooldown)
+            {
+                _stopSound.Play();
+            }
         }
     }
 }

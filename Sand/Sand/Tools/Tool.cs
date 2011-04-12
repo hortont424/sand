@@ -102,7 +102,7 @@ namespace Sand.Tools
         private readonly Animation _energyAnimation;
         private readonly AnimationGroup _energyAnimationGroup;
         private TimeSpan _cooldownTime;
-        private bool _inCooldown;
+        protected bool _inCooldown;
 
         protected Tool(LocalPlayer player)
         {
@@ -133,11 +133,13 @@ namespace Sand.Tools
                         {
                             Energy = 0.0f;
 
-                            Active = false;
+                            Storage.Sound("Drained").CreateInstance().Play();
 
                             _inCooldown = true;
                             _cooldownTime =
                                 new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(new TimeSpan(0, 0, 2));
+
+                            Active = false;
                         }
                     }
                     else
