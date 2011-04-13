@@ -72,6 +72,8 @@ namespace Sand.GameState
                                 };
                 Game.Components.Add(nameLabel);
             }
+
+            Game.Components.Add(Storage.SandParticles);
         }
 
         public override void Update()
@@ -92,6 +94,7 @@ namespace Sand.GameState
             }
 
             Game.Components.Remove(sandGame.GameMap);
+            Game.Components.Remove(Storage.SandParticles);
 
             return null;
         }

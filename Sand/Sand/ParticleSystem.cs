@@ -11,10 +11,12 @@ namespace Sand
         public Int64 Lifetime, LifeRemaining;
     }
 
-    internal class ParticleSystem : Actor
+    public class ParticleSystem : Actor
     {
         public Player Player;
         public List<Particle> Particles;
+
+        public bool IsSand;
 
         public delegate void EmitParticleDelegate(Particle particle);
 
@@ -30,7 +32,16 @@ namespace Sand
             foreach (var particle in Particles.Where(particle => particle.LifeRemaining > 0))
             {
                 particle.Position += (particle.Velocity * new Vector2((float)gameTime.ElapsedGameTime.TotalSeconds));
-                particle.LifeRemaining -= (Int64)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if(IsSand)
+                {
+                    particle.Velocity *= new Vector2(0.95f, 0.95f);
+                }
+                else
+                {
+                    particle.LifeRemaining -= (Int64)gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
+                
             }
         }
 

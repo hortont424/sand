@@ -24,7 +24,7 @@ namespace Sand
 
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
-        private Vector2 _velocity;
+        public Vector2 Velocity;
 
         private ParticleSystem _particles;
         private Vector2 _pureAcceleration;
@@ -53,13 +53,13 @@ namespace Sand
             {
                 _particles.Emit(100, (p) =>
                                      {
-                                         var velocity = new Vector2(-_pureAcceleration.X * 0.2f + _random.Next(-70, 70),
-                                                                    -_pureAcceleration.Y * 0.2f + _random.Next(-70, 70));
+                                         var velocity = new Vector2(-_pureAcceleration.X * 0.2f + Storage.Random.Next(-70, 70),
+                                                                    -_pureAcceleration.Y * 0.2f + Storage.Random.Next(-70, 70));
 
-                                         p.LifeRemaining = p.Lifetime = _random.Next(150, 350);
+                                         p.LifeRemaining = p.Lifetime = Storage.Random.Next(150, 350);
 
-                                         var angle = (float)_random.NextDouble()*(Math.PI * 2.0f);
-                                         var length = (float)_random.Next(0, 6);
+                                         var angle = (float)Storage.Random.NextDouble()*(Math.PI * 2.0f);
+                                         var length = (float)Storage.Random.Next(0, 6);
 
                                          p.Position = new Vector2((float)(X + (length * Math.Cos(angle))), (float)(Y + (length * Math.Sin(angle))));
                                          p.Velocity = velocity;
@@ -146,7 +146,7 @@ namespace Sand
                     Stun(25.0f);
                 }
 
-                if(PrimaryA != null && newKeyState.IsKeyDown(PrimaryA.Key) && !_oldKeyState.IsKeyDown(PrimaryA.Key))
+                if(PrimaryA != null && newKeyState.IsKeyDown(PrimaryA.Key) != _oldKeyState.IsKeyDown(PrimaryA.Key))
                 {
                     PrimaryA.Active = newKeyState.IsKeyDown(PrimaryA.Key);
                 }
@@ -169,14 +169,14 @@ namespace Sand
 
             _pureAcceleration = Acceleration;
 
-            Acceleration.X -= Drag.X * _velocity.X;
-            Acceleration.Y -= Drag.Y * _velocity.Y;
+            Acceleration.X -= Drag.X * Velocity.X;
+            Acceleration.Y -= Drag.Y * Velocity.Y;
 
-            _velocity.X += Acceleration.X * timestep;
-            _velocity.Y += Acceleration.Y * timestep;
+            Velocity.X += Acceleration.X * timestep;
+            Velocity.Y += Acceleration.Y * timestep;
 
-            newPosition.X += _velocity.X * timestep;
-            newPosition.Y += _velocity.Y * timestep;
+            newPosition.X += Velocity.X * timestep;
+            newPosition.Y += Velocity.Y * timestep;
 
             if(!Stunned)
             {
@@ -194,7 +194,7 @@ namespace Sand
                                                                                (int)(Y - (Height / 2.0)), (int)Width,
                                                                                (int)Height)))
                     {
-                        _velocity.Y = -_velocity.Y;
+                        Velocity.Y = -Velocity.Y;
                         X = newPosition.X;
                     }
                     else if(!_sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(X - (Width / 2.0)),
@@ -202,19 +202,19 @@ namespace Sand
                                                                                     (newPosition.Y - (Height / 2.0)),
                                                                                     (int)Width, (int)Height)))
                     {
-                        _velocity.X = -_velocity.X;
+                        Velocity.X = -Velocity.X;
                         Y = newPosition.Y;
                     }
                     else
                     {
-                        _velocity.X = -_velocity.X;
-                        _velocity.Y = -_velocity.Y;
+                        Velocity.X = -Velocity.X;
+                        Velocity.Y = -Velocity.Y;
                     }
                 }
             }
             else
             {
-                _velocity.X = _velocity.Y = 0;
+                Velocity.X = Velocity.Y = 0;
             }
         }
 

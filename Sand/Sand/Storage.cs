@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,6 +18,9 @@ namespace Sand
         public static NetworkSession NetworkSession;
         public static PacketReader PacketReader = new PacketReader();
         public static PacketWriter PacketWriter = new PacketWriter();
+
+        public static ParticleSystem SandParticles;
+        public static Random Random = new Random();
 
         public static bool AcceptInput = true;
         public static GameTime CurrentTime;

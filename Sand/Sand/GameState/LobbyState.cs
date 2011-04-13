@@ -154,6 +154,9 @@ namespace Sand.GameState
             var returns = new Dictionary<string, object>();
             returns["SandLogo"] = _sandLogo;
 
+            Storage.SandParticles = new ParticleSystem(Game, Storage.NetworkSession.LocalGamers[0].Tag as Player);
+            Storage.SandParticles.IsSand = true;
+
             return returns;
         }
 
