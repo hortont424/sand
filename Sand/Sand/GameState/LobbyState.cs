@@ -35,7 +35,7 @@ namespace Sand.GameState
 
         private string AddRandomSuffix(string str)
         {
-            return String.Format("{0}{1}", str, Storage.Random.Next(1, 3));
+            return String.Format("{0}{1}", str, Storage.Random.Next(1, 4));
         }
 
         public override void Enter(Dictionary<string, object> data)
