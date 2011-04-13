@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Sand.Tools;
 using Sand.Tools.Mobilities;
 using Sand.Tools.Utilities;
-using Sand.Tools.Weapons;
 
 namespace Sand
 {
@@ -49,20 +47,22 @@ namespace Sand
             UpdateAngle();
 
             // TODO: move into BoostDrive
-            if (Mobility is BoostDrive && Mobility.Active)
+            if(Mobility is BoostDrive && Mobility.Active)
             {
                 _particles.Emit(100, (p) =>
                                      {
-                                         var velocity = new Vector2(-_pureAcceleration.X * 0.2f + Storage.Random.Next(-70, 70),
-                                                                    -_pureAcceleration.Y * 0.2f + Storage.Random.Next(-70, 70));
+                                         var velocity =
+                                             new Vector2(-_pureAcceleration.X * 0.2f + Storage.Random.Next(-70, 70),
+                                                         -_pureAcceleration.Y * 0.2f + Storage.Random.Next(-70, 70));
 
                                          p.LifeRemaining = p.Lifetime = Storage.Random.Next(150, 350);
 
-                                         var angle = (float)Storage.Random.NextDouble()*(Math.PI * 2.0f);
+                                         var angle = (float)Storage.Random.NextDouble() * (Math.PI * 2.0f);
                                          var length = (float)Storage.Random.Next(0, 6);
 
                                          p.Team = Team;
-                                         p.Position = new Vector2((float)(X + (length * Math.Cos(angle))), (float)(Y + (length * Math.Sin(angle))));
+                                         p.Position = new Vector2((float)(X + (length * Math.Cos(angle))),
+                                                                  (float)(Y + (length * Math.Sin(angle))));
                                          p.Velocity = velocity;
                                      });
             }
@@ -126,30 +126,30 @@ namespace Sand
 
             if(!Stunned)
             {
-                if (newKeyState.IsKeyDown(Mobility.Key) != _oldKeyState.IsKeyDown(Mobility.Key))
+                if(newKeyState.IsKeyDown(Mobility.Key) != _oldKeyState.IsKeyDown(Mobility.Key))
                 {
                     Mobility.Active = newKeyState.IsKeyDown(Mobility.Key);
                 }
 
-                if (newMouseState.LeftButton != _oldMouseState.LeftButton)
+                if(newMouseState.RightButton != _oldMouseState.RightButton)
                 {
                     // TODO: make sure cursor is in our window!!
-                    Weapon.Active = (newMouseState.LeftButton == ButtonState.Pressed);
+                    Weapon.Active = (newMouseState.RightButton == ButtonState.Pressed);
                 }
 
-                if (newKeyState.IsKeyDown(Utility.Key) != _oldKeyState.IsKeyDown(Utility.Key))
+                if(newKeyState.IsKeyDown(Utility.Key) != _oldKeyState.IsKeyDown(Utility.Key))
                 {
                     Utility.Active = newKeyState.IsKeyDown(Utility.Key);
                 }
 
-                if (newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
+                if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
                 {
                     Stun(25.0f);
                 }
 
-                if(PrimaryA != null && newKeyState.IsKeyDown(PrimaryA.Key) != _oldKeyState.IsKeyDown(PrimaryA.Key))
+                if(PrimaryA != null && newMouseState.LeftButton != _oldMouseState.LeftButton)
                 {
-                    PrimaryA.Active = newKeyState.IsKeyDown(PrimaryA.Key);
+                    PrimaryA.Active = (newMouseState.LeftButton == ButtonState.Pressed);
                 }
             }
 
@@ -182,9 +182,9 @@ namespace Sand
             if(!Stunned)
             {
                 if(!_sandGame.GameMap.CollisionTest(_texture,
-                                                   new Rectangle((int)(newPosition.X - (Width / 2.0)),
-                                                                 (int)(newPosition.Y - (Height / 2.0)),
-                                                                 (int)Width, (int)Height)))
+                                                    new Rectangle((int)(newPosition.X - (Width / 2.0)),
+                                                                  (int)(newPosition.Y - (Height / 2.0)),
+                                                                  (int)Width, (int)Height)))
                 {
                     X = newPosition.X;
                     Y = newPosition.Y;
@@ -192,16 +192,16 @@ namespace Sand
                 else
                 {
                     if(!_sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(newPosition.X - (Width / 2.0)),
-                                                                               (int)(Y - (Height / 2.0)), (int)Width,
-                                                                               (int)Height)))
+                                                                                (int)(Y - (Height / 2.0)), (int)Width,
+                                                                                (int)Height)))
                     {
                         Velocity.Y = -Velocity.Y;
                         X = newPosition.X;
                     }
                     else if(!_sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(X - (Width / 2.0)),
-                                                                                    (int)
-                                                                                    (newPosition.Y - (Height / 2.0)),
-                                                                                    (int)Width, (int)Height)))
+                                                                                     (int)
+                                                                                     (newPosition.Y - (Height / 2.0)),
+                                                                                     (int)Width, (int)Height)))
                     {
                         Velocity.X = -Velocity.X;
                         Y = newPosition.Y;
@@ -236,7 +236,7 @@ namespace Sand
             if(Stunned)
             {
                 Storage.Sound("Shock").CreateInstance().Play();
-                Messages.SendPlaySoundMessage(this, "Shock", this.Gamer.Id, true);
+                Messages.SendPlaySoundMessage(this, "Shock", Gamer.Id, true);
             }
 
             var newStunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));
