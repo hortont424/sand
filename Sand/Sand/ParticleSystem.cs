@@ -29,6 +29,8 @@ namespace Sand
 
         public override void Update(GameTime gameTime)
         {
+            var size = IsSand ? 4 : 2;
+
             foreach(var particle in Particles)
             {
                 if(!IsSand && particle.LifeRemaining <= 0)
@@ -36,20 +38,38 @@ namespace Sand
                     continue;
                 }
 
-                particle.Position += (particle.Velocity * new Vector2((float)gameTime.ElapsedGameTime.TotalSeconds));
+                var newPosition = particle.Position + (particle.Velocity * new Vector2((float)gameTime.ElapsedGameTime.TotalSeconds));
 
                 if(IsSand)
                 {
                     particle.Velocity *= new Vector2(0.95f, 0.95f);
-
-                    if(_sandGame.GameMap.CollisionTest(particle.Position))
-                    {
-                        particle.Velocity *= new Vector2(-1.0f, -1.0f);
-                    }
                 }
                 else
                 {
                     particle.LifeRemaining -= (Int64)gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
+
+                if (!_sandGame.GameMap.CollisionTest(newPosition, size))
+                {
+                    particle.Position = newPosition;
+                }
+                else
+                {
+                    if (!_sandGame.GameMap.CollisionTest(new Vector2(newPosition.X, particle.Position.Y), size))
+                    {
+                        particle.Velocity.Y = -particle.Velocity.Y;
+                        particle.Position.X = newPosition.X;
+                    }
+                    else if (!_sandGame.GameMap.CollisionTest(new Vector2(particle.Position.X, newPosition.Y), size))
+                    {
+                        particle.Velocity.X = -particle.Velocity.X;
+                        particle.Position.Y = newPosition.Y;
+                    }
+                    else
+                    {
+                        particle.Velocity.X = -particle.Velocity.X;
+                        particle.Velocity.Y = -particle.Velocity.Y;
+                    }
                 }
             }
         }

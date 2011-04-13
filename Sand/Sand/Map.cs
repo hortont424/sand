@@ -38,9 +38,9 @@ namespace Sand
             _spriteBatch.Draw(_mapImage, new Vector2(0.0f, 0.0f), Color.White);
         }
         
-        public bool CollisionTest(Vector2 position)
+        public bool CollisionTest(Vector2 position, int size)
         {
-            var rectangleA = new Rectangle((int)position.X, (int)position.Y, 1, 1);
+            var rectangleA = new Rectangle((int)position.X - (size / 2), (int)position.Y - (size / 2), size, size);
             var rectangleB = new Rectangle(0, 0, (int)Width, (int)Height);
 
             int top = Math.Max(rectangleA.Top, rectangleB.Top);

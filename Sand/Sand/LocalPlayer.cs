@@ -49,13 +49,13 @@ namespace Sand
             // TODO: move into BoostDrive
             if(Mobility is BoostDrive && Mobility.Active)
             {
-                _particles.Emit(100, (p) =>
+                _particles.Emit(10, (p) =>
                                      {
                                          var velocity =
                                              new Vector2(-_pureAcceleration.X * 0.2f + Storage.Random.Next(-70, 70),
                                                          -_pureAcceleration.Y * 0.2f + Storage.Random.Next(-70, 70));
 
-                                         p.LifeRemaining = p.Lifetime = Storage.Random.Next(150, 350);
+                                         p.LifeRemaining = p.Lifetime = Storage.Random.Next(250, 450);
 
                                          var angle = (float)Storage.Random.NextDouble() * (Math.PI * 2.0f);
                                          var length = (float)Storage.Random.Next(0, 6);
