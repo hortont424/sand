@@ -108,7 +108,14 @@ Overview
 Creating a Character
 --------------------
 
-During the beginning of a game, each player is asked to choose their team, class, and loadout. The loadout selection involves choosing from a wide variety of tools, weapons, and powerups, detailed below.
+During the beginning of a game, each player is asked to choose their team, class, and loadout.
+
+Before the game begins, each player has the opportunity to select his loadout (there are five slots: two primaries, a weapon, utility, and mobility modifier), and many of the tools can be modified with a single slider which increases a positive and a negative attribute of the player in a balanced fashion. Potential tool choices are detailed below.
+
+Energy
+------
+
+Each tool has a fixed amount of energy, which is depleted when the player makes use of the tool. Some tools deplete instantly, while others drain as the tool is used over time. When a tool is not in use, its energy recharges; if the player totally depletes a tool's energy, there is a cooldown timeout before it begins to recharge again.
 
 Primaries
 ---------
@@ -164,10 +171,12 @@ User Interface
 Overview
 --------
 
-The user interface during gameplay is very simple: the map takes up the majority of the screen, while the 
+The user interface during gameplay is very simple: the map takes up the majority of the screen, while the right side contains loadout icons for the current player and his team.
 
-User Interface Detail x
------------------------
+Loadout Icons
+-------------
+
+During gameplay, the right hand side of the screen contains icons describing the loadout of the current player, with energy meters around each one. These energy meters deplete as the player uses the tool, and recharge along with the energy.
 
 Sound
 =====
@@ -191,25 +200,17 @@ Multiplayer
 Overview
 --------
 
+Sand is, at its heart, a multiplayer game. For simplicity of implementation, it will be limited to LAN games.
+
 Max Players
 -----------
 
-The maximum number of players in a single game of Sand is 6, as each game is comprised of two teams of three players each.
+The maximum (and minimum) number of players in a single game of Sand is 6, as each game is comprised of two teams of three players each.
 
 Servers
 -------
 
-The first player to launch the game on a particular network becomes the de-facto server. <this might change>
-
-Customization
--------------
-
-Before the game begins, each player has the opportunity to select his loadout (there are five slots: two primaries, a weapon, utility, and mobility modifier), and many of the tools can be modified with a single slider which increases a positive and a negative attribute of the player in a balanced fashion.
-
-Internet
---------
-
-This game will not work over the internet. For simplicity of implementation, it will be limited to LAN games.
+The first player to launch the game on a particular network becomes the de-facto server. In addition, it is not possible at the current moment to maintain multiple games on a single LAN.
 
 Persistence
 -----------
