@@ -50,21 +50,21 @@ namespace Sand
             if(Mobility is BoostDrive && Mobility.Active)
             {
                 _particles.Emit(10, (p) =>
-                                     {
-                                         var velocity =
-                                             new Vector2(-_pureAcceleration.X * 0.2f + Storage.Random.Next(-70, 70),
-                                                         -_pureAcceleration.Y * 0.2f + Storage.Random.Next(-70, 70));
+                                    {
+                                        var velocity =
+                                            new Vector2(-_pureAcceleration.X * 0.2f + Storage.Random.Next(-70, 70),
+                                                        -_pureAcceleration.Y * 0.2f + Storage.Random.Next(-70, 70));
 
-                                         p.LifeRemaining = p.Lifetime = Storage.Random.Next(250, 450);
+                                        p.LifeRemaining = p.Lifetime = Storage.Random.Next(250, 450);
 
-                                         var angle = (float)Storage.Random.NextDouble() * (Math.PI * 2.0f);
-                                         var length = (float)Storage.Random.Next(0, 6);
+                                        var angle = (float)Storage.Random.NextDouble() * (Math.PI * 2.0f);
+                                        var length = (float)Storage.Random.Next(0, 6);
 
-                                         p.Team = Team;
-                                         p.Position = new Vector2((float)(X + (length * Math.Cos(angle))),
-                                                                  (float)(Y + (length * Math.Sin(angle))));
-                                         p.Velocity = velocity;
-                                     });
+                                        p.Team = Team;
+                                        p.Position = new Vector2((float)(X + (length * Math.Cos(angle))),
+                                                                 (float)(Y + (length * Math.Sin(angle))));
+                                        p.Velocity = velocity;
+                                    });
             }
         }
 
@@ -122,6 +122,34 @@ namespace Sand
             else if(newKeyState.IsKeyDown(Keys.D3))
             {
                 Class = Class.Support;
+            }
+
+            if(newKeyState.IsKeyDown(Keys.R))
+            {
+                if(Mobility != null)
+                {
+                    Mobility.Reset();
+                }
+
+                if(Weapon != null)
+                {
+                    Weapon.Reset();
+                }
+
+                if(Utility != null)
+                {
+                    Utility.Reset();
+                }
+
+                if(PrimaryA != null)
+                {
+                    PrimaryA.Reset();
+                }
+
+                if(PrimaryB != null)
+                {
+                    PrimaryB.Reset();
+                }
             }
 
             if(!Stunned)

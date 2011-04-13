@@ -189,5 +189,11 @@ namespace Sand.Tools
         protected virtual void Deactivate()
         {
         }
+
+        public void Reset()
+        {
+            Energy = TotalEnergy;
+            _inCooldown = false;
+        }
     }
 }
