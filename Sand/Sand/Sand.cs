@@ -139,9 +139,17 @@ namespace Sand
             Storage.AddSprite("OffenseClassLarge", Content.Load<Texture2D>("Textures/Classes/OffenseLarge"));
             Storage.AddSprite("SupportClassLarge", Content.Load<Texture2D>("Textures/Classes/SupportLarge"));
 
-            Storage.AddSound("DefenseClass", Content.Load<SoundEffect>("Sounds/Defense_1"));
-            Storage.AddSound("OffenseClass", Content.Load<SoundEffect>("Sounds/Offense_1"));
-            Storage.AddSound("SupportClass", Content.Load<SoundEffect>("Sounds/Support_1"));
+            Storage.AddSound("DefenseClass1", Content.Load<SoundEffect>("Sounds/Defense_1"));
+            Storage.AddSound("OffenseClass1", Content.Load<SoundEffect>("Sounds/Offense_1"));
+            Storage.AddSound("SupportClass1", Content.Load<SoundEffect>("Sounds/Support_1"));
+
+            Storage.AddSound("DefenseClass2", Content.Load<SoundEffect>("Sounds/Defense_2"));
+            Storage.AddSound("OffenseClass2", Content.Load<SoundEffect>("Sounds/Offense_2"));
+            Storage.AddSound("SupportClass2", Content.Load<SoundEffect>("Sounds/Support_2"));
+
+            Storage.AddSound("DefenseClass3", Content.Load<SoundEffect>("Sounds/Defense_3"));
+            Storage.AddSound("OffenseClass3", Content.Load<SoundEffect>("Sounds/Offense_3"));
+            Storage.AddSound("SupportClass3", Content.Load<SoundEffect>("Sounds/Support_3"));
 
             Storage.AddSprite("BoostDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BoostDrive"));
             Storage.AddSound("BoostDrive_Start", Content.Load<SoundEffect>("Sounds/BoostDrive_Start"));
