@@ -7,8 +7,8 @@ namespace Sand.Tools.Primaries
 {
     public class Jet : Tool
     {
-        private Animation _jetTimer;
-        private AnimationGroup _jetTimerGroup;
+        private readonly Animation _jetTimer;
+        private readonly AnimationGroup _jetTimerGroup;
 
         public Jet(LocalPlayer player) : base(player)
         {
@@ -25,19 +25,21 @@ namespace Sand.Tools.Primaries
 
         private void JetEmit()
         {
-            Storage.SandParticles.Emit(1, (p) =>
-            {
-                p.LifeRemaining = p.Lifetime = 100;
+            var p = new Particle();
 
-                var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
-                var length = (float)Storage.Random.Next(100, 250);
+            p.LifeRemaining = p.Lifetime = 100;
 
-                p.Position = new Vector2(Player.X, Player.Y);
-                p.Velocity = (Player as LocalPlayer).Velocity +
-                    new Vector2(
-                        (float)Math.Cos(Player.Angle - (Math.PI / 2.0f) + angle) * length,
-                        (float)Math.Sin(Player.Angle - (Math.PI / 2.0f) + angle) * length);
-            });
+            var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
+            var length = (float)Storage.Random.Next(100, 250);
+
+            p.Team = Player.Team;
+            p.Position = new Vector2(Player.X, Player.Y);
+            p.Velocity = (Player).Velocity +
+                         new Vector2(
+                             (float)Math.Cos(Player.Angle - (Math.PI / 2.0f) + angle) * length,
+                             (float)Math.Sin(Player.Angle - (Math.PI / 2.0f) + angle) * length);
+
+            Storage.SandParticles.Emit(p);
         }
 
         protected override void Activate()

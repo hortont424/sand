@@ -61,6 +61,7 @@ namespace Sand
                                          var angle = (float)Storage.Random.NextDouble()*(Math.PI * 2.0f);
                                          var length = (float)Storage.Random.Next(0, 6);
 
+                                         p.Team = Team;
                                          p.Position = new Vector2((float)(X + (length * Math.Cos(angle))), (float)(Y + (length * Math.Sin(angle))));
                                          p.Velocity = velocity;
                                      });

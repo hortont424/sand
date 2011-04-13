@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Net;
 
 namespace Sand
@@ -11,7 +12,9 @@ namespace Sand
         UpdatePlayerTeam,
         InvisiblePlayer,
         PlaySound,
-        Stun
+        Stun,
+        CreateSand,
+        UpdateSand
     } ;
 
     internal class Messages
@@ -216,7 +219,7 @@ namespace Sand
             var soundName = Storage.PacketReader.ReadString();
 
             Storage.Sound(soundName).Play();
-            
+
             return soundName;
         }
 
@@ -269,6 +272,90 @@ namespace Sand
         {
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadInt32();
+        }
+
+        #endregion
+
+        #region CreateSand Message
+
+        public static void SendCreateSandMessage(Player player, Particle p, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.CreateSand, id);
+
+            Storage.PacketWriter.Write(p.Position);
+            Storage.PacketWriter.Write(p.Velocity);
+            Storage.PacketWriter.Write((byte)p.Team);
+
+            if(immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static Particle ProcessCreateSandMessage(Player player)
+        {
+            var p = new Particle();
+
+            p.Position = Storage.PacketReader.ReadVector2();
+            p.Velocity = Storage.PacketReader.ReadVector2();
+            p.Team = (Team)Storage.PacketReader.ReadByte();
+
+            Storage.SandParticles.Emit(p, false);
+
+            return p;
+        }
+
+        private static void DiscardCreateSandMessage()
+        {
+            Storage.PacketReader.ReadVector2();
+            Storage.PacketReader.ReadVector2();
+            Storage.PacketReader.ReadByte();
+        }
+
+        #endregion
+
+        #region UpdateSand Message
+
+        public static void SendUpdateSandMessage(Player player, byte id)
+        {
+            /*SendMessageHeader(MessageType.UpdateSand, id);
+
+            Storage.PacketWriter.Write(Storage.SandParticles.Particles.Count);
+
+            foreach(var particle in Storage.SandParticles.Particles)
+            {
+                Storage.PacketWriter.Write(particle.Position);
+                Storage.PacketWriter.Write((byte)particle.Team);
+            }*/
+        }
+
+        private static void ProcessUpdateSandMessage(Player player)
+        {
+            /*var count = Storage.PacketReader.ReadInt32();
+            var particles = new List<Particle>(count);
+
+            for(Int32 i = 0; i < count; i++)
+            {
+                var particle = new Particle();
+
+                particle.Position = Storage.PacketReader.ReadVector2();
+                particle.Team = (Team)Storage.PacketReader.ReadByte();
+
+                particles.Add(particle);
+            }
+
+            Storage.SandParticles.Particles = particles;*/
+        }
+
+        private static void DiscardUpdateSandMessage()
+        {
+            /*var count = Storage.PacketReader.ReadInt32();
+
+            for(Int32 i = 0; i < count; i++)
+            {
+                Storage.PacketReader.ReadVector2();
+                Storage.PacketReader.ReadByte();
+            }*/
         }
 
         #endregion
@@ -351,7 +438,12 @@ namespace Sand
                             case MessageType.Stun:
                                 DiscardStunMessage();
                                 break;
-
+                            case MessageType.CreateSand:
+                                DiscardCreateSandMessage();
+                                break;
+                            case MessageType.UpdateSand:
+                                DiscardUpdateSandMessage();
+                                break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -383,6 +475,12 @@ namespace Sand
                             break;
                         case MessageType.Stun:
                             ProcessStunMessage(player);
+                            break;
+                        case MessageType.CreateSand:
+                            ProcessCreateSandMessage(player);
+                            break;
+                        case MessageType.UpdateSand:
+                            ProcessUpdateSandMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -506,6 +604,23 @@ namespace Sand
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
+                        case MessageType.CreateSand:
+                            var particle = ProcessCreateSandMessage(player);
+
+                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
+                            {
+                                var clientPlayer = clientGamer.Tag as Player;
+
+                                //if(clientGamer.Id != gamerId && clientGamer.Id != Storage.NetworkSession.LocalGamers[0].Id)
+                                {
+                                    SendCreateSandMessage(gamer.Tag as Player, particle, gamerId, false);
+                                }
+                            }
+
+                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -548,6 +663,7 @@ namespace Sand
                     if(Storage.NetworkSession.IsEveryoneReady)
                     {
                         SendUpdatePlayerStateMessage(player, gamer.Id);
+                        //SendUpdateSandMessage(player, gamer.Id);
                     }
                     else
                     {

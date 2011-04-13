@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace Sand
@@ -9,6 +8,7 @@ namespace Sand
     {
         public Vector2 Position, Velocity;
         public Int64 Lifetime, LifeRemaining;
+        public Team Team;
     }
 
     public class ParticleSystem : Actor
@@ -29,8 +29,13 @@ namespace Sand
 
         public override void Update(GameTime gameTime)
         {
-            foreach (var particle in Particles.Where(particle => particle.LifeRemaining > 0))
+            foreach(var particle in Particles)
             {
+                if(!IsSand && particle.LifeRemaining <= 0)
+                {
+                    continue;
+                }
+
                 particle.Position += (particle.Velocity * new Vector2((float)gameTime.ElapsedGameTime.TotalSeconds));
 
                 if(IsSand)
@@ -41,27 +46,47 @@ namespace Sand
                 {
                     particle.LifeRemaining -= (Int64)gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
-                
             }
         }
 
         public override void Draw(GameTime gameTime)
         {
-            var teamColor = Teams.ColorForTeam(Player.Team);
             var size = IsSand ? 4 : 2;
             var offset = size / 2;
 
-            foreach (var particle in Particles.Where(particle => particle.LifeRemaining > 0))
+            foreach(var particle in Particles)
             {
-                float gray = (float)particle.LifeRemaining / (float)particle.Lifetime;
-                _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)(particle.Position.X - offset), (int)(particle.Position.Y - offset), size, size), teamColor * gray);
+                if(!IsSand && particle.LifeRemaining <= 0)
+                {
+                    continue;
+                }
+
+                float gray = IsSand ? 1.0f : particle.LifeRemaining / (float)particle.Lifetime;
+                _spriteBatch.Draw(Storage.Sprite("pixel"),
+                                  new Rectangle((int)(particle.Position.X - offset), (int)(particle.Position.Y - offset),
+                                                size, size), Teams.ColorForTeam(particle.Team) * gray);
             }
+        }
+
+        public void Emit(Particle p, bool broadcast = true)
+        {
+            if(IsSand && broadcast)
+            {
+                Messages.SendCreateSandMessage(Player, p, Player.Gamer.Id, true);
+            }
+
+            Particles.Add(p);
         }
 
         public void Emit(int number, EmitParticleDelegate emitDelegate)
         {
-            foreach (var particle in Particles.Where(particle => particle.LifeRemaining <= 0))
+            foreach(var particle in Particles)
             {
+                if(!IsSand && particle.LifeRemaining > 0)
+                {
+                    continue;
+                }
+
                 number--;
 
                 emitDelegate(particle);
@@ -71,7 +96,7 @@ namespace Sand
             {
                 var particle = new Particle();
                 emitDelegate(particle);
-                Particles.Add(particle);
+                Emit(particle);
             }
         }
     }
