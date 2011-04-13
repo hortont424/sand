@@ -37,6 +37,36 @@ namespace Sand
             // If we change drawing location, we need to change ray intersection offset
             _spriteBatch.Draw(_mapImage, new Vector2(0.0f, 0.0f), Color.White);
         }
+        
+        public bool CollisionTest(Vector2 position)
+        {
+            var rectangleA = new Rectangle((int)position.X, (int)position.Y, 1, 1);
+            var rectangleB = new Rectangle(0, 0, (int)Width, (int)Height);
+
+            int top = Math.Max(rectangleA.Top, rectangleB.Top);
+            int bottom = Math.Min(rectangleA.Bottom, rectangleB.Bottom);
+            int left = Math.Max(rectangleA.Left, rectangleB.Left);
+            int right = Math.Min(rectangleA.Right, rectangleB.Right);
+
+            // Check every point within the intersection bounds
+            for (int y = top; y < bottom; y++)
+            {
+                for (int x = left; x < right; x++)
+                {
+                    Color colorB = _mapTexture[(x - rectangleB.Left) +
+                                               (y - rectangleB.Top) * rectangleB.Width];
+
+                    // If both pixels are not completely transparent,
+                    if (colorB == Color.White)
+                    {
+                        // then an intersection has been found
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         // (C) Microsoft, Corp (see License.md)
         public bool CollisionTest(Color[] pTexture, Rectangle rectangleA)

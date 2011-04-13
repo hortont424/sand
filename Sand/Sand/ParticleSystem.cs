@@ -41,6 +41,11 @@ namespace Sand
                 if(IsSand)
                 {
                     particle.Velocity *= new Vector2(0.95f, 0.95f);
+
+                    if(_sandGame.GameMap.CollisionTest(particle.Position))
+                    {
+                        particle.Velocity *= new Vector2(-1.0f, -1.0f);
+                    }
                 }
                 else
                 {

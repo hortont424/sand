@@ -30,7 +30,7 @@ namespace Sand.Tools.Primaries
             p.LifeRemaining = p.Lifetime = 100;
 
             var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
-            var length = (float)Storage.Random.Next(100, 250);
+            var length = (float)Storage.Random.Next(200, 450);
 
             p.Team = Player.Team;
             p.Position = new Vector2(Player.X, Player.Y);
