@@ -23,7 +23,12 @@ namespace Sand
             DrawOrder = 100;
             _toolButtons = new Dictionary<Type, Button>();
 
-            var label = new Label(Game, origin.X, origin.Y, _toolSetName, "Calibri24Bold") { PositionGravity = new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Center, Gravity.Horizontal.Right)};
+            var label = new Label(Game, origin.X, origin.Y, _toolSetName, "Calibri24Bold")
+                        {
+                            PositionGravity =
+                                new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Center,
+                                                                                Gravity.Horizontal.Right)
+                        };
             Children.Add(label);
 
             var offsetX = origin.X + 24;
@@ -44,7 +49,10 @@ namespace Sand
                 _toolButtons.Add(toolClass, toolButton);
             }
 
-            ChooseTool(null, toolClasses[0]);
+            if(toolClasses.Count > 0)
+            {
+                ChooseTool(null, toolClasses[0]);
+            }
         }
 
         public void SetHoverAction(HoverDelegate hoverAction, object hoverUserData)

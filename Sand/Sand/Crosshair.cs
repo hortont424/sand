@@ -20,7 +20,7 @@ namespace Sand
         public override void Draw(GameTime gameTime)
         {
             _spriteBatch.Draw(_sprite, new Vector2(_sandGame.MouseLocation.X, _sandGame.MouseLocation.Y), null,
-                              Color.Gray, 0.0f,
+                              Color.LightGray, 0.0f,
                               Gravity.Offset(PositionGravity) * new Vector2(_sprite.Width, _sprite.Height), 1.0f,
                               SpriteEffects.None, 1.0f);
         }

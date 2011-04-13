@@ -17,7 +17,7 @@ namespace Sand
         public Vector2 MovementAcceleration;
         public readonly Vector2 DefaultAcceleration;
 
-        public List<Tool> Primaries;
+        public Tool PrimaryA, PrimaryB;
         public Tool Mobility;
         public Tool Weapon;
         public Tool Utility;
@@ -144,6 +144,11 @@ namespace Sand
                 if (newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
                 {
                     Stun(25.0f);
+                }
+
+                if(PrimaryA != null && newKeyState.IsKeyDown(PrimaryA.Key) && !_oldKeyState.IsKeyDown(PrimaryA.Key))
+                {
+                    PrimaryA.Active = newKeyState.IsKeyDown(PrimaryA.Key);
                 }
             }
 

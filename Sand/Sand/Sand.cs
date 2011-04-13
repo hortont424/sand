@@ -160,6 +160,8 @@ namespace Sand
             Storage.AddSprite("ShieldCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/ShieldCircle"));
             Storage.AddSound("Shield", Content.Load<SoundEffect>("Sounds/Shield"));
 
+            Storage.AddSprite("Jet", Content.Load<Texture2D>("Textures/Tools/Primaries/Jet"));
+
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });
             Storage.AddSprite("pixel", rectTexture);

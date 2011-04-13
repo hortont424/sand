@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace Sand.GameState
 {
@@ -54,6 +53,15 @@ namespace Sand.GameState
                                       Position = new Vector2(centerSidebar + 20.0f + 148.0f, 10.0f + 148.0f)
                                   };
                 Game.Components.Add(utilityIcon);
+
+                if(localPlayer.PrimaryA != null)
+                {
+                    var primaryIcon = new ToolIcon(Game, localPlayer.PrimaryA)
+                                      {
+                                          Position = new Vector2(centerSidebar - 10.0f - 74.0f, (10.0f + 148.0f) * 2.0f)
+                                      };
+                    Game.Components.Add(primaryIcon);
+                }
 
                 var nameLabel = new Label(Game, centerSidebar, 2.0f,
                                           localPlayer.Gamer.Gamertag, "Calibri48Bold")

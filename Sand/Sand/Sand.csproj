@@ -160,6 +160,7 @@
     <Compile Include="ToolIcon.cs" />
     <Compile Include="Tools\Mobilities\BoostDrive.cs" />
     <Compile Include="Tools\Mobilities\WinkDrive.cs" />
+    <Compile Include="Tools\Primaries\Jet.cs" />
     <Compile Include="Tools\Tool.cs" />
     <Compile Include="Tools\Utilities\Shield.cs" />
     <Compile Include="Tools\Weapons\Cannon.cs" />
@@ -201,9 +202,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tools\Primaries\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Sand_TemporaryKey.pfx" />
   </ItemGroup>

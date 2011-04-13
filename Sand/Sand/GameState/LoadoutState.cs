@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Sand.Tools;
 using Sand.Tools.Mobilities;
+using Sand.Tools.Primaries;
 using Sand.Tools.Utilities;
 using Sand.Tools.Weapons;
 
@@ -16,6 +17,7 @@ namespace Sand.GameState
         private ToolChooserButton _utilitiesToolChooser;
         private ToolChooserButton _mobilitiesToolChooser;
         private Label _nameLabel, _descriptionLabel;
+        private ToolChooserButton _primariesToolChooser;
 
         public LoadoutState(Sand game) : base(game)
         {
@@ -35,15 +37,35 @@ namespace Sand.GameState
             var utilities = new List<Type> { typeof(Shield) };
             var mobilities = new List<Type> { typeof(BoostDrive), typeof(WinkDrive) };
 
-            _weaponsToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 300), "Weapons", weapons);
-            _utilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 500), "Utilities",
+            var primaries = new List<Type>();
+
+            switch((Storage.NetworkSession.LocalGamers[0].Tag as Player).Class)
+            {
+                case Class.None:
+                    break;
+                case Class.Defense:
+                    primaries.Add(typeof(Jet));
+                    break;
+                case Class.Offense:
+                    break;
+                case Class.Support:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            _primariesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 300), "Primaries",
+                                                          primaries);
+            _weaponsToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 500), "Weapons", weapons);
+            _utilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 700), "Utilities",
                                                           utilities);
-            _mobilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 700), "Mobilities",
+            _mobilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 900), "Mobilities",
                                                            mobilities);
 
             _weaponsToolChooser.SetHoverAction(HoverTool, null);
             _utilitiesToolChooser.SetHoverAction(HoverTool, null);
             _mobilitiesToolChooser.SetHoverAction(HoverTool, null);
+            _primariesToolChooser.SetHoverAction(HoverTool, null);
 
             _nameLabel = new Label(Game, 1300, _sandLogo.Y + 300, "", "Calibri24Bold");
             _descriptionLabel = new Label(Game, 1300, _sandLogo.Y + 350, "", "Calibri24");
@@ -53,6 +75,7 @@ namespace Sand.GameState
             Game.Components.Add(_weaponsToolChooser);
             Game.Components.Add(_utilitiesToolChooser);
             Game.Components.Add(_mobilitiesToolChooser);
+            Game.Components.Add(_primariesToolChooser);
 
             Game.Components.Add(_nameLabel);
             Game.Components.Add(_descriptionLabel);
@@ -86,13 +109,17 @@ namespace Sand.GameState
                 player.Mobility =
                     _mobilitiesToolChooser.SelectedTool.GetConstructor(localPlayerTypeArray).Invoke(localPlayerArray) as
                     Tool;
+                player.PrimaryA =
+                    _primariesToolChooser.SelectedTool.GetConstructor(localPlayerTypeArray).Invoke(localPlayerArray) as
+                    Tool;
             }
 
             Game.Components.Remove(_sandLogo);
-            Game.Components.Remove( _readyButton);
+            Game.Components.Remove(_readyButton);
             Game.Components.Remove(_weaponsToolChooser);
             Game.Components.Remove(_utilitiesToolChooser);
             Game.Components.Remove(_mobilitiesToolChooser);
+            Game.Components.Remove(_primariesToolChooser);
 
             Game.Components.Remove(_nameLabel);
             Game.Components.Remove(_descriptionLabel);
