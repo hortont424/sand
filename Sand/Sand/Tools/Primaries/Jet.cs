@@ -25,12 +25,12 @@ namespace Sand.Tools.Primaries
 
         private void JetEmit()
         {
-            Storage.SandParticles.Emit(50, (p) =>
+            Storage.SandParticles.Emit(1, (p) =>
             {
-                p.LifeRemaining = p.Lifetime = 1000000000000;
+                p.LifeRemaining = p.Lifetime = 100;
 
                 var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
-                var length = (float)Storage.Random.Next(50, 200);
+                var length = (float)Storage.Random.Next(100, 250);
 
                 p.Position = new Vector2(Player.X, Player.Y);
                 p.Velocity = (Player as LocalPlayer).Velocity +

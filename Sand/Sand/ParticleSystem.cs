@@ -48,11 +48,13 @@ namespace Sand
         public override void Draw(GameTime gameTime)
         {
             var teamColor = Teams.ColorForTeam(Player.Team);
+            var size = IsSand ? 4 : 2;
+            var offset = size / 2;
 
             foreach (var particle in Particles.Where(particle => particle.LifeRemaining > 0))
             {
                 float gray = (float)particle.LifeRemaining / (float)particle.Lifetime;
-                _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)(particle.Position.X - 1), (int)(particle.Position.Y - 1), 2, 2), teamColor * gray);
+                _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)(particle.Position.X - offset), (int)(particle.Position.Y - offset), size, size), teamColor * gray);
             }
         }
 
