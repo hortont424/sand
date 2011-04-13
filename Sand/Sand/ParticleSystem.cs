@@ -86,10 +86,11 @@ namespace Sand
                     continue;
                 }
 
+                var color = IsSand ? Teams.ColorForTeam(particle.Team) : Color.Orange;
                 float gray = IsSand ? 1.0f : particle.LifeRemaining / (float)particle.Lifetime;
                 _spriteBatch.Draw(Storage.Sprite("pixel"),
                                   new Rectangle((int)(particle.Position.X - offset), (int)(particle.Position.Y - offset),
-                                                size, size), Teams.ColorForTeam(particle.Team) * gray);
+                                                size, size), color * gray);
             }
         }
 
