@@ -14,13 +14,12 @@ namespace Sand
         public float Angle;
 
         public TimeSpan StunTimeRemaining;
-        
+
         protected TimeSpan _unstunTime;
         private Class _class;
         private Team _team;
-        private bool _invisible;
         private Texture2D _sprite;
-        
+
         public Team Team
         {
             get
@@ -57,22 +56,7 @@ namespace Sand
             }
         }
 
-        public bool Invisible
-        {
-            get
-            {
-                return _invisible;
-            }
-            set
-            {
-                _invisible = value;
-
-                if(this is LocalPlayer)
-                {
-                    Messages.SendInvisiblePlayerMessage(this, Gamer.Id, true);
-                }
-            }
-        }
+        public float Invisible { get; set; }
 
         public bool Stunned { get; set; }
 
@@ -98,29 +82,40 @@ namespace Sand
             var virtualX = Stunned ? X + Storage.Random.Next(-shakeAmplitude, shakeAmplitude) : X;
             var virtualY = Stunned ? Y + Storage.Random.Next(-shakeAmplitude, shakeAmplitude) : Y;
 
-            if(Invisible)
+            if(Invisible != 0.0f)
             {
-                if(this is RemotePlayer)
-                {
-                    return;
-                }
-
                 double hue, saturation, value;
                 SandColor.ToHSV(teamColor, out hue, out saturation, out value);
 
-                teamColor = SandColor.FromHSV(hue, saturation, Math.Max(value - 0.5, 0.0));
+                if(this is LocalPlayer)
+                {
+                    teamColor = SandColor.FromHSV(hue, saturation, Math.Max(value - Invisible, 0.2));
+                }
+                else
+                {
+                    Console.WriteLine(value);
+                    teamColor = SandColor.FromHSV(hue, saturation, Math.Max(value - Invisible, 0.0));
+                }
+            }
+
+            // TODO: hack
+            if(Invisible == 1.0f && !(this is LocalPlayer))
+            {
+                return;
             }
 
             if(this is LocalPlayer)
             {
                 if(Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
                 {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 1, 3000), null,
+                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 1, 3000),
+                                      null,
                                       teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
                 else
                 {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 2, 3000), null,
+                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 2, 3000),
+                                      null,
                                       teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
             }

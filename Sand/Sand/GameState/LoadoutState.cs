@@ -109,9 +109,14 @@ namespace Sand.GameState
                 player.Mobility =
                     _mobilitiesToolChooser.SelectedTool.GetConstructor(localPlayerTypeArray).Invoke(localPlayerArray) as
                     Tool;
-                player.PrimaryA =
-                    _primariesToolChooser.SelectedTool.GetConstructor(localPlayerTypeArray).Invoke(localPlayerArray) as
-                    Tool;
+
+                if(_primariesToolChooser.SelectedTool != null)
+                {
+                    player.PrimaryA =
+                        _primariesToolChooser.SelectedTool.GetConstructor(localPlayerTypeArray).Invoke(localPlayerArray)
+                        as
+                        Tool;
+                }
             }
 
             Game.Components.Remove(_sandLogo);

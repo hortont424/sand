@@ -37,7 +37,7 @@ namespace Sand.Tools.Weapons
 
         public static Keys _key()
         {
-            return Keys.Space;
+            return Keys.None;
         }
 
         protected override void Activate()

@@ -152,6 +152,22 @@ namespace Sand
                     PrimaryA.Active = (newMouseState.LeftButton == ButtonState.Pressed);
                 }
             }
+            else
+            {
+                Mobility.Active = false;
+                Weapon.Active = false;
+                Utility.Active = false;
+
+                if(PrimaryA != null)
+                {
+                    PrimaryA.Active = false;
+                }
+
+                if(PrimaryB != null)
+                {
+                    PrimaryB.Active = false;
+                }
+            }
 
             _oldKeyState = newKeyState;
             _oldMouseState = newMouseState;

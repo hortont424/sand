@@ -7,6 +7,8 @@ namespace Sand.Tools.Mobilities
     public class WinkDrive : Tool
     {
         private SoundEffectInstance _startSound, _stopSound;
+        private Animation _animation;
+        private AnimationGroup _animationGroup;
 
         public WinkDrive(LocalPlayer player) : base(player)
         {
@@ -45,7 +47,9 @@ namespace Sand.Tools.Mobilities
         {
             base.Activate();
 
-            Player.Invisible = true;
+            _animation = new Animation(Player, "Invisible", 1.0f);
+            _animationGroup = new AnimationGroup(_animation, 110.0f);
+            Storage.AnimationController.AddGroup(_animationGroup);
 
             _startSound.Play();
         }
@@ -54,7 +58,11 @@ namespace Sand.Tools.Mobilities
         {
             base.Deactivate();
 
-            Player.Invisible = false;
+            Storage.AnimationController.RemoveGroup(_animationGroup);
+
+            _animation = new Animation(Player, "Invisible", 0.0f);
+            _animationGroup = new AnimationGroup(_animation, 110.0f);
+            Storage.AnimationController.AddGroup(_animationGroup);
 
             _startSound.Stop();
 

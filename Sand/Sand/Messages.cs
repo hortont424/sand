@@ -10,7 +10,6 @@ namespace Sand
         UpdatePlayerMenuState,
         UpdatePlayerClass,
         UpdatePlayerTeam,
-        InvisiblePlayer,
         PlaySound,
         Stun,
         CreateSand,
@@ -63,6 +62,7 @@ namespace Sand
             Storage.PacketWriter.Write(player.Y);
             Storage.PacketWriter.Write(player.Angle);
             Storage.PacketWriter.Write(player.Stunned);
+            Storage.PacketWriter.Write(player.Invisible);
 
             if(player.Stunned)
             {
@@ -76,6 +76,7 @@ namespace Sand
             player.Y = Storage.PacketReader.ReadSingle();
             player.Angle = Storage.PacketReader.ReadSingle();
             player.Stunned = Storage.PacketReader.ReadBoolean();
+            player.Invisible = Storage.PacketReader.ReadSingle();
 
             if(player.Stunned)
             {
@@ -89,6 +90,7 @@ namespace Sand
             Storage.PacketReader.ReadSingle();
             Storage.PacketReader.ReadSingle();
             var stunned = Storage.PacketReader.ReadBoolean();
+            Storage.PacketReader.ReadSingle();
 
             if(stunned)
             {
@@ -170,32 +172,6 @@ namespace Sand
         private static void DiscardUpdatePlayerTeamMessage()
         {
             Storage.PacketReader.ReadByte();
-        }
-
-        #endregion
-
-        #region InvisiblePlayer Message
-
-        public static void SendInvisiblePlayerMessage(Player player, byte id, bool immediate)
-        {
-            SendMessageHeader(MessageType.InvisiblePlayer, id);
-
-            Storage.PacketWriter.Write(player.Invisible);
-
-            if(immediate)
-            {
-                SendOneOffMessage(player);
-            }
-        }
-
-        private static void ProcessInvisiblePlayerMessage(Player player)
-        {
-            player.Invisible = Storage.PacketReader.ReadBoolean();
-        }
-
-        private static void DiscardInvisiblePlayerMessage()
-        {
-            Storage.PacketReader.ReadBoolean();
         }
 
         #endregion
@@ -429,9 +405,6 @@ namespace Sand
                             case MessageType.UpdatePlayerTeam:
                                 DiscardUpdatePlayerTeamMessage();
                                 break;
-                            case MessageType.InvisiblePlayer:
-                                DiscardInvisiblePlayerMessage();
-                                break;
                             case MessageType.PlaySound:
                                 DiscardPlaySoundMessage();
                                 break;
@@ -466,9 +439,6 @@ namespace Sand
                             break;
                         case MessageType.UpdatePlayerTeam:
                             ProcessUpdatePlayerTeamMessage(player);
-                            break;
-                        case MessageType.InvisiblePlayer:
-                            ProcessInvisiblePlayerMessage(player);
                             break;
                         case MessageType.PlaySound:
                             ProcessPlaySoundMessage(player);
@@ -545,20 +515,6 @@ namespace Sand
                                 var clientPlayer = clientGamer.Tag as Player;
 
                                 SendUpdatePlayerTeamMessage(gamer.Tag as Player, gamerId, false);
-                            }
-
-                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
-
-                            break;
-                        case MessageType.InvisiblePlayer:
-                            ProcessInvisiblePlayerMessage(player);
-
-                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
-                            {
-                                var clientPlayer = clientGamer.Tag as Player;
-
-                                SendInvisiblePlayerMessage(gamer.Tag as Player, gamerId, false);
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;

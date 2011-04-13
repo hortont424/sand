@@ -73,7 +73,7 @@ namespace Sand.Tools.Primaries
 
         public static Keys _key()
         {
-            return Keys.Q;
+            return Keys.None;
         }
     }
 }
