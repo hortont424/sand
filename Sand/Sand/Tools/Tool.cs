@@ -11,6 +11,13 @@ namespace Sand.Tools
         Custom
     } ;
 
+    public enum MouseButton
+    {
+        None,
+        LeftButton,
+        RightButton
+    } ;
+
     public abstract class Tool
     {
         public double Modifier { get; set; }
@@ -20,7 +27,7 @@ namespace Sand.Tools
         {
             get
             {
-                return this.GetType().GetMethod("_name").Invoke(null, null) as string;
+                return GetType().GetMethod("_name").Invoke(null, null) as string;
             }
         }
 
@@ -28,7 +35,7 @@ namespace Sand.Tools
         {
             get
             {
-                return this.GetType().GetMethod("_description").Invoke(null, null) as string;
+                return GetType().GetMethod("_description").Invoke(null, null) as string;
             }
         }
 
@@ -36,7 +43,7 @@ namespace Sand.Tools
         {
             get
             {
-                return this.GetType().GetMethod("_icon").Invoke(null, null) as Texture2D;
+                return GetType().GetMethod("_icon").Invoke(null, null) as Texture2D;
             }
         }
 
@@ -44,7 +51,33 @@ namespace Sand.Tools
         {
             get
             {
-                return (Keys)this.GetType().GetMethod("_key").Invoke(null, null);
+                var method = GetType().GetMethod("_key");
+
+                if(method != null)
+                {
+                    return (Keys)method.Invoke(null, null);
+                }
+                else
+                {
+                    return Keys.None;
+                }
+            }
+        }
+
+        public MouseButton Button
+        {
+            get
+            {
+                var method = GetType().GetMethod("_button");
+
+                if(method != null)
+                {
+                    return (MouseButton)method.Invoke(null, null);
+                }
+                else
+                {
+                    return MouseButton.None;
+                }
             }
         }
 
@@ -194,6 +227,65 @@ namespace Sand.Tools
         {
             Energy = TotalEnergy;
             _inCooldown = false;
+        }
+
+        private bool MouseButtonState(MouseState state, MouseButton button)
+        {
+            switch(button)
+            {
+                case MouseButton.None:
+                    return false;
+                case MouseButton.LeftButton:
+                    return state.LeftButton == ButtonState.Pressed;
+                case MouseButton.RightButton:
+                    return state.RightButton == ButtonState.Pressed;
+                default:
+                    throw new ArgumentOutOfRangeException("button");
+            }
+        }
+
+        public bool ShouldDisable(KeyboardState newKeyState, MouseState newMouseState, KeyboardState oldKeyState,
+                                  MouseState oldMouseState)
+        {
+            if(Key != Keys.None)
+            {
+                if(newKeyState.IsKeyUp(Key) && oldKeyState.IsKeyDown(Key))
+                {
+                    return true;
+                }
+            }
+
+            if(Button != MouseButton.None)
+            {
+                if(!MouseButtonState(newMouseState, Button) && MouseButtonState(oldMouseState, Button))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool ShouldEnable(KeyboardState newKeyState, MouseState newMouseState, KeyboardState oldKeyState,
+                                 MouseState oldMouseState)
+        {
+            if(Key != Keys.None)
+            {
+                if(oldKeyState.IsKeyUp(Key) && newKeyState.IsKeyDown(Key))
+                {
+                    return true;
+                }
+            }
+
+            if(Button != MouseButton.None)
+            {
+                if(!MouseButtonState(oldMouseState, Button) && MouseButtonState(newMouseState, Button))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

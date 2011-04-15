@@ -23,6 +23,26 @@ namespace Sand.Tools.Primaries
             _jetTimerGroup = new AnimationGroup(_jetTimer, 10) { Loops = true };
         }
 
+        public static string _name()
+        {
+            return "Jet";
+        }
+
+        public static string _description()
+        {
+            return "Make Sand!";
+        }
+
+        public static Texture2D _icon()
+        {
+            return Storage.Sprite("Jet");
+        }
+
+        public static MouseButton _button()
+        {
+            return MouseButton.LeftButton;
+        }
+
         private void JetEmit()
         {
             var p = new Particle();
@@ -56,24 +76,6 @@ namespace Sand.Tools.Primaries
             Storage.AnimationController.RemoveGroup(_jetTimerGroup);
         }
 
-        public static string _name()
-        {
-            return "Jet";
-        }
-
-        public static string _description()
-        {
-            return "Make Sand!";
-        }
-
-        public static Texture2D _icon()
-        {
-            return Storage.Sprite("Jet");
-        }
-
-        public static Keys _key()
-        {
-            return Keys.None;
-        }
+        
     }
 }

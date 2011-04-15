@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
@@ -154,30 +155,35 @@ namespace Sand
 
             if(!Stunned)
             {
-                if(newKeyState.IsKeyDown(Mobility.Key) != _oldKeyState.IsKeyDown(Mobility.Key))
+                var tools = new[] { Mobility, Utility, Weapon, PrimaryA, PrimaryB };
+
+                foreach(var tool in tools.Where(tool => tool != null))
                 {
-                    Mobility.Active = newKeyState.IsKeyDown(Mobility.Key);
+                    if(tool.ShouldDisable(newKeyState, newMouseState, _oldKeyState, _oldMouseState))
+                    {
+                        tool.Active = false;
+                    }
                 }
 
-                if(newMouseState.RightButton != _oldMouseState.RightButton)
-                {
-                    // TODO: make sure cursor is in our window!!
-                    Weapon.Active = (newMouseState.RightButton == ButtonState.Pressed);
-                }
-
-                if(newKeyState.IsKeyDown(Utility.Key) != _oldKeyState.IsKeyDown(Utility.Key))
-                {
-                    Utility.Active = newKeyState.IsKeyDown(Utility.Key);
-                }
+                bool activeTool = Mobility.Active || Weapon.Active || Utility.Active ||
+                                  (PrimaryA != null && PrimaryA.Active) ||
+                                  (PrimaryB != null && PrimaryB.Active);
 
                 if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
                 {
                     Stun(25.0f);
                 }
 
-                if(PrimaryA != null && newMouseState.LeftButton != _oldMouseState.LeftButton)
+                if(!activeTool)
                 {
-                    PrimaryA.Active = (newMouseState.LeftButton == ButtonState.Pressed);
+                    foreach(var tool in tools.Where(tool => tool != null))
+                    {
+                        if(tool.ShouldEnable(newKeyState, newMouseState, _oldKeyState, _oldMouseState))
+                        {
+                            tool.Active = true;
+                            break;
+                        }
+                    }
                 }
             }
             else

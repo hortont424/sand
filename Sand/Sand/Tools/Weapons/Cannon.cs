@@ -35,9 +35,9 @@ namespace Sand.Tools.Weapons
             return Storage.Sprite("Cannon");
         }
 
-        public static Keys _key()
+        public static MouseButton _button()
         {
-            return Keys.None;
+            return MouseButton.RightButton;
         }
 
         protected override void Activate()

@@ -49,6 +49,7 @@ namespace Sand.GameState
                 case Class.Offense:
                     break;
                 case Class.Support:
+                    primaries.Add(typeof(Plow));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
