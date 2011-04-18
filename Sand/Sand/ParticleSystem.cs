@@ -6,15 +6,29 @@ namespace Sand
 {
     public class Particle
     {
+        public string Id;
         public Vector2 Position, Velocity;
         public Int64 Lifetime, LifeRemaining;
         public Team Team;
+
+        public Particle(string id = null)
+        {
+            if(id != null)
+            {
+                Id = id;
+            }
+            else
+            {
+                var uuid = Guid.NewGuid();
+                Id = uuid.ToString("N");
+            }
+        }
     }
 
     public class ParticleSystem : Actor
     {
         public Player Player;
-        public List<Particle> Particles;
+        public Dictionary<string,Particle> Particles;
 
         public bool IsSand;
 
@@ -24,14 +38,14 @@ namespace Sand
         {
             DrawOrder = 50;
             Player = player;
-            Particles = new List<Particle>(1000);
+            Particles = new Dictionary<string,Particle>(1000);
         }
 
         public override void Update(GameTime gameTime)
         {
             var size = IsSand ? 4 : 2;
 
-            foreach(var particle in Particles)
+            foreach(var particle in Particles.Values)
             {
                 if(!IsSand && particle.LifeRemaining <= 0)
                 {
@@ -79,7 +93,7 @@ namespace Sand
             var size = IsSand ? 4 : 2;
             var offset = size / 2;
 
-            foreach(var particle in Particles)
+            foreach(var particle in Particles.Values)
             {
                 if(!IsSand && particle.LifeRemaining <= 0)
                 {
@@ -101,12 +115,12 @@ namespace Sand
                 Messages.SendCreateSandMessage(Player, p, Player.Gamer.Id, true);
             }
 
-            Particles.Add(p);
+            Particles.Add(p.Id, p);
         }
 
         public void Emit(int number, EmitParticleDelegate emitDelegate)
         {
-            foreach(var particle in Particles)
+            foreach(var particle in Particles.Values)
             {
                 if(!IsSand && particle.LifeRemaining > 0)
                 {
