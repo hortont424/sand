@@ -20,12 +20,12 @@ namespace Sand
 
             if(team == Team.Red)
             {
-                Label = new Label(game, origin.X - 10, origin.Y + (Button.Bounds.Height / 2.0f),
+                Label = new Label(game, origin.X - 25, origin.Y + (Button.Bounds.Height / 2.0f),
                               "", "Calibri24Bold") { DrawOrder = 10000, PositionGravity = new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Center, Gravity.Horizontal.Right) };
             }
             else
             {
-                Label = new Label(game, origin.X + Button.Bounds.Width + 10, origin.Y + (Button.Bounds.Height / 2.0f),
+                Label = new Label(game, origin.X + Button.Bounds.Width + 25, origin.Y + (Button.Bounds.Height / 2.0f),
                               "", "Calibri24Bold") { DrawOrder = 10000, PositionGravity = new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Center, Gravity.Horizontal.Left)};
             }
 
