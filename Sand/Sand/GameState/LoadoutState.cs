@@ -47,6 +47,7 @@ namespace Sand.GameState
                     primaries.Add(typeof(Jet));
                     break;
                 case Class.Offense:
+                    primaries.Add(typeof(Laser));
                     break;
                 case Class.Support:
                     primaries.Add(typeof(Plow));

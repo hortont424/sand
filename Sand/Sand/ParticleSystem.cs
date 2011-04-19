@@ -10,6 +10,7 @@ namespace Sand
         public Vector2 Position, Velocity;
         public Int64 Lifetime, LifeRemaining;
         public Team Team;
+        public byte Fire;
 
         public Particle(string id = null)
         {
@@ -100,8 +101,8 @@ namespace Sand
                     continue;
                 }
 
-                var color = IsSand ? Teams.ColorForTeam(particle.Team) : Color.Orange;
-                float gray = IsSand ? 1.0f : particle.LifeRemaining / (float)particle.Lifetime;
+                var color = IsSand ? (particle.Fire == 255 ? Color.Orange : Teams.ColorForTeam(particle.Team)) : Color.Orange;
+                var gray = IsSand ? 1.0f : particle.LifeRemaining / (float)particle.Lifetime;
                 _spriteBatch.Draw(Storage.Sprite("pixel"),
                                   new Rectangle((int)(particle.Position.X - offset), (int)(particle.Position.Y - offset),
                                                 size, size), color * gray);

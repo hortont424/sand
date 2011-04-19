@@ -261,6 +261,7 @@ namespace Sand
             Storage.PacketWriter.Write(p.Position);
             Storage.PacketWriter.Write(p.Velocity);
             Storage.PacketWriter.Write((byte)p.Team);
+            Storage.PacketWriter.Write(p.Fire);
 
             if(immediate)
             {
@@ -280,6 +281,7 @@ namespace Sand
             p.Position = Storage.PacketReader.ReadVector2();
             p.Velocity = Storage.PacketReader.ReadVector2();
             p.Team = (Team)Storage.PacketReader.ReadByte();
+            p.Fire = Storage.PacketReader.ReadByte();
 
             if(!exists)
             {
@@ -294,6 +296,7 @@ namespace Sand
             Storage.PacketReader.ReadString();
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadVector2();
+            Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
         }
 

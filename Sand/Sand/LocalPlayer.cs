@@ -315,6 +315,16 @@ namespace Sand
                 Weapon.Draw(_spriteBatch);
             }
 
+            if(PrimaryA != null)
+            {
+                PrimaryA.Draw(_spriteBatch);
+            }
+
+            if(PrimaryB != null)
+            {
+                PrimaryB.Draw(_spriteBatch);
+            }
+
             base.Draw(gameTime);
 
             // TODO: drawing for primaries

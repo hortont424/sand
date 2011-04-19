@@ -53,6 +53,8 @@ namespace Sand.Tools.Primaries
 
         private void PlowBlow()
         {
+            const int maxDistance = 100 * 100;
+
             foreach(var pair in Storage.SandParticles.Particles)
             {
                 var id = pair.Key;
@@ -61,8 +63,7 @@ namespace Sand.Tools.Primaries
                 var angleToParticle = (float)Math.Atan2(particle.Position.Y - Player.Y, particle.Position.X - Player.X);
                 var playerAngle = Player.Angle - ((float)Math.PI / 2.0f);
                 var distanceToParticle =
-                    Math.Sqrt(Math.Pow(Player.X - particle.Position.X, 2) + Math.Pow(Player.Y - particle.Position.Y, 2));
-                const int maxDistance = 100;
+                    Math.Pow(Player.X - particle.Position.X, 2) + Math.Pow(Player.Y - particle.Position.Y, 2);
 
                 if(Math.Abs(angleToParticle - playerAngle) > (Math.PI / 6))
                 {
