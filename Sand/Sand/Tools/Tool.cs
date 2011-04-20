@@ -43,7 +43,8 @@ namespace Sand.Tools
         Cannon,
         SandCharge,
         FlameCharge,
-        PressureCharge
+        PressureCharge,
+        EMP
     }
 
     public abstract class Tool
@@ -166,7 +167,7 @@ namespace Sand.Tools
                 {
                     if(_active)
                     {
-                        if(Energy > EnergyConsumptionRate)
+                        if(Energy >= EnergyConsumptionRate)
                         {
                             Activate();
 
@@ -246,6 +247,8 @@ namespace Sand.Tools
                     return new FlameCharge(player);
                 case ToolType.PressureCharge:
                     return new PressureCharge(player);
+                case ToolType.EMP:
+                    return new EMP(player);
                 default:
                     throw new ArgumentOutOfRangeException("type");
             }

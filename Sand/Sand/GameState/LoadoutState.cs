@@ -33,7 +33,7 @@ namespace Sand.GameState
             _readyButton = new Button(Game, readyButtonRect, "Ready", new Color(0.1f, 0.7f, 0.1f));
             _readyButton.SetAction((a, userInfo) => Game.TransitionState(States.ReadyWait), null);
 
-            var weapons = new List<Type> { typeof(Cannon) };
+            var weapons = new List<Type> { typeof(Cannon), typeof(EMP) };
             var utilities = new List<Type> { typeof(Shield) };
             var mobilities = new List<Type> { typeof(BoostDrive), typeof(WinkDrive) };
 
