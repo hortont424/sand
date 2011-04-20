@@ -49,9 +49,11 @@ namespace Sand.GameState
                     break;
                 case Class.Offense:
                     primaries.Add(typeof(Laser));
+                    primaries.Add(typeof(FlameCharge));
                     break;
                 case Class.Support:
                     primaries.Add(typeof(Plow));
+                    primaries.Add(typeof(PressureCharge));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -161,9 +161,11 @@
     <Compile Include="ToolIcon.cs" />
     <Compile Include="Tools\Mobilities\BoostDrive.cs" />
     <Compile Include="Tools\Mobilities\WinkDrive.cs" />
+    <Compile Include="Tools\Primaries\FlameCharge.cs" />
     <Compile Include="Tools\Primaries\Jet.cs" />
     <Compile Include="Tools\Primaries\Laser.cs" />
     <Compile Include="Tools\Primaries\Plow.cs" />
+    <Compile Include="Tools\Primaries\PressureCharge.cs" />
     <Compile Include="Tools\Primaries\SandCharge.cs" />
     <Compile Include="Tools\Tool.cs" />
     <Compile Include="Tools\Utilities\Shield.cs" />
