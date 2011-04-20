@@ -14,7 +14,8 @@ namespace Sand
         Stun,
         ActivateTool,
         CreateSand,
-        RemoveSand
+        RemoveSand,
+        UpdateSand
     }
 
     internal class ActivationInfo
@@ -452,6 +453,68 @@ namespace Sand
 
         #endregion
 
+        #region UpdateSand Message
+
+        public static void SendUpdateSandMessage(Player player, Particle p, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.UpdateSand, id);
+
+            Storage.PacketWriter.Write(p.Id);
+            Storage.PacketWriter.Write(p.Position);
+            Storage.PacketWriter.Write(p.Velocity);
+
+            Storage.PacketWriter.Write(p.Alive);
+            Storage.PacketWriter.Write(p.OnFire);
+
+            if (p.OnFire)
+            {
+                Storage.PacketWriter.Write(p.Fire);
+            }
+
+            if (immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static Particle ProcessUpdateSandMessage(Player player)
+        {
+            var id = Storage.PacketReader.ReadString();
+            var exists = Storage.SandParticles.Particles.ContainsKey(id);
+
+            var p = exists
+                        ? Storage.SandParticles.Particles[id]
+                        : new Particle(id);
+
+            p.Position = Storage.PacketReader.ReadVector2();
+            p.Velocity = Storage.PacketReader.ReadVector2();
+            p.Alive = Storage.PacketReader.ReadBoolean();
+            p.OnFire = Storage.PacketReader.ReadBoolean();
+
+            if (p.OnFire)
+            {
+                p.Fire = Storage.PacketReader.ReadByte();
+            }
+
+            return p;
+        }
+
+        private static void DiscardUpdateSandMessage()
+        {
+            Storage.PacketReader.ReadString();
+            Storage.PacketReader.ReadVector2();
+            Storage.PacketReader.ReadVector2();
+            Storage.PacketReader.ReadBoolean();
+            var onFire = Storage.PacketReader.ReadBoolean();
+
+            if (onFire)
+            {
+                Storage.PacketReader.ReadByte();
+            }
+        }
+
+        #endregion
+
         #region RemoveSand Message
 
         public static void SendRemoveSandMessage(Player player, Particle p, byte id, bool immediate)
@@ -578,6 +641,9 @@ namespace Sand
                             case MessageType.CreateSand:
                                 DiscardCreateSandMessage();
                                 break;
+                            case MessageType.UpdateSand:
+                                DiscardUpdateSandMessage();
+                                break;
                             case MessageType.RemoveSand:
                                 DiscardRemoveSandMessage();
                                 break;
@@ -615,6 +681,9 @@ namespace Sand
                             break;
                         case MessageType.CreateSand:
                             ProcessCreateSandMessage(player);
+                            break;
+                        case MessageType.UpdateSand:
+                            ProcessUpdateSandMessage(player);
                             break;
                         case MessageType.RemoveSand:
                             ProcessRemoveSandMessage(player);
@@ -699,7 +768,15 @@ namespace Sand
                             var stunId = stunInfo.Item1;
                             var stunEnergy = stunInfo.Item2;
 
-                            SendStunMessage(gamer.Tag as Player, clientPlayer, stunEnergy, gamerId, false);
+                            foreach (var clientGamer in Storage.NetworkSession.AllGamers)
+                            {
+                                var clientPlayer = clientGamer.Tag as Player;
+
+                                if (clientGamer.Id == stunId)
+                                {
+                                    SendStunMessage(gamer.Tag as Player, clientPlayer, stunEnergy, gamerId, false);
+                                }
+                            }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
@@ -722,6 +799,15 @@ namespace Sand
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+
+                            break;
+                        case MessageType.UpdateSand:
+                            particle = ProcessUpdateSandMessage(player);
+
+                            SendUpdateSandMessage(gamer.Tag as Player, particle, gamerId, false);
+
+                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
+                            server.SendData(Storage.PacketWriter, SendDataOptions.None);
 
                             break;
                         case MessageType.RemoveSand:

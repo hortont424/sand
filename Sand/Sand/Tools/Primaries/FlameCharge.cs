@@ -78,7 +78,7 @@ namespace Sand.Tools.Primaries
 
             foreach (var particle in particleQueue)
             {
-                Messages.SendCreateSandMessage(Player, particle, Player.Gamer.Id, false);
+                Messages.SendUpdateSandMessage(Player, particle, Player.Gamer.Id, false);
             }
 
             if (particleQueue.Count > 0)
