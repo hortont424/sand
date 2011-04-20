@@ -70,19 +70,6 @@ namespace Sand
                 Acceleration.Y = MovementAcceleration.Y;
             }
 
-            if(newKeyState.IsKeyDown(Keys.D1))
-            {
-                Class = Class.Defense;
-            }
-            else if(newKeyState.IsKeyDown(Keys.D2))
-            {
-                Class = Class.Offense;
-            }
-            else if(newKeyState.IsKeyDown(Keys.D3))
-            {
-                Class = Class.Support;
-            }
-
             if(newKeyState.IsKeyDown(Keys.R))
             {
                 if(Mobility != null)
