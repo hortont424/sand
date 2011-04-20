@@ -13,13 +13,13 @@ namespace Sand
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
 
-        public Tool CurrentPrimary;
+        public Tool CurrentPrimary, LastTool;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             MovementAcceleration = DefaultAcceleration;
         }
-
+        
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -157,6 +157,7 @@ namespace Sand
                         if(tool.ShouldEnable(newKeyState, newMouseState, _oldKeyState, _oldMouseState))
                         {
                             tool.Active = true;
+                            LastTool = tool;
                             break;
                         }
                     }

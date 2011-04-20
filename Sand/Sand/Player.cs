@@ -91,27 +91,27 @@ namespace Sand
         {
             var teamColor = Teams.ColorForTeam(Team);
 
-            if (Utility != null)
+            if(Utility != null)
             {
                 Utility.Draw(_spriteBatch);
             }
 
-            if (Mobility != null)
+            if(Mobility != null)
             {
                 Mobility.Draw(_spriteBatch);
             }
 
-            if (Weapon != null)
+            if(Weapon != null)
             {
                 Weapon.Draw(_spriteBatch);
             }
 
-            if (PrimaryA != null)
+            if(PrimaryA != null)
             {
                 PrimaryA.Draw(_spriteBatch);
             }
 
-            if (PrimaryB != null)
+            if(PrimaryB != null)
             {
                 PrimaryB.Draw(_spriteBatch);
             }
@@ -161,6 +161,36 @@ namespace Sand
             _spriteBatch.Draw(_sprite, new Rectangle((int)virtualX, (int)virtualY, (int)Width, (int)Height),
                               null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
+
+            var localPlayer = this as LocalPlayer;
+            if(localPlayer != null)
+            {
+                var tool = localPlayer.LastTool;
+
+                if(tool == null)
+                {
+                    return;
+                }
+
+                if(tool.Energy == tool.TotalEnergy)
+                {
+                    return;
+                }
+
+                _spriteBatch.Draw(Storage.Sprite("pixel"),
+                                  new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
+                                                (int)(virtualY + (_sprite.Height / 2.0f) + 15),
+                                                _sprite.Width, 7),
+                                  null,
+                                  new Color(0.2f, 0.2f, 0.2f), 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
+
+                _spriteBatch.Draw(Storage.Sprite("pixel"),
+                                  new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
+                                                (int)(virtualY + (_sprite.Height / 2.0f) + 15),
+                                                (int)((tool.Energy / tool.TotalEnergy) * _sprite.Width), 7),
+                                  null,
+                                  teamColor, 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
+            }
         }
 
         public float ? Intersects(Ray ray)
@@ -186,7 +216,7 @@ namespace Sand
 
         public Tool ToolInSlot(ToolSlot slot)
         {
-            switch (slot)
+            switch(slot)
             {
                 case ToolSlot.Primary:
                     return PrimaryA;

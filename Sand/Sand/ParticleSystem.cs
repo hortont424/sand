@@ -123,7 +123,7 @@ namespace Sand
 
                 if(IsSand && particle.Owner == Player.Gamer.Id)
                 {
-                    const int fireSpreadRadius = 20 * 20;
+                    const int fireSpreadRadius = 10 * 10;
 
                     if(particle.OnFire)
                     {

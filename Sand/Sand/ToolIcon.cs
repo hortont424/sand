@@ -72,7 +72,7 @@ namespace Sand
                 UpdateDrainMeter();
             }
 
-            var mulColor = Disabled ? Microsoft.Xna.Framework.Color.DarkGray : Microsoft.Xna.Framework.Color.White;
+            var mulColor = Disabled ? new Microsoft.Xna.Framework.Color(0.2f, 0.2f, 0.2f) : Microsoft.Xna.Framework.Color.White;
 
             if(_drainTexture != null && _tool.Energy > 0.0f)
             {
