@@ -14,15 +14,9 @@ namespace Sand
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
 
-        private readonly ParticleSystem _particles;
-        private Vector2 _pureAcceleration;
-
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             MovementAcceleration = DefaultAcceleration;
-
-            _particles = new ParticleSystem(game, this);
-            Children.Add(_particles);
         }
 
         public override void Update(GameTime gameTime)
@@ -33,27 +27,6 @@ namespace Sand
             UpdateInput(gameTime);
             UpdatePosition(gameTime);
             UpdateAngle();
-
-            // TODO: move into BoostDrive
-            if(Mobility is BoostDrive && Mobility.Active)
-            {
-                _particles.Emit(10, (p) =>
-                                    {
-                                        var velocity =
-                                            new Vector2(-_pureAcceleration.X * 0.2f + Storage.Random.Next(-70, 70),
-                                                        -_pureAcceleration.Y * 0.2f + Storage.Random.Next(-70, 70));
-
-                                        p.LifeRemaining = p.Lifetime = Storage.Random.Next(250, 450);
-
-                                        var angle = (float)Storage.Random.NextDouble() * (Math.PI * 2.0f);
-                                        var length = (float)Storage.Random.Next(0, 6);
-
-                                        p.Team = Team;
-                                        p.Position = new Vector2((float)(X + (length * Math.Cos(angle))),
-                                                                 (float)(Y + (length * Math.Sin(angle))));
-                                        p.Velocity = velocity;
-                                    });
-            }
         }
 
         private void UpdateStun(GameTime gameTime)
@@ -205,7 +178,7 @@ namespace Sand
             var newPosition = new Vector2(X, Y);
             var timestep = (float)(gameTime.ElapsedGameTime.TotalSeconds);
 
-            _pureAcceleration = Acceleration;
+            PureAcceleration = Acceleration;
 
             Acceleration.X -= Drag.X * Velocity.X;
             Acceleration.Y -= Drag.Y * Velocity.Y;

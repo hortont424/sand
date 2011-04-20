@@ -16,6 +16,7 @@ namespace Sand
 
         public Vector2 Velocity;
         public Vector2 Acceleration;
+        public Vector2 PureAcceleration;
         public Vector2 Drag = new Vector2(1.5f, 1.5f);
         public Vector2 MovementAcceleration;
         public readonly Vector2 DefaultAcceleration = new Vector2(450.0f, 450.0f);

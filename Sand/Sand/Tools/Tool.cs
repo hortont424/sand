@@ -112,7 +112,7 @@ namespace Sand.Tools
             {
                 var method = GetType().GetMethod("_type");
 
-                if (method != null)
+                if(method != null)
                 {
                     return (ToolType)method.Invoke(null, null);
                 }
@@ -129,7 +129,7 @@ namespace Sand.Tools
             {
                 var method = GetType().GetMethod("_slot");
 
-                if (method != null)
+                if(method != null)
                 {
                     return (ToolSlot)method.Invoke(null, null);
                 }
@@ -207,11 +207,14 @@ namespace Sand.Tools
         {
             Player = player;
 
-            _energyAnimation = new Animation { CompletedDelegate = EnergyTick };
+            if(Player is LocalPlayer)
+            {
+                _energyAnimation = new Animation { CompletedDelegate = EnergyTick };
 
-            _energyAnimationGroup = new AnimationGroup(_energyAnimation, 10) { Loops = true };
+                _energyAnimationGroup = new AnimationGroup(_energyAnimation, 10) { Loops = true };
 
-            Storage.AnimationController.AddGroup(_energyAnimationGroup);
+                Storage.AnimationController.AddGroup(_energyAnimationGroup);
+            }
         }
 
         public static Tool OfType(ToolType type, Player player)
