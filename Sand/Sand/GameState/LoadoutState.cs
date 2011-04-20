@@ -131,6 +131,8 @@ namespace Sand.GameState
             Game.Components.Remove(_nameLabel);
             Game.Components.Remove(_descriptionLabel);
 
+            Messages.Update();
+
             return null;
         }
     }

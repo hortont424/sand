@@ -13,7 +13,7 @@ namespace Sand.Tools.Primaries
         private readonly HashSet<Particle> _particleQueue;
         private readonly AnimationGroup _plowUpdateTimerGroup;
 
-        public Plow(LocalPlayer player) : base(player)
+        public Plow(Player player) : base(player)
         {
             Modifier = 0.5;
 
@@ -49,6 +49,16 @@ namespace Sand.Tools.Primaries
         public static MouseButton _button()
         {
             return MouseButton.LeftButton;
+        }
+
+        public static ToolType _type()
+        {
+            return ToolType.Plow;
+        }
+
+        public static ToolSlot _slot()
+        {
+            return ToolSlot.Primary;
         }
 
         private void PlowBlow()

@@ -10,7 +10,7 @@ namespace Sand.Tools.Weapons
         private bool _drawCannonNextFrame;
         private float _drawCannonLength;
 
-        public Cannon(LocalPlayer player) : base(player)
+        public Cannon(Player player) : base(player)
         {
             Modifier = 0.5;
 
@@ -38,6 +38,16 @@ namespace Sand.Tools.Weapons
         public static MouseButton _button()
         {
             return MouseButton.RightButton;
+        }
+
+        public static ToolType _type()
+        {
+            return ToolType.Cannon;
+        }
+
+        public static ToolSlot _slot()
+        {
+            return ToolSlot.Weapon;
         }
 
         protected override void Activate()

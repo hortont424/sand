@@ -14,8 +14,7 @@ namespace Sand.Tools.Utilities
 
         public float GrayLevel { get; set; }
 
-        public Shield(LocalPlayer player)
-            : base(player)
+        public Shield(Player player) : base(player)
         {
             Modifier = 0.5;
 
@@ -50,6 +49,16 @@ namespace Sand.Tools.Utilities
         public static Keys _key()
         {
             return Keys.LeftShift;
+        }
+
+        public static ToolType _type()
+        {
+            return ToolType.Shield;
+        }
+
+        public static ToolSlot _slot()
+        {
+            return ToolSlot.Utility;
         }
 
         protected override void Activate()

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Net;
+using Sand.Tools;
 
 namespace Sand
 {
@@ -11,6 +12,7 @@ namespace Sand
         UpdatePlayerTeam,
         PlaySound,
         Stun,
+        ActivateTool,
         CreateSand,
         RemoveSand
     } ;
@@ -107,16 +109,61 @@ namespace Sand
 
             Storage.PacketWriter.Write((Byte)player.Class);
             Storage.PacketWriter.Write((Byte)player.Team);
+
+            Storage.PacketWriter.Write((byte)(player.PrimaryA != null ? player.PrimaryA.Type : ToolType.None));
+            Storage.PacketWriter.Write((byte)(player.PrimaryB != null ? player.PrimaryB.Type : ToolType.None));
+            Storage.PacketWriter.Write((byte)(player.Weapon != null ? player.Weapon.Type : ToolType.None));
+            Storage.PacketWriter.Write((byte)(player.Mobility != null ? player.Mobility.Type : ToolType.None));
+            Storage.PacketWriter.Write((byte)(player.Utility != null ? player.Utility.Type : ToolType.None));
         }
 
         private static void ProcessUpdatePlayerMenuStateMessage(Player player)
         {
             player.Class = (Class)Storage.PacketReader.ReadByte();
             player.Team = (Team)Storage.PacketReader.ReadByte();
+
+            var primaryAType = (ToolType)Storage.PacketReader.ReadByte();
+            var primaryBType = (ToolType)Storage.PacketReader.ReadByte();
+            var weaponType = (ToolType)Storage.PacketReader.ReadByte();
+            var mobilityType = (ToolType)Storage.PacketReader.ReadByte();
+            var utilityType = (ToolType)Storage.PacketReader.ReadByte();
+
+            // TODO: copypasta
+
+            if(primaryAType != ToolType.None && (player.PrimaryA == null || primaryAType != player.PrimaryA.Type))
+            {
+                player.PrimaryA = Tool.OfType(primaryAType, player);
+            }
+
+            if(primaryBType != ToolType.None && (player.PrimaryB == null || primaryBType != player.PrimaryB.Type))
+            {
+                player.PrimaryB = Tool.OfType(primaryBType, player);
+            }
+
+            if(weaponType != ToolType.None && (player.Weapon == null || weaponType != player.Weapon.Type))
+            {
+                player.Weapon = Tool.OfType(weaponType, player);
+            }
+
+            if(mobilityType != ToolType.None && (player.Mobility == null || mobilityType != player.Mobility.Type))
+            {
+                player.Mobility = Tool.OfType(mobilityType, player);
+            }
+
+            if(utilityType != ToolType.None && (player.Utility == null || utilityType != player.Utility.Type))
+            {
+                player.Utility = Tool.OfType(utilityType, player);
+            }
         }
 
         private static void DiscardUpdatePlayerMenuStateMessage()
         {
+            Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadByte();
+
+            Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
         }
@@ -244,6 +291,71 @@ namespace Sand
         }
 
         private static void DiscardStunMessage()
+        {
+            Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadInt32();
+        }
+
+        #endregion
+
+        #region ActivateTool Message
+
+        public static void SendActivateToolMessage(Player player, ToolSlot slot, bool newState, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.ActivateTool, id);
+
+            Storage.PacketWriter.Write((byte)slot);
+            Storage.PacketWriter.Write(newState);
+
+            if(immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static Tuple<ToolSlot, bool> ProcessActivateToolMessage(Player player)
+        {
+            var slot = (ToolSlot)Storage.PacketReader.ReadByte();
+            var state = Storage.PacketReader.ReadBoolean();
+
+            if(player is RemotePlayer)
+            {
+                switch(slot)
+                {
+                    case ToolSlot.Primary:
+                        if(player.PrimaryA != null)
+                        {
+                            player.PrimaryA.Active = state;
+                        }
+                        break;
+                        // TODO: more for second primary!!
+                    case ToolSlot.Weapon:
+                        if(player.Weapon != null)
+                        {
+                            player.Weapon.Active = state;
+                        }
+                        break;
+                    case ToolSlot.Mobility:
+                        if(player.Mobility != null)
+                        {
+                            player.Mobility.Active = state;
+                        }
+                        break;
+                    case ToolSlot.Utility:
+                        if(player.Utility != null)
+                        {
+                            player.Utility.Active = state;
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            return Tuple.Create(slot, state);
+        }
+
+        private static void DiscardActivateToolMessage()
         {
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadInt32();
@@ -422,6 +534,9 @@ namespace Sand
                             case MessageType.Stun:
                                 DiscardStunMessage();
                                 break;
+                            case MessageType.ActivateTool:
+                                DiscardActivateToolMessage();
+                                break;
                             case MessageType.CreateSand:
                                 DiscardCreateSandMessage();
                                 break;
@@ -456,6 +571,9 @@ namespace Sand
                             break;
                         case MessageType.Stun:
                             ProcessStunMessage(player);
+                            break;
+                        case MessageType.ActivateTool:
+                            ProcessActivateToolMessage(player);
                             break;
                         case MessageType.CreateSand:
                             ProcessCreateSandMessage(player);
@@ -566,6 +684,21 @@ namespace Sand
                                 {
                                     SendStunMessage(gamer.Tag as Player, clientPlayer, stunEnergy, gamerId, false);
                                 }
+                            }
+
+                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+
+                            break;
+                        case MessageType.ActivateTool:
+                            var activationInfo = ProcessActivateToolMessage(player);
+
+                            var slot = activationInfo.Item1;
+                            var state = activationInfo.Item2;
+
+                            foreach (var clientGamer in Storage.NetworkSession.AllGamers)
+                            {
+                                SendActivateToolMessage(gamer.Tag as Player, slot, state, gamerId, false);
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;

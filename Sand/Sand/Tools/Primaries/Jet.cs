@@ -10,7 +10,7 @@ namespace Sand.Tools.Primaries
         private readonly Animation _jetTimer;
         private readonly AnimationGroup _jetTimerGroup;
 
-        public Jet(LocalPlayer player) : base(player)
+        public Jet(Player player) : base(player)
         {
             Modifier = 0.5;
 
@@ -41,6 +41,16 @@ namespace Sand.Tools.Primaries
         public static MouseButton _button()
         {
             return MouseButton.LeftButton;
+        }
+
+        public static ToolType _type()
+        {
+            return ToolType.Jet;
+        }
+
+        public static ToolSlot _slot()
+        {
+            return ToolSlot.Primary;
         }
 
         private void JetEmit()

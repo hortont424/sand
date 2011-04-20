@@ -1,6 +1,10 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Sand.Tools.Mobilities;
+using Sand.Tools.Primaries;
+using Sand.Tools.Utilities;
+using Sand.Tools.Weapons;
 
 namespace Sand.Tools
 {
@@ -9,19 +13,40 @@ namespace Sand.Tools
         Drain,
         Instant,
         Custom
-    } ;
+    }
 
     public enum MouseButton
     {
         None,
         LeftButton,
         RightButton
-    } ;
+    }
+
+    public enum ToolSlot
+    {
+        None,
+        Primary,
+        Weapon,
+        Mobility,
+        Utility
+    }
+
+    public enum ToolType
+    {
+        None,
+        BoostDrive,
+        WinkDrive,
+        Jet,
+        Laser,
+        Plow,
+        Shield,
+        Cannon
+    }
 
     public abstract class Tool
     {
         public double Modifier { get; set; }
-        public LocalPlayer Player { get; protected set; }
+        public Player Player { get; protected set; }
 
         public string Name
         {
@@ -81,6 +106,40 @@ namespace Sand.Tools
             }
         }
 
+        public ToolType Type
+        {
+            get
+            {
+                var method = GetType().GetMethod("_type");
+
+                if (method != null)
+                {
+                    return (ToolType)method.Invoke(null, null);
+                }
+                else
+                {
+                    return ToolType.None;
+                }
+            }
+        }
+
+        public ToolSlot Slot
+        {
+            get
+            {
+                var method = GetType().GetMethod("_slot");
+
+                if (method != null)
+                {
+                    return (ToolSlot)method.Invoke(null, null);
+                }
+                else
+                {
+                    return ToolSlot.None;
+                }
+            }
+        }
+
         private bool _active;
 
         public bool Active
@@ -94,6 +153,11 @@ namespace Sand.Tools
                 var oldValue = _active;
 
                 _active = value;
+
+                if(!(Player is LocalPlayer))
+                {
+                    return;
+                }
 
                 if(oldValue != _active)
                 {
@@ -123,6 +187,8 @@ namespace Sand.Tools
                         Deactivate();
                     }
                 }
+
+                Messages.SendActivateToolMessage(Player, Slot, Active, Player.Gamer.Id, true);
             }
         }
 
@@ -137,7 +203,7 @@ namespace Sand.Tools
         private TimeSpan _cooldownTime;
         protected bool _inCooldown;
 
-        protected Tool(LocalPlayer player)
+        protected Tool(Player player)
         {
             Player = player;
 
@@ -146,6 +212,31 @@ namespace Sand.Tools
             _energyAnimationGroup = new AnimationGroup(_energyAnimation, 10) { Loops = true };
 
             Storage.AnimationController.AddGroup(_energyAnimationGroup);
+        }
+
+        public static Tool OfType(ToolType type, Player player)
+        {
+            switch(type)
+            {
+                case ToolType.None:
+                    return null;
+                case ToolType.BoostDrive:
+                    return new BoostDrive(player);
+                case ToolType.WinkDrive:
+                    return new WinkDrive(player);
+                case ToolType.Jet:
+                    return new Jet(player);
+                case ToolType.Laser:
+                    return new Laser(player);
+                case ToolType.Plow:
+                    return new Plow(player);
+                case ToolType.Shield:
+                    return new Shield(player);
+                case ToolType.Cannon:
+                    return new Cannon(player);
+                default:
+                    throw new ArgumentOutOfRangeException("type");
+            }
         }
 
         private void EnergyTick()

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Net;
+using Sand.Tools;
 
 namespace Sand
 {
@@ -13,12 +14,23 @@ namespace Sand
 
         public float Angle;
 
+        public Vector2 Velocity;
+        public Vector2 Acceleration;
+        public Vector2 Drag = new Vector2(1.5f, 1.5f);
+        public Vector2 MovementAcceleration;
+        public readonly Vector2 DefaultAcceleration = new Vector2(450.0f, 450.0f);
+
         public TimeSpan StunTimeRemaining;
 
         protected TimeSpan _unstunTime;
         private Class _class;
         private Team _team;
         private Texture2D _sprite;
+
+        public Tool PrimaryA, PrimaryB;
+        public Tool Mobility;
+        public Tool Weapon;
+        public Tool Utility;
 
         public Team Team
         {
@@ -77,6 +89,31 @@ namespace Sand
         public override void Draw(GameTime gameTime)
         {
             var teamColor = Teams.ColorForTeam(Team);
+
+            if (Utility != null)
+            {
+                Utility.Draw(_spriteBatch);
+            }
+
+            if (Mobility != null)
+            {
+                Mobility.Draw(_spriteBatch);
+            }
+
+            if (Weapon != null)
+            {
+                Weapon.Draw(_spriteBatch);
+            }
+
+            if (PrimaryA != null)
+            {
+                PrimaryA.Draw(_spriteBatch);
+            }
+
+            if (PrimaryB != null)
+            {
+                PrimaryB.Draw(_spriteBatch);
+            }
 
             int shakeAmplitude = (int)(StunTimeRemaining.TotalMilliseconds / 1000) + 1;
             var virtualX = Stunned ? X + Storage.Random.Next(-shakeAmplitude, shakeAmplitude) : X;

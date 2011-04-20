@@ -17,7 +17,7 @@ namespace Sand.Tools.Primaries
         private int _drawLaserLength;
         private Vector2 _laserPosition;
 
-        public Laser(LocalPlayer player) : base(player)
+        public Laser(Player player) : base(player)
         {
             Modifier = 0.5;
 
@@ -56,6 +56,16 @@ namespace Sand.Tools.Primaries
         public static MouseButton _button()
         {
             return MouseButton.LeftButton;
+        }
+
+        public static ToolType _type()
+        {
+            return ToolType.Laser;
+        }
+
+        public static ToolSlot _slot()
+        {
+            return ToolSlot.Primary;
         }
 
         private void LaserZap()

@@ -11,7 +11,7 @@ namespace Sand.Tools.Mobilities
         private Animation _startFinishedAnimation;
         private AnimationGroup _startFinishedAnimationGroup;
 
-        public BoostDrive(LocalPlayer player) : base(player)
+        public BoostDrive(Player player) : base(player)
         {
             Modifier = 0.5;
 
@@ -44,6 +44,16 @@ namespace Sand.Tools.Mobilities
         public static Keys _key()
         {
             return Keys.Space;
+        }
+
+        public static ToolType _type()
+        {
+            return ToolType.BoostDrive;
+        }
+
+        public static ToolSlot _slot()
+        {
+            return ToolSlot.Mobility;
         }
 
         protected override void Activate()

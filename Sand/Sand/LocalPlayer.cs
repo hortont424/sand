@@ -11,27 +11,14 @@ namespace Sand
 {
     public class LocalPlayer : Player
     {
-        public Vector2 Acceleration;
-        public Vector2 Drag;
-        public Vector2 MovementAcceleration;
-        public readonly Vector2 DefaultAcceleration;
-
-        public Tool PrimaryA, PrimaryB;
-        public Tool Mobility;
-        public Tool Weapon;
-        public Tool Utility;
-
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
-        public Vector2 Velocity;
 
-        private ParticleSystem _particles;
+        private readonly ParticleSystem _particles;
         private Vector2 _pureAcceleration;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
-            Drag = new Vector2(1.5f, 1.5f);
-            DefaultAcceleration = new Vector2(450.0f, 450.0f);
             MovementAcceleration = DefaultAcceleration;
 
             _particles = new ParticleSystem(game, this);
@@ -296,38 +283,6 @@ namespace Sand
                 StunTimeRemaining = newStunTimeRemaining;
                 _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
             }
-        }
-
-        public override void Draw(GameTime gameTime)
-        {
-            if(Utility != null)
-            {
-                Utility.Draw(_spriteBatch);
-            }
-
-            if(Mobility != null)
-            {
-                Mobility.Draw(_spriteBatch);
-            }
-
-            if(Weapon != null)
-            {
-                Weapon.Draw(_spriteBatch);
-            }
-
-            if(PrimaryA != null)
-            {
-                PrimaryA.Draw(_spriteBatch);
-            }
-
-            if(PrimaryB != null)
-            {
-                PrimaryB.Draw(_spriteBatch);
-            }
-
-            base.Draw(gameTime);
-
-            // TODO: drawing for primaries
         }
     }
 }
