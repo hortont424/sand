@@ -59,10 +59,11 @@ namespace Sand.GameState
                     throw new ArgumentOutOfRangeException();
             }
 
-            _primaryAToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 200), "Primary",
+            _primaryAToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 200), "Primary 1",
                                                           primaries);
-            _primaryBToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 400), "Primary",
+            _primaryBToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 400), "Primary 2",
                                                           primaries);
+            _primaryBToolChooser.SelectedTool = primaries[primaries.Count - 1]; // TODO: this is all a hack
             _weaponsToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 600), "Weapons", weapons);
             _utilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 800), "Utilities",
                                                           utilities);
