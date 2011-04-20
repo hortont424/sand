@@ -67,11 +67,15 @@ namespace Sand.Tools.Utilities
             _shieldSound.Volume = 0.0f;
 
             Storage.AnimationController.Add(new Animation(_shieldSound, "Volume", 0.0f, 1.0f), 600);
+
+            base.Activate();
         }
 
         protected override void Deactivate()
         {
             _shieldSound.Stop();
+
+            base.Deactivate();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -91,7 +95,6 @@ namespace Sand.Tools.Utilities
         {
             if(Active)
             {
-                //Player.Stunned = false;
                 return 0.0f;
             }
             else
@@ -99,6 +102,11 @@ namespace Sand.Tools.Utilities
                 Player.Stunned = true;
                 return strength;
             }
+        }
+
+        public override void SendActivationMessage()
+        {
+            Messages.SendActivateToolMessage(Player, Slot, Active, null, 0.0f, Player.Gamer.Id, true);
         }
     }
 }
