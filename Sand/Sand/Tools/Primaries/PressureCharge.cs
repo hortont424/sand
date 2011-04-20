@@ -62,6 +62,7 @@ namespace Sand.Tools.Primaries
                 var angleToParticle = (float)Math.Atan2(particle.Position.Y - Player.Y, particle.Position.X - Player.X);
                 var distanceToParticle =
                     Math.Pow(Player.X - particle.Position.X, 2) + Math.Pow(Player.Y - particle.Position.Y, 2);
+                var velocity = Storage.Random.Next(100, 450);
 
                 if(distanceToParticle > maxDistance)
                 {
@@ -69,7 +70,7 @@ namespace Sand.Tools.Primaries
                 }
 
                 particle.Velocity +=
-                    new Vector2((float)(200.0f * Math.Cos(angleToParticle)), (float)(200.0f * Math.Sin(angleToParticle))) *
+                    new Vector2((float)(velocity * Math.Cos(angleToParticle)), (float)(velocity * Math.Sin(angleToParticle))) *
                     new Vector2((float)((maxDistance - distanceToParticle) / maxDistance));
 
                 particleQueue.Add(particle);
