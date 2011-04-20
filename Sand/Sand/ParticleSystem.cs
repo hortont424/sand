@@ -115,11 +115,11 @@ namespace Sand
                     }
                 }
 
-                const int fireSpreadRadius = 20 * 20;
-                var particleQueue = new HashSet<Particle>();
-
-                if(particle.Owner == Player.Gamer.Id)
+                if(IsSand && particle.Owner == Player.Gamer.Id)
                 {
+                    const int fireSpreadRadius = 20 * 20;
+                    var particleQueue = new HashSet<Particle>();
+
                     if(particle.OnFire)
                     {
                         particle.Fire = (byte)Math.Max(particle.Fire - 10, 0);
@@ -168,9 +168,6 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            var size = IsSand ? 4 : 2;
-            var offset = size / 2;
-
             foreach(var particle in Particles.Values.Where(particle => particle.Alive))
             {
                 if(!IsSand && particle.LifeRemaining <= 0)
@@ -179,6 +176,8 @@ namespace Sand
                 }
 
                 Color color;
+                var size = IsSand ? (particle.OnFire ? ((255 - particle.Fire) / 30) + 4 : 4) : 2;
+                var offset = size / 2;
 
                 if(IsSand)
                 {
