@@ -370,6 +370,7 @@ namespace Sand
             SendMessageHeader(MessageType.CreateSand, id);
 
             Storage.PacketWriter.Write(p.Id);
+            Storage.PacketWriter.Write(p.Owner);
             Storage.PacketWriter.Write(p.Position);
             Storage.PacketWriter.Write(p.Velocity);
             Storage.PacketWriter.Write((byte)p.Team);
@@ -390,6 +391,7 @@ namespace Sand
                         ? Storage.SandParticles.Particles[id]
                         : new Particle(id);
 
+            p.Owner = Storage.PacketReader.ReadByte();
             p.Position = Storage.PacketReader.ReadVector2();
             p.Velocity = Storage.PacketReader.ReadVector2();
             p.Team = (Team)Storage.PacketReader.ReadByte();
@@ -406,6 +408,7 @@ namespace Sand
         private static void DiscardCreateSandMessage()
         {
             Storage.PacketReader.ReadString();
+            Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadByte();

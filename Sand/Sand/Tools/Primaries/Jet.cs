@@ -55,7 +55,7 @@ namespace Sand.Tools.Primaries
 
         private void JetEmit()
         {
-            var p = new Particle();
+            var p = new Particle(null, Player.Gamer.Id);
 
             p.LifeRemaining = p.Lifetime = 100;
 

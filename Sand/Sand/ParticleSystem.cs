@@ -7,12 +7,13 @@ namespace Sand
     public class Particle
     {
         public string Id;
+        public byte Owner;
         public Vector2 Position, Velocity;
         public Int64 Lifetime, LifeRemaining;
         public Team Team;
         public byte Fire;
 
-        public Particle(string id = null)
+        public Particle(string id = null, byte owner = (byte)0)
         {
             if(id != null)
             {
@@ -23,6 +24,8 @@ namespace Sand
                 var uuid = Guid.NewGuid();
                 Id = uuid.ToString("N");
             }
+
+            Owner = owner;
         }
     }
 
@@ -135,7 +138,7 @@ namespace Sand
 
             for(int i = 0; i < number; i++)
             {
-                var particle = new Particle();
+                var particle = new Particle(null, Player.Gamer.Id);
                 emitDelegate(particle);
                 Emit(particle);
             }

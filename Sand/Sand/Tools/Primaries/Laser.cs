@@ -16,6 +16,7 @@ namespace Sand.Tools.Primaries
         private readonly SoundEffectInstance _laserSound;
         private int _drawLaserLength;
         private Vector2 _laserPosition;
+        private readonly ParticleSystem _laserParticles;
 
         public Laser(Player player) : base(player)
         {
@@ -36,6 +37,9 @@ namespace Sand.Tools.Primaries
 
             _laserSound = Storage.Sound("Laser").CreateInstance();
             _laserSound.IsLooped = true;
+
+            _laserParticles = new ParticleSystem(Player.Game, Player);
+            Player.Game.Components.Add(_laserParticles);
         }
 
         public static string _name()
@@ -110,7 +114,17 @@ namespace Sand.Tools.Primaries
 
             _laserPosition = laserPosition;
 
-            //Console.WriteLine("{0} laserPosition: {1}", sandGame.MouseLocation, laserPosition);
+            _laserParticles.Emit(10, (p) =>
+                                     {
+                                         var velocity =
+                                            new Vector2(Storage.Random.Next(-300, 300),
+                                                        Storage.Random.Next(-300, 300));
+
+                                         p.LifeRemaining = p.Lifetime = Storage.Random.Next(50, 150);
+
+                                         p.Position = _laserPosition;
+                                         p.Velocity = velocity;
+                                     });
 
             foreach(var pair in Storage.SandParticles.Particles)
             {
