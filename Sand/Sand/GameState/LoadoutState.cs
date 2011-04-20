@@ -17,7 +17,7 @@ namespace Sand.GameState
         private ToolChooserButton _utilitiesToolChooser;
         private ToolChooserButton _mobilitiesToolChooser;
         private Label _nameLabel, _descriptionLabel;
-        private ToolChooserButton _primariesToolChooser;
+        private ToolChooserButton _primaryAToolChooser, _primaryBToolChooser;
 
         public LoadoutState(Sand game) : base(game)
         {
@@ -59,18 +59,21 @@ namespace Sand.GameState
                     throw new ArgumentOutOfRangeException();
             }
 
-            _primariesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 300), "Primaries",
+            _primaryAToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 200), "Primary",
                                                           primaries);
-            _weaponsToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 500), "Weapons", weapons);
-            _utilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 700), "Utilities",
+            _primaryBToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 400), "Primary",
+                                                          primaries);
+            _weaponsToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 600), "Weapons", weapons);
+            _utilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 800), "Utilities",
                                                           utilities);
-            _mobilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 900), "Mobilities",
+            _mobilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 1000), "Mobilities",
                                                            mobilities);
 
             _weaponsToolChooser.SetHoverAction(HoverTool, null);
             _utilitiesToolChooser.SetHoverAction(HoverTool, null);
             _mobilitiesToolChooser.SetHoverAction(HoverTool, null);
-            _primariesToolChooser.SetHoverAction(HoverTool, null);
+            _primaryAToolChooser.SetHoverAction(HoverTool, null);
+            _primaryBToolChooser.SetHoverAction(HoverTool, null);
 
             _nameLabel = new Label(Game, 1300, _sandLogo.Y + 300, "", "Calibri24Bold");
             _descriptionLabel = new Label(Game, 1300, _sandLogo.Y + 350, "", "Calibri24");
@@ -80,7 +83,8 @@ namespace Sand.GameState
             Game.Components.Add(_weaponsToolChooser);
             Game.Components.Add(_utilitiesToolChooser);
             Game.Components.Add(_mobilitiesToolChooser);
-            Game.Components.Add(_primariesToolChooser);
+            Game.Components.Add(_primaryAToolChooser);
+            Game.Components.Add(_primaryBToolChooser);
 
             Game.Components.Add(_nameLabel);
             Game.Components.Add(_descriptionLabel);
@@ -115,10 +119,18 @@ namespace Sand.GameState
                     _mobilitiesToolChooser.SelectedTool.GetConstructor(localPlayerTypeArray).Invoke(localPlayerArray) as
                     Tool;
 
-                if(_primariesToolChooser.SelectedTool != null)
+                if(_primaryAToolChooser.SelectedTool != null)
                 {
                     player.PrimaryA =
-                        _primariesToolChooser.SelectedTool.GetConstructor(localPlayerTypeArray).Invoke(localPlayerArray)
+                        _primaryAToolChooser.SelectedTool.GetConstructor(localPlayerTypeArray).Invoke(localPlayerArray)
+                        as
+                        Tool;
+                }
+
+                if (_primaryBToolChooser.SelectedTool != null)
+                {
+                    player.PrimaryB =
+                        _primaryBToolChooser.SelectedTool.GetConstructor(localPlayerTypeArray).Invoke(localPlayerArray)
                         as
                         Tool;
                 }
@@ -129,7 +141,8 @@ namespace Sand.GameState
             Game.Components.Remove(_weaponsToolChooser);
             Game.Components.Remove(_utilitiesToolChooser);
             Game.Components.Remove(_mobilitiesToolChooser);
-            Game.Components.Remove(_primariesToolChooser);
+            Game.Components.Remove(_primaryAToolChooser);
+            Game.Components.Remove(_primaryBToolChooser);
 
             Game.Components.Remove(_nameLabel);
             Game.Components.Remove(_descriptionLabel);

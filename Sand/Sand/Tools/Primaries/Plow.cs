@@ -19,7 +19,7 @@ namespace Sand.Tools.Primaries
 
             Energy = TotalEnergy = 150;
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
-            EnergyConsumptionRate = 1;
+            EnergyConsumptionRate = 0.7;
             EnergyRechargeRate = 0.2;
 
             _plowTimer = new Animation { CompletedDelegate = PlowBlow };

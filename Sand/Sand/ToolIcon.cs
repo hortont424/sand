@@ -18,6 +18,7 @@ namespace Sand
         private readonly Bitmap _bitmap;
         private readonly Graphics _graphics;
         private byte[] _bitmapBytes;
+        public bool Disabled;
 
         public Vector2 Position { get; set; }
 
@@ -71,18 +72,20 @@ namespace Sand
                 UpdateDrainMeter();
             }
 
+            var mulColor = Disabled ? Microsoft.Xna.Framework.Color.DarkGray : Microsoft.Xna.Framework.Color.White;
+
             if(_drainTexture != null && _tool.Energy > 0.0f)
             {
                 _spriteBatch.Draw(_drainTexture,
                                   Position,
-                                  null, Microsoft.Xna.Framework.Color.White, 0.0f,
+                                  null, mulColor, 0.0f,
                                   new Vector2(_drainTexture.Width / 2.0f, _drainTexture.Height / 2.0f),
-                                  1.0f,
+                                  Disabled ? 0.75f : 1.0f,
                                   SpriteEffects.None, 0);
             }
 
-            _spriteBatch.Draw(_tool.Icon, Position, null, Microsoft.Xna.Framework.Color.White, 0.0f,
-                              new Vector2(_tool.Icon.Width / 2.0f, _tool.Icon.Height / 2.0f), 1.0f, SpriteEffects.None,
+            _spriteBatch.Draw(_tool.Icon, Position, null, mulColor, 0.0f,
+                new Vector2(_tool.Icon.Width / 2.0f, _tool.Icon.Height / 2.0f), Disabled ? 0.75f : 1.0f, SpriteEffects.None,
                               0);
         }
     }

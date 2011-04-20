@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
+using Sand.Tools;
 using Sand.Tools.Utilities;
 
 namespace Sand
@@ -11,6 +12,8 @@ namespace Sand
     {
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
+
+        public Tool CurrentPrimary;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
@@ -70,6 +73,16 @@ namespace Sand
                 Acceleration.Y = MovementAcceleration.Y;
             }
 
+            if(newKeyState.IsKeyDown(Keys.Q) && _oldKeyState.IsKeyUp(Keys.Q))
+            {
+                CurrentPrimary = CurrentPrimary == PrimaryA ? PrimaryB : PrimaryA;
+            }
+
+            if(CurrentPrimary == null)
+            {
+                CurrentPrimary = PrimaryA;
+            }
+
             if(newKeyState.IsKeyDown(Keys.R))
             {
                 if(Mobility != null)
@@ -124,7 +137,7 @@ namespace Sand
 
             if(!Stunned)
             {
-                var tools = new[] { Mobility, Utility, Weapon, PrimaryA, PrimaryB };
+                var tools = new[] { Mobility, Utility, Weapon, CurrentPrimary };
 
                 foreach(var tool in tools.Where(tool => tool != null))
                 {
@@ -135,8 +148,7 @@ namespace Sand
                 }
 
                 bool activeTool = Mobility.Active || Weapon.Active || Utility.Active ||
-                                  (PrimaryA != null && PrimaryA.Active) ||
-                                  (PrimaryB != null && PrimaryB.Active);
+                                  (CurrentPrimary != null && CurrentPrimary.Active);
 
                 if(!activeTool)
                 {

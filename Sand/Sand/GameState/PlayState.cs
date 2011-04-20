@@ -8,6 +8,7 @@ namespace Sand.GameState
     public class PlayState : GameState
     {
         private Crosshair _crosshair;
+        private ToolIcon _primaryAIcon, _primaryBIcon;
 
         public PlayState(Sand game) : base(game)
         {
@@ -56,11 +57,20 @@ namespace Sand.GameState
 
                 if(localPlayer.PrimaryA != null)
                 {
-                    var primaryIcon = new ToolIcon(Game, localPlayer.PrimaryA)
-                                      {
-                                          Position = new Vector2(centerSidebar - 10.0f - 74.0f, (10.0f + 148.0f) * 2.0f)
-                                      };
-                    Game.Components.Add(primaryIcon);
+                    _primaryAIcon = new ToolIcon(Game, localPlayer.PrimaryA)
+                                    {
+                                        Position = new Vector2(centerSidebar - 10.0f - 74.0f, (10.0f + 148.0f) * 2.0f)
+                                    };
+                    Game.Components.Add(_primaryAIcon);
+                }
+
+                if(localPlayer.PrimaryB != null)
+                {
+                    _primaryBIcon = new ToolIcon(Game, localPlayer.PrimaryB)
+                                    {
+                                        Position = new Vector2(centerSidebar + 20.0f + 74.0f, (10.0f + 148.0f) * 2.0f)
+                                    };
+                    Game.Components.Add(_primaryBIcon);
                 }
 
                 var nameLabel = new Label(Game, centerSidebar, 2.0f,
@@ -79,6 +89,14 @@ namespace Sand.GameState
         public override void Update()
         {
             Messages.Update();
+
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            if(localPlayer != null)
+            {
+                _primaryAIcon.Disabled = !(localPlayer.CurrentPrimary == localPlayer.PrimaryA);
+                _primaryBIcon.Disabled = !(localPlayer.CurrentPrimary == localPlayer.PrimaryB);
+            }
         }
 
         public override Dictionary<string, object> Leave()
