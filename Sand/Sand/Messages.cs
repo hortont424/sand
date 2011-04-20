@@ -664,12 +664,7 @@ namespace Sand
                         case MessageType.UpdatePlayerClass:
                             ProcessUpdatePlayerClassMessage(player);
 
-                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
-                            {
-                                var clientPlayer = clientGamer.Tag as Player;
-
-                                SendUpdatePlayerClassMessage(gamer.Tag as Player, gamerId, false);
-                            }
+                            SendUpdatePlayerClassMessage(gamer.Tag as Player, gamerId, false);
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
@@ -678,12 +673,7 @@ namespace Sand
                         case MessageType.UpdatePlayerTeam:
                             ProcessUpdatePlayerTeamMessage(player);
 
-                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
-                            {
-                                var clientPlayer = clientGamer.Tag as Player;
-
-                                SendUpdatePlayerTeamMessage(gamer.Tag as Player, gamerId, false);
-                            }
+                            SendUpdatePlayerTeamMessage(gamer.Tag as Player, gamerId, false);
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
@@ -692,12 +682,7 @@ namespace Sand
                         case MessageType.PlaySound:
                             var soundName = ProcessPlaySoundMessage(player);
 
-                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
-                            {
-                                var clientPlayer = clientGamer.Tag as Player;
-
-                                SendPlaySoundMessage(gamer.Tag as Player, soundName, gamerId, false);
-                            }
+                            SendPlaySoundMessage(gamer.Tag as Player, soundName, gamerId, false);
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
@@ -714,15 +699,7 @@ namespace Sand
                             var stunId = stunInfo.Item1;
                             var stunEnergy = stunInfo.Item2;
 
-                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
-                            {
-                                var clientPlayer = clientGamer.Tag as Player;
-
-                                if(clientGamer.Id == stunId)
-                                {
-                                    SendStunMessage(gamer.Tag as Player, clientPlayer, stunEnergy, gamerId, false);
-                                }
-                            }
+                            SendStunMessage(gamer.Tag as Player, clientPlayer, stunEnergy, gamerId, false);
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
@@ -731,11 +708,8 @@ namespace Sand
                         case MessageType.ActivateTool:
                             var aInfo = ProcessActivateToolMessage(player);
 
-                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
-                            {
-                                SendActivateToolMessage(gamer.Tag as Player, aInfo.Slot, aInfo.State, aInfo.PropertyName,
-                                                        aInfo.PropertyValue, gamerId, false);
-                            }
+                            SendActivateToolMessage(gamer.Tag as Player, aInfo.Slot, aInfo.State, aInfo.PropertyName,
+                                                    aInfo.PropertyValue, gamerId, false);
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
@@ -744,10 +718,7 @@ namespace Sand
                         case MessageType.CreateSand:
                             particle = ProcessCreateSandMessage(player);
 
-                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
-                            {
-                                SendCreateSandMessage(gamer.Tag as Player, particle, gamerId, false);
-                            }
+                            SendCreateSandMessage(gamer.Tag as Player, particle, gamerId, false);
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
@@ -756,10 +727,7 @@ namespace Sand
                         case MessageType.RemoveSand:
                             var id = ProcessRemoveSandMessage(player);
 
-                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
-                            {
-                                SendRemoveSandMessage(gamer.Tag as Player, id, gamerId, false);
-                            }
+                            SendRemoveSandMessage(gamer.Tag as Player, id, gamerId, false);
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
