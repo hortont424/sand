@@ -73,6 +73,8 @@ namespace Sand
         {
             var size = IsSand ? 4 : 2;
 
+            double burningVolume = 0.0;
+
             foreach(var particle in Particles.Values.Where(particle => particle.Alive))
             {
                 if(!IsSand && particle.LifeRemaining <= 0)
@@ -119,6 +121,9 @@ namespace Sand
                 if(particle.OnFire)
                 {
                     particle.Fire = (byte)Math.Max(particle.Fire - 10, 0);
+                    burningVolume +=
+                        Math.Sqrt(Math.Pow(particle.Position.X - Player.X, 2) +
+                                  Math.Pow(particle.Position.Y - Player.Y, 2)); // TODO: play burning sound
                 }
 
                 if(IsSand && particle.Owner == Player.Gamer.Id)
