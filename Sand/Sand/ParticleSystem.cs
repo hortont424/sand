@@ -43,8 +43,7 @@ namespace Sand
             }
             else
             {
-                var uuid = Guid.NewGuid();
-                Id = uuid.ToString("N");
+                Id = Guid.NewGuid().ToString("N");
             }
 
             Alive = true;
@@ -117,14 +116,17 @@ namespace Sand
                     }
                 }
 
+                if(particle.OnFire)
+                {
+                    particle.Fire = (byte)Math.Max(particle.Fire - 10, 0);
+                }
+
                 if(IsSand && particle.Owner == Player.Gamer.Id)
                 {
                     const int fireSpreadRadius = 20 * 20;
 
                     if(particle.OnFire)
                     {
-                        particle.Fire = (byte)Math.Max(particle.Fire - 10, 0);
-
                         if(particle.Fire == 0)
                         {
                             particle.Alive = false;
@@ -143,6 +145,7 @@ namespace Sand
                                     continue;
                                 }
 
+                                neighborParticle.OnFire = true;
                                 neighborParticle.Fire = 255;
 
                                 _particleQueue.Add(neighborParticle);
@@ -224,7 +227,17 @@ namespace Sand
 
                 number--;
 
+                particle.OnFire = false;
+                particle.Fire = 0;
+                particle.Alive = true;
+                particle.Id = Guid.NewGuid().ToString("N");
+
                 emitDelegate(particle);
+
+                if(number == 0)
+                {
+                    break;
+                }
             }
 
             for(int i = 0; i < number; i++)
