@@ -3,8 +3,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
-using Sand.Tools;
-using Sand.Tools.Mobilities;
 using Sand.Tools.Utilities;
 
 namespace Sand
@@ -113,6 +111,30 @@ namespace Sand
                 }
             }
 
+            if(newKeyState.IsKeyDown(Keys.P))
+            {
+                var p = new Particle(null, Gamer.Id);
+
+                p.LifeRemaining = p.Lifetime = 100;
+
+                var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
+                var length = (float)Storage.Random.Next(200, 450);
+
+                p.Team = Team;
+                p.Position = new Vector2(X, Y);
+                p.Velocity = Velocity +
+                             new Vector2(
+                                 (float)Math.Cos(Angle - (Math.PI / 2.0f) + angle) * length,
+                                 (float)Math.Sin(Angle - (Math.PI / 2.0f) + angle) * length);
+
+                Storage.SandParticles.Emit(p);
+            }
+
+            if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
+            {
+                Stun(25.0f);
+            }
+
             if(!Stunned)
             {
                 var tools = new[] { Mobility, Utility, Weapon, PrimaryA, PrimaryB };
@@ -128,11 +150,6 @@ namespace Sand
                 bool activeTool = Mobility.Active || Weapon.Active || Utility.Active ||
                                   (PrimaryA != null && PrimaryA.Active) ||
                                   (PrimaryB != null && PrimaryB.Active);
-
-                if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
-                {
-                    Stun(25.0f);
-                }
 
                 if(!activeTool)
                 {

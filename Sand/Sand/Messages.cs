@@ -37,7 +37,7 @@ namespace Sand
 
                 if(gamer != null)
                 {
-                    gamer.SendData(Storage.PacketWriter, SendDataOptions.Reliable, Storage.NetworkSession.Host);
+                    gamer.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder, Storage.NetworkSession.Host);
                 }
             }
             else
@@ -46,7 +46,7 @@ namespace Sand
 
                 if(server != null)
                 {
-                    server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                    server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
                 }
             }
         }
@@ -361,7 +361,7 @@ namespace Sand
         private static void DiscardActivateToolMessage()
         {
             Storage.PacketReader.ReadByte();
-            Storage.PacketReader.ReadInt32();
+            Storage.PacketReader.ReadBoolean();
         }
 
         #endregion
@@ -640,7 +640,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
 
                             break;
                         case MessageType.UpdatePlayerTeam:
@@ -654,7 +654,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
 
                             break;
                         case MessageType.PlaySound:
@@ -668,7 +668,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
 
                             break;
                         case MessageType.Stun:
@@ -693,7 +693,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
 
                             break;
                         case MessageType.ActivateTool:
@@ -708,7 +708,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
 
                             break;
                         case MessageType.CreateSand:
@@ -720,7 +720,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
 
                             break;
                         case MessageType.RemoveSand:
@@ -732,7 +732,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
 
                             break;
                         default:
