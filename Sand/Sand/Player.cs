@@ -218,6 +218,7 @@ namespace Sand
         {
             switch(slot)
             {
+                // TODO: this is broken
                 case ToolSlot.Primary:
                     return PrimaryA;
                 case ToolSlot.Weapon:

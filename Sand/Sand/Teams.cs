@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -21,49 +22,29 @@ namespace Sand
 
     public class Teams
     {
+        private static readonly Dictionary<Team, String> TeamColorNames = new Dictionary<Team, String>()
+            {
+                  { Team.None, "NeutralTeam" },
+                  { Team.Red, "RedTeam" },
+                  { Team.Blue, "BlueTeam" }
+            };
+
+        private static readonly Dictionary<Class, String> ClassSpriteNames = new Dictionary<Class, String>()
+            {
+                  { Class.None, "" },
+                  { Class.Defense, "DefenseClass" },
+                  { Class.Offense, "OffenseClass" },
+                  { Class.Support, "SupportClass"}
+            };
+
         public static Color ColorForTeam(Team team)
         {
-            string colorName;
-
-            switch(team)
-            {
-                case Team.None:
-                    colorName = "NeutralTeam";
-                    break;
-                case Team.Red:
-                    colorName = "RedTeam";
-                    break;
-                case Team.Blue:
-                    colorName = "BlueTeam";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("team");
-            }
-
-            return Storage.Color(colorName);
+            return Storage.Color(TeamColorNames[team]);
         }
 
         public static Texture2D SpriteForClass(Class cls, bool large)
         {
-            string spriteName;
-
-            switch(cls) // TODO: I hear you like dictionaries?
-            {
-                case Class.None:
-                    spriteName = "DefenseClass"; // TODO: questionmark class?
-                    break;
-                case Class.Defense:
-                    spriteName = "DefenseClass";
-                    break;
-                case Class.Offense:
-                    spriteName = "OffenseClass";
-                    break;
-                case Class.Support:
-                    spriteName = "SupportClass";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("cls");
-            }
+            string spriteName = ClassSpriteNames[cls];
 
             return Storage.Sprite(large ? spriteName + "Large" : spriteName);
         }

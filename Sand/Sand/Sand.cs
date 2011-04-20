@@ -19,7 +19,7 @@ namespace Sand
         private readonly Dictionary<States, GameState.GameState> _gameStateInstances;
 
         public Vector2 BaseScreenSize;
-        private Matrix _globalTransformMatrix;
+        private Matrix _globalTransformMatrix, _invGlobalTransformMatrix;
         public Vector2 MouseLocation;
 
         public Map GameMap;
@@ -44,8 +44,6 @@ namespace Sand
                        };
 
             Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
-
-            //Graphics.ToggleFullScreen();
 
             Content.RootDirectory = "Content";
 
@@ -193,6 +191,7 @@ namespace Sand
             float verScaling = GraphicsDevice.PresentationParameters.BackBufferHeight / BaseScreenSize.Y;
             var screenScalingFactor = new Vector3(horScaling, verScaling, 1);
             _globalTransformMatrix = Matrix.CreateScale(screenScalingFactor);
+            _invGlobalTransformMatrix = Matrix.Invert(_globalTransformMatrix);
         }
 
         protected override void UnloadContent()
@@ -231,8 +230,7 @@ namespace Sand
             Storage.AcceptInput = IsActive;
 
             MouseState mouse = Mouse.GetState();
-            MouseLocation = Vector2.Transform(new Vector2(mouse.X, mouse.Y),
-                                              Matrix.Invert(_globalTransformMatrix)); // TODO: cache inverse?
+            MouseLocation = Vector2.Transform(new Vector2(mouse.X, mouse.Y), _invGlobalTransformMatrix);
 
             UpdateInput();
             UpdateState();
