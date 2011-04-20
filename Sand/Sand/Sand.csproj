@@ -164,6 +164,7 @@
     <Compile Include="Tools\Primaries\Jet.cs" />
     <Compile Include="Tools\Primaries\Laser.cs" />
     <Compile Include="Tools\Primaries\Plow.cs" />
+    <Compile Include="Tools\Primaries\SandCharge.cs" />
     <Compile Include="Tools\Tool.cs" />
     <Compile Include="Tools\Utilities\Shield.cs" />
     <Compile Include="Tools\Weapons\Cannon.cs" />

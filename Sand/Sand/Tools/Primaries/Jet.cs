@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Sand.Tools.Primaries
 {
@@ -59,15 +58,18 @@ namespace Sand.Tools.Primaries
                                           {
                                               p.LifeRemaining = p.Lifetime = 100;
 
-                                              var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
+                                              var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) -
+                                                          (Math.PI / 16.0f);
                                               var length = (float)Storage.Random.Next(200, 450);
 
                                               p.Team = Player.Team;
                                               p.Position = new Vector2(Player.X, Player.Y);
                                               p.Velocity = (Player).Velocity +
                                                            new Vector2(
-                                                               (float)Math.Cos(Player.Angle - (Math.PI / 2.0f) + angle) * length,
-                                                               (float)Math.Sin(Player.Angle - (Math.PI / 2.0f) + angle) * length);
+                                                               (float)Math.Cos(Player.Angle - (Math.PI / 2.0f) + angle) *
+                                                               length,
+                                                               (float)Math.Sin(Player.Angle - (Math.PI / 2.0f) + angle) *
+                                                               length);
                                           });
         }
 
@@ -84,7 +86,5 @@ namespace Sand.Tools.Primaries
 
             Storage.AnimationController.RemoveGroup(_jetTimerGroup);
         }
-
-        
     }
 }

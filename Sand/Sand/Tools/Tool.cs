@@ -40,7 +40,8 @@ namespace Sand.Tools
         Laser,
         Plow,
         Shield,
-        Cannon
+        Cannon,
+        SandCharge
     }
 
     public abstract class Tool
@@ -237,6 +238,8 @@ namespace Sand.Tools
                     return new Shield(player);
                 case ToolType.Cannon:
                     return new Cannon(player);
+                case ToolType.SandCharge:
+                    return new SandCharge(player);
                 default:
                     throw new ArgumentOutOfRangeException("type");
             }

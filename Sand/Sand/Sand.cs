@@ -175,6 +175,10 @@ namespace Sand
             Storage.AddSprite("Laser", Content.Load<Texture2D>("Textures/Tools/Primaries/Laser"));
             Storage.AddSound("Laser", Content.Load<SoundEffect>("Sounds/Laser"));
 
+            Storage.AddSprite("SandCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/SandCharge"));
+            Storage.AddSprite("FlameCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/FlameCharge"));
+            Storage.AddSprite("PressureCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/PressureCharge"));
+
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });
             Storage.AddSprite("pixel", rectTexture);
