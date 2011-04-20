@@ -14,7 +14,7 @@ namespace Sand.Tools.Primaries
         private readonly Animation _laserUpdateTimer;
         private readonly AnimationGroup _laserUpdateTimerGroup;
         private readonly SoundEffectInstance _laserSound;
-        private int _drawLaserLength;
+        public int DrawLaserLength { get; set; }
         private Vector2 _laserPosition;
         private readonly ParticleSystem _laserParticles;
 
@@ -103,7 +103,7 @@ namespace Sand.Tools.Primaries
                 laserDistance = (int)wallIntersection.Value;
             }
 
-            _drawLaserLength = (int)laserDistance;
+            DrawLaserLength = (int)laserDistance;
 
             const int laserRadius = 20 * 20;
 
@@ -162,41 +162,50 @@ namespace Sand.Tools.Primaries
             }
 
             _particleQueue.Clear();
+
+            SendActivationMessage();
         }
 
         protected override void Activate()
         {
-            base.Activate();
-
             _laserSound.Play();
             Storage.AnimationController.AddGroup(_laserTimerGroup);
+
+            base.Activate();
         }
 
         protected override void Deactivate()
         {
-            base.Deactivate();
-
             _laserSound.Stop();
             Storage.AnimationController.RemoveGroup(_laserTimerGroup);
+
+            base.Deactivate();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if(Active)
+            if(DrawLaserLength != 0)
             {
                 if(Player.Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
                 {
                     spriteBatch.Draw(Storage.Sprite("pixel"),
-                                     new Rectangle((int)Player.X, (int)Player.Y, 6, _drawLaserLength), null,
+                                     new Rectangle((int)Player.X, (int)Player.Y, 6, DrawLaserLength), null,
                                      Color.Orange, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
                 else
                 {
                     spriteBatch.Draw(Storage.Sprite("pixel"),
-                                     new Rectangle((int)Player.X, (int)Player.Y, 7, _drawLaserLength), null,
+                                     new Rectangle((int)Player.X, (int)Player.Y, 7, DrawLaserLength), null,
                                      Color.Orange, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
+
+                DrawLaserLength = 0;
             }
+        }
+
+        public override void SendActivationMessage()
+        {
+            Messages.SendActivateToolMessage(Player, Slot, Active, "DrawLaserLength", DrawLaserLength, Player.Gamer.Id, true);
         }
     }
 }
