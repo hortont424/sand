@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand.Tools.Primaries
@@ -12,6 +13,8 @@ namespace Sand.Tools.Primaries
         private readonly Animation _plowUpdateTimer;
         private readonly HashSet<Particle> _particleQueue;
         private readonly AnimationGroup _plowUpdateTimerGroup;
+        private readonly SoundEffectInstance _plowSound;
+        private Animation _plowSoundAnimation;
 
         public Plow(Player player) : base(player)
         {
@@ -29,6 +32,10 @@ namespace Sand.Tools.Primaries
             _plowUpdateTimer = new Animation { CompletedDelegate = PlowUpdate };
             _plowUpdateTimerGroup = new AnimationGroup(_plowUpdateTimer, 50) { Loops = true };
             Storage.AnimationController.AddGroup(_plowUpdateTimerGroup);
+
+            _plowSound = Storage.Sound("Plow").CreateInstance();
+            _plowSound.IsLooped = true;
+            _plowSound.Volume = 0.0f;
         }
 
         public static string _name()
@@ -110,16 +117,45 @@ namespace Sand.Tools.Primaries
 
         protected override void Activate()
         {
-            base.Activate();
-
             Storage.AnimationController.AddGroup(_plowTimerGroup);
+
+            _plowSound.Play();
+
+            if (_plowSoundAnimation != null)
+            {
+                Storage.AnimationController.Remove(_plowSoundAnimation);
+            }
+
+            _plowSoundAnimation = new Animation(_plowSound, "Volume", 1.0f) { CompletedDelegate = FinishStartingSound };
+            Storage.AnimationController.Add(_plowSoundAnimation, 500);
+
+            base.Activate();
         }
 
         protected override void Deactivate()
         {
-            base.Deactivate();
-
             Storage.AnimationController.RemoveGroup(_plowTimerGroup);
+
+            if (_plowSoundAnimation != null)
+            {
+                Storage.AnimationController.Remove(_plowSoundAnimation);
+            }
+
+            _plowSoundAnimation = new Animation(_plowSound, "Volume", 0.0f) { CompletedDelegate = FinishStoppingSound };
+            Storage.AnimationController.Add(_plowSoundAnimation, 500);
+
+            base.Deactivate();
+        }
+
+        private void FinishStartingSound()
+        {
+            _plowSoundAnimation = null;
+        }
+
+        private void FinishStoppingSound()
+        {
+            _plowSound.Stop();
+            _plowSoundAnimation = null;
         }
     }
 }

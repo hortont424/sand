@@ -52,6 +52,8 @@ namespace Sand.Tools.Primaries
             var particleQueue = new HashSet<Particle>();
             base.Activate();
 
+            Storage.Sound("FlameCharge").CreateInstance().Play();
+
             const int flameChargeRadius = 50 * 50;
 
             foreach (var pair in Storage.SandParticles.Particles)

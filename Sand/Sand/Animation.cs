@@ -48,7 +48,15 @@ namespace Sand
         public Animation(object obj, string propName, float startValue, float endValue, EaseFunctionDelegate easeFunc,
                          EasingType easeType)
         {
-            _property = obj.GetType().GetProperty(propName);
+            if(propName != null)
+            {
+                _property = obj.GetType().GetProperty(propName);
+            }
+            else
+            {
+                _property = null;
+            }
+
             PropertyName = propName;
             _obj = obj;
             _startValue = startValue;
@@ -76,10 +84,14 @@ namespace Sand
 
                 Type propertyType = _property.PropertyType;
                 var easingProgress = _easeFunc(newProgress, _easeType);
-                _property.SetValue(_obj,
-                                   Convert.ChangeType(fromValue + (easingProgress * (toValue - fromValue)),
-                                                      propertyType),
-                                   null);
+
+                if(_property != null)
+                {
+                    _property.SetValue(_obj,
+                                       Convert.ChangeType(fromValue + (easingProgress * (toValue - fromValue)),
+                                                          propertyType),
+                                       null);
+                }
             }
         }
     }
@@ -167,6 +179,32 @@ namespace Sand
         public void Add(Animation animation, double duration)
         {
             _animationGroups.Add(new AnimationGroup(animation, duration));
+        }
+
+        public void Remove(Animation animation)
+        {
+            var removePairs = new List<Tuple<AnimationGroup, Animation>>();
+
+            foreach(AnimationGroup group in _animationGroups)
+            {
+                foreach(Animation anim in group.Animations)
+                {
+                    if(anim == animation)
+                    {
+                        removePairs.Add(new Tuple<AnimationGroup, Animation>(group, anim));
+                    }
+                }
+            }
+
+            foreach(Tuple<AnimationGroup, Animation> removePair in removePairs)
+            {
+                removePair.Item1.Animations.Remove(removePair.Item2);
+
+                if(removePair.Item1.Animations.Count == 0)
+                {
+                    RemoveGroup(removePair.Item1);
+                }
+            }
         }
 
         public void AddGroup(AnimationGroup animationGroup)

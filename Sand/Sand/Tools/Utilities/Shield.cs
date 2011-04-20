@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,8 +8,9 @@ namespace Sand.Tools.Utilities
     public class Shield : Tool
     {
         private readonly SoundEffectInstance _shieldSound;
-        private Animation _animation;
-        private AnimationGroup _animationGroup;
+        private Animation _shieldSoundAnimation;
+        private readonly Animation _animation;
+        private readonly AnimationGroup _animationGroup;
 
         public float GrayLevel { get; set; }
 
@@ -25,6 +25,7 @@ namespace Sand.Tools.Utilities
 
             _shieldSound = Storage.Sound("Shield").CreateInstance();
             _shieldSound.IsLooped = true;
+            _shieldSound.Volume = 0.0f;
 
             _animation = new Animation(this, "GrayLevel", 0.5f, 1.0f);
             _animationGroup = new AnimationGroup(_animation, 200) { Loops = true };
@@ -64,18 +65,42 @@ namespace Sand.Tools.Utilities
         protected override void Activate()
         {
             _shieldSound.Play();
-            _shieldSound.Volume = 0.0f;
 
-            Storage.AnimationController.Add(new Animation(_shieldSound, "Volume", 0.0f, 1.0f), 600);
+            if(_shieldSoundAnimation != null)
+            {
+                Storage.AnimationController.Remove(_shieldSoundAnimation);
+            }
+
+            _shieldSoundAnimation = new Animation(_shieldSound, "Volume", 1.0f)
+                                    { CompletedDelegate = FinishStartingSound };
+            Storage.AnimationController.Add(_shieldSoundAnimation, 500);
 
             base.Activate();
         }
 
         protected override void Deactivate()
         {
-            _shieldSound.Stop();
+            if (_shieldSoundAnimation != null)
+            {
+                Storage.AnimationController.Remove(_shieldSoundAnimation);
+            }
+
+            _shieldSoundAnimation = new Animation(_shieldSound, "Volume", 0.0f)
+                                    { CompletedDelegate = FinishStoppingSound };
+            Storage.AnimationController.Add(_shieldSoundAnimation, 500);
 
             base.Deactivate();
+        }
+
+        private void FinishStartingSound()
+        {
+            _shieldSoundAnimation = null;
+        }
+
+        private void FinishStoppingSound()
+        {
+            _shieldSound.Stop();
+            _shieldSoundAnimation = null;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

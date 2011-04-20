@@ -169,13 +169,16 @@ namespace Sand
             Storage.AddSprite("Jet", Content.Load<Texture2D>("Textures/Tools/Primaries/Jet"));
 
             Storage.AddSprite("Plow", Content.Load<Texture2D>("Textures/Tools/Primaries/Plow"));
+            Storage.AddSound("Plow", Content.Load<SoundEffect>("Sounds/Plow"));
 
             Storage.AddSprite("Laser", Content.Load<Texture2D>("Textures/Tools/Primaries/Laser"));
             Storage.AddSound("Laser", Content.Load<SoundEffect>("Sounds/Laser"));
 
             Storage.AddSprite("SandCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/SandCharge"));
             Storage.AddSprite("FlameCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/FlameCharge"));
+            Storage.AddSound("FlameCharge", Content.Load<SoundEffect>("Sounds/FlameCharge"));
             Storage.AddSprite("PressureCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/PressureCharge"));
+            Storage.AddSound("PressureCharge", Content.Load<SoundEffect>("Sounds/PressureCharge"));
 
             Storage.AddSprite("EMP", Content.Load<Texture2D>("Textures/Tools/Weapons/EMP"));
             Storage.AddSound("EMP", Content.Load<SoundEffect>("Sounds/EMP"));
