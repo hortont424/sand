@@ -11,6 +11,7 @@ namespace Sand.GameState
         private Billboard _sandLogo;
         private PlayerClassButton _redSupportButton, _redDefenseButton, _redOffenseButton;
         private PlayerClassButton _blueSupportButton, _blueDefenseButton, _blueOffenseButton;
+        private LobbyList _lobbyList;
 
         public LobbyState(Sand game) : base(game)
         {
@@ -134,8 +135,15 @@ namespace Sand.GameState
                                                 }, null);
             Game.Components.Add(_blueSupportButton);
 
+            _lobbyList = new LobbyList(Game)
+                         {
+                             X = (_blueSupportButton.Button.X + _redSupportButton.Button.X + _redSupportButton.Button.Width) / 2,
+                             Y = _redDefenseButton.Button.Y
+                         };
+
             Game.Components.Add(_sandLogo);
             Game.Components.Add(_readyButton);
+            Game.Components.Add(_lobbyList);
         }
 
         public override void Update()
@@ -147,6 +155,7 @@ namespace Sand.GameState
         {
             Game.Components.Remove(_sandLogo);
             Game.Components.Remove(_readyButton);
+            Game.Components.Remove(_lobbyList);
 
             Game.Components.Remove(_redDefenseButton);
             Game.Components.Remove(_redOffenseButton);
