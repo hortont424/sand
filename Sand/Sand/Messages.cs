@@ -24,11 +24,13 @@ namespace Sand
         public bool State;
         public string PropertyName;
         public float PropertyValue;
+        public ToolType Type;
 
-        public ActivationInfo(ToolSlot slot, bool state, string propertyName, float propertyValue)
+        public ActivationInfo(ToolSlot slot, ToolType type, bool state, string propertyName, float propertyValue)
         {
             Slot = slot;
             State = state;
+            Type = type;
             PropertyName = propertyName;
             PropertyValue = propertyValue;
         }
@@ -320,12 +322,13 @@ namespace Sand
 
         #region ActivateTool Message
 
-        public static void SendActivateToolMessage(Player player, ToolSlot slot, bool newState, string propertyName,
+        public static void SendActivateToolMessage(Player player, ToolSlot slot, ToolType type, bool newState, string propertyName,
                                                    float propertyValue, byte id, bool immediate)
         {
             SendMessageHeader(MessageType.ActivateTool, id);
 
             Storage.PacketWriter.Write((byte)slot);
+            Storage.PacketWriter.Write((byte)type);
             Storage.PacketWriter.Write(newState);
             Storage.PacketWriter.Write(propertyName ?? "");
             Storage.PacketWriter.Write(propertyValue);
@@ -339,6 +342,7 @@ namespace Sand
         private static ActivationInfo ProcessActivateToolMessage(Player player)
         {
             var slot = (ToolSlot)Storage.PacketReader.ReadByte();
+            var type = (ToolType)Storage.PacketReader.ReadByte();
             var state = Storage.PacketReader.ReadBoolean();
 
             // This is scary.
@@ -348,7 +352,7 @@ namespace Sand
 
             if(player is RemotePlayer)
             {
-                dynamic tool = player.ToolInSlot(slot);
+                var tool = player.ToolInSlot(slot, type);
                 tool.Active = state;
 
                 if(propertyName != "")
@@ -367,11 +371,12 @@ namespace Sand
                 }
             }
 
-            return new ActivationInfo(slot, state, propertyName, propertyValue);
+            return new ActivationInfo(slot, type, state, propertyName, propertyValue);
         }
 
         private static void DiscardActivateToolMessage()
         {
+            Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadBoolean();
             Storage.PacketReader.ReadString();
@@ -785,7 +790,7 @@ namespace Sand
                         case MessageType.ActivateTool:
                             var aInfo = ProcessActivateToolMessage(player);
 
-                            SendActivateToolMessage(gamer.Tag as Player, aInfo.Slot, aInfo.State, aInfo.PropertyName,
+                            SendActivateToolMessage(gamer.Tag as Player, aInfo.Slot, aInfo.Type, aInfo.State, aInfo.PropertyName,
                                                     aInfo.PropertyValue, gamerId, false);
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;

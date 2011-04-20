@@ -106,7 +106,7 @@ namespace Sand.Tools.Utilities
 
         public override void SendActivationMessage()
         {
-            Messages.SendActivateToolMessage(Player, Slot, Active, null, 0.0f, Player.Gamer.Id, true);
+            Messages.SendActivateToolMessage(Player, Slot, Type, Active, null, 0.0f, Player.Gamer.Id, true);
         }
     }
 }

@@ -196,7 +196,7 @@ namespace Sand.Tools
 
         public virtual void SendActivationMessage()
         {
-            Messages.SendActivateToolMessage(Player, Slot, Active, null, 0.0f, Player.Gamer.Id, true);
+            Messages.SendActivateToolMessage(Player, Slot, Type, Active, null, 0.0f, Player.Gamer.Id, true);
         }
 
         public double Energy { get; protected set; }

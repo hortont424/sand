@@ -214,13 +214,12 @@ namespace Sand
             throw new NotImplementedException();
         }
 
-        public Tool ToolInSlot(ToolSlot slot)
+        public Tool ToolInSlot(ToolSlot slot, ToolType type)
         {
             switch(slot)
             {
-                // TODO: this is broken
                 case ToolSlot.Primary:
-                    return PrimaryA;
+                    return PrimaryA.Type == type ? PrimaryA : PrimaryB;
                 case ToolSlot.Weapon:
                     return Weapon;
                 case ToolSlot.Mobility:

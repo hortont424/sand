@@ -205,7 +205,7 @@ namespace Sand.Tools.Primaries
 
         public override void SendActivationMessage()
         {
-            Messages.SendActivateToolMessage(Player, Slot, Active, "DrawLaserLength", DrawLaserLength, Player.Gamer.Id, true);
+            Messages.SendActivateToolMessage(Player, Slot, Type, Active, "DrawLaserLength", DrawLaserLength, Player.Gamer.Id, true);
         }
     }
 }

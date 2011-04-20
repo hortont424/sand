@@ -31,7 +31,7 @@ namespace Sand
 
         private static readonly Dictionary<Class, String> ClassSpriteNames = new Dictionary<Class, String>()
             {
-                  { Class.None, "" },
+                  { Class.None, "DefenseClass" },
                   { Class.Defense, "DefenseClass" },
                   { Class.Offense, "OffenseClass" },
                   { Class.Support, "SupportClass"}

@@ -125,7 +125,7 @@ namespace Sand.Tools.Weapons
 
         public override void SendActivationMessage()
         {
-            Messages.SendActivateToolMessage(Player, Slot, Active, "DrawCannonLength", DrawCannonLength, Player.Gamer.Id, true);
+            Messages.SendActivateToolMessage(Player, Slot, Type, Active, "DrawCannonLength", DrawCannonLength, Player.Gamer.Id, true);
         }
     }
 }
