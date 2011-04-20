@@ -77,7 +77,7 @@ namespace Sand.Tools.Weapons
 
             foreach(Player player in shockPlayers)
             {
-                Messages.SendStunMessage(Player, player, (int)EnergyConsumptionRate, Player.Gamer.Id, true);
+                Messages.SendStunMessage(Player, player, 25, Player.Gamer.Id, true);
             }
         }
     }

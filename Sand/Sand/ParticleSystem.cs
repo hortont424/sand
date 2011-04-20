@@ -58,6 +58,7 @@ namespace Sand
         public Dictionary<string, Particle> Particles;
 
         public bool IsSand;
+        private HashSet<Particle> _particleQueue;
 
         public delegate void EmitParticleDelegate(Particle particle);
 
@@ -66,6 +67,7 @@ namespace Sand
             DrawOrder = 50;
             Player = player;
             Particles = new Dictionary<string, Particle>(1000);
+            _particleQueue = new HashSet<Particle>();
         }
 
         public override void Update(GameTime gameTime)
@@ -118,7 +120,6 @@ namespace Sand
                 if(IsSand && particle.Owner == Player.Gamer.Id)
                 {
                     const int fireSpreadRadius = 20 * 20;
-                    var particleQueue = new HashSet<Particle>();
 
                     if(particle.OnFire)
                     {
@@ -144,26 +145,26 @@ namespace Sand
 
                                 neighborParticle.Fire = 255;
 
-                                particleQueue.Add(neighborParticle);
+                                _particleQueue.Add(neighborParticle);
                             }
 
-                            particleQueue.Add(particle);
+                            _particleQueue.Add(particle);
                         }
                     }
-
-                    foreach(var sendParticle in particleQueue)
-                    {
-                        Messages.SendCreateSandMessage(Player, sendParticle, Player.Gamer.Id, false);
-                    }
-
-                    if(particleQueue.Count > 0)
-                    {
-                        Messages.SendOneOffMessage(Player);
-                    }
-
-                    particleQueue.Clear();
                 }
             }
+
+            foreach(var sendParticle in _particleQueue)
+            {
+                Messages.SendCreateSandMessage(Player, sendParticle, Player.Gamer.Id, false);
+            }
+
+            if(_particleQueue.Count > 0)
+            {
+                Messages.SendOneOffMessage(Player);
+            }
+
+            _particleQueue.Clear();
         }
 
         public override void Draw(GameTime gameTime)

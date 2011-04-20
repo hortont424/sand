@@ -191,9 +191,12 @@ namespace Sand.Tools
                         Deactivate();
                     }
                 }
-
-                Messages.SendActivateToolMessage(Player, Slot, Active, Player.Gamer.Id, true);
             }
+        }
+
+        public virtual void SendActivationMessage()
+        {
+            Messages.SendActivateToolMessage(Player, Slot, Active, null, 0.0f, Player.Gamer.Id, true);
         }
 
         public double Energy { get; protected set; }
@@ -319,6 +322,7 @@ namespace Sand.Tools
 
         protected virtual void Activate()
         {
+            SendActivationMessage();
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
@@ -327,6 +331,7 @@ namespace Sand.Tools
 
         protected virtual void Deactivate()
         {
+            SendActivationMessage();
         }
 
         public void Reset()

@@ -7,8 +7,7 @@ namespace Sand.Tools.Weapons
 {
     public class Cannon : Tool
     {
-        private bool _drawCannonNextFrame;
-        private float _drawCannonLength;
+        public float DrawCannonLength { get; set; }
 
         public Cannon(Player player) : base(player)
         {
@@ -52,8 +51,6 @@ namespace Sand.Tools.Weapons
 
         protected override void Activate()
         {
-            base.Activate();
-
             Storage.Sound("Cannon").CreateInstance().Play();
             Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
 
@@ -61,8 +58,7 @@ namespace Sand.Tools.Weapons
             Player closestIntersectionPlayer = null;
             float ? closestIntersectionDistance = null;
 
-            _drawCannonNextFrame = true;
-            _drawCannonLength = 3000;
+            DrawCannonLength = 3000;
 
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {
@@ -87,7 +83,7 @@ namespace Sand.Tools.Weapons
 
             if(closestIntersectionDistance != null)
             {
-                _drawCannonLength = closestIntersectionDistance.Value;
+                DrawCannonLength = closestIntersectionDistance.Value;
             }
 
             var wallIntersection = (Player.Game as Sand).GameMap.Intersects(cannonRay);
@@ -95,35 +91,41 @@ namespace Sand.Tools.Weapons
             if(wallIntersection != null && (wallIntersection < closestIntersectionDistance || closestIntersectionDistance == null))
             {
                 closestIntersectionDistance = null;
-                _drawCannonLength = wallIntersection.Value;
+                DrawCannonLength = wallIntersection.Value;
             }
 
             if(closestIntersectionDistance != null)
             {
-                Messages.SendStunMessage(Player, closestIntersectionPlayer, (int)EnergyConsumptionRate, Player.Gamer.Id,
-                                         true);
+                Messages.SendStunMessage(Player, closestIntersectionPlayer, (int)EnergyConsumptionRate, Player.Gamer.Id, true);
             }
+
+            base.Activate();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if(_drawCannonNextFrame)
+            if(DrawCannonLength != 0)
             {
                 if(Player.Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
                 {
                     spriteBatch.Draw(Storage.Sprite("pixel"),
-                                     new Rectangle((int)Player.X, (int)Player.Y, 6, (int)_drawCannonLength), null,
+                                     new Rectangle((int)Player.X, (int)Player.Y, 6, (int)DrawCannonLength), null,
                                      Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
                 else
                 {
                     spriteBatch.Draw(Storage.Sprite("pixel"),
-                                     new Rectangle((int)Player.X, (int)Player.Y, 7, (int)_drawCannonLength), null,
+                                     new Rectangle((int)Player.X, (int)Player.Y, 7, (int)DrawCannonLength), null,
                                      Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
 
-                _drawCannonNextFrame = false;
+                DrawCannonLength = 0;
             }
+        }
+
+        public override void SendActivationMessage()
+        {
+            Messages.SendActivateToolMessage(Player, Slot, Active, "DrawCannonLength", DrawCannonLength, Player.Gamer.Id, true);
         }
     }
 }

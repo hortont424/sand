@@ -183,5 +183,22 @@ namespace Sand
         {
             throw new NotImplementedException();
         }
+
+        public Tool ToolInSlot(ToolSlot slot)
+        {
+            switch (slot)
+            {
+                case ToolSlot.Primary:
+                    return PrimaryA;
+                case ToolSlot.Weapon:
+                    return Weapon;
+                case ToolSlot.Mobility:
+                    return Mobility;
+                case ToolSlot.Utility:
+                    return Utility;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
     }
 }

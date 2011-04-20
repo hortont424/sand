@@ -15,7 +15,23 @@ namespace Sand
         ActivateTool,
         CreateSand,
         RemoveSand
-    } ;
+    }
+
+    internal class ActivationInfo
+    {
+        public ToolSlot Slot;
+        public bool State;
+        public string PropertyName;
+        public float PropertyValue;
+
+        public ActivationInfo(ToolSlot slot, bool state, string propertyName, float propertyValue)
+        {
+            Slot = slot;
+            State = state;
+            PropertyName = propertyName;
+            PropertyValue = propertyValue;
+        }
+    }
 
     internal class Messages
     {
@@ -37,7 +53,7 @@ namespace Sand
 
                 if(gamer != null)
                 {
-                    gamer.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder, Storage.NetworkSession.Host);
+                    gamer.SendData(Storage.PacketWriter, SendDataOptions.Reliable, Storage.NetworkSession.Host);
                 }
             }
             else
@@ -46,7 +62,7 @@ namespace Sand
 
                 if(server != null)
                 {
-                    server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
+                    server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
                 }
             }
         }
@@ -303,12 +319,15 @@ namespace Sand
 
         #region ActivateTool Message
 
-        public static void SendActivateToolMessage(Player player, ToolSlot slot, bool newState, byte id, bool immediate)
+        public static void SendActivateToolMessage(Player player, ToolSlot slot, bool newState, string propertyName,
+                                                   float propertyValue, byte id, bool immediate)
         {
             SendMessageHeader(MessageType.ActivateTool, id);
 
             Storage.PacketWriter.Write((byte)slot);
             Storage.PacketWriter.Write(newState);
+            Storage.PacketWriter.Write(propertyName ?? "");
+            Storage.PacketWriter.Write(propertyValue);
 
             if(immediate)
             {
@@ -316,52 +335,46 @@ namespace Sand
             }
         }
 
-        private static Tuple<ToolSlot, bool> ProcessActivateToolMessage(Player player)
+        private static ActivationInfo ProcessActivateToolMessage(Player player)
         {
             var slot = (ToolSlot)Storage.PacketReader.ReadByte();
             var state = Storage.PacketReader.ReadBoolean();
 
+            // This is scary.
+
+            var propertyName = Storage.PacketReader.ReadString();
+            var propertyValue = Storage.PacketReader.ReadSingle();
+
             if(player is RemotePlayer)
             {
-                switch(slot)
+                dynamic tool = player.ToolInSlot(slot);
+                tool.Active = state;
+
+                if(propertyName != "")
                 {
-                    case ToolSlot.Primary:
-                        if(player.PrimaryA != null)
-                        {
-                            player.PrimaryA.Active = state;
-                        }
-                        break;
-                        // TODO: more for second primary!!
-                    case ToolSlot.Weapon:
-                        if(player.Weapon != null)
-                        {
-                            player.Weapon.Active = state;
-                        }
-                        break;
-                    case ToolSlot.Mobility:
-                        if(player.Mobility != null)
-                        {
-                            player.Mobility.Active = state;
-                        }
-                        break;
-                    case ToolSlot.Utility:
-                        if(player.Utility != null)
-                        {
-                            player.Utility.Active = state;
-                        }
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    var toolType = tool.GetType();
+                    var property = toolType.GetProperty(propertyName);
+
+                    if(property != null)
+                    {
+                        var propertyType = property.PropertyType;
+
+                        property.SetValue(tool,
+                                          Convert.ChangeType(propertyValue, propertyType),
+                                          null);
+                    }
                 }
             }
 
-            return Tuple.Create(slot, state);
+            return new ActivationInfo(slot, state, propertyName, propertyValue);
         }
 
         private static void DiscardActivateToolMessage()
         {
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadBoolean();
+            Storage.PacketReader.ReadString();
+            Storage.PacketReader.ReadSingle();
         }
 
         #endregion
@@ -640,7 +653,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
                         case MessageType.UpdatePlayerTeam:
@@ -654,7 +667,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
                         case MessageType.PlaySound:
@@ -668,7 +681,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
                         case MessageType.Stun:
@@ -693,22 +706,20 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
                         case MessageType.ActivateTool:
-                            var activationInfo = ProcessActivateToolMessage(player);
+                            var aInfo = ProcessActivateToolMessage(player);
 
-                            var slot = activationInfo.Item1;
-                            var state = activationInfo.Item2;
-
-                            foreach (var clientGamer in Storage.NetworkSession.AllGamers)
+                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
                             {
-                                SendActivateToolMessage(gamer.Tag as Player, slot, state, gamerId, false);
+                                SendActivateToolMessage(gamer.Tag as Player, aInfo.Slot, aInfo.State, aInfo.PropertyName,
+                                                        aInfo.PropertyValue, gamerId, false);
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
                         case MessageType.CreateSand:
@@ -720,7 +731,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
                         case MessageType.RemoveSand:
@@ -732,7 +743,7 @@ namespace Sand
                             }
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.ReliableInOrder);
+                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
                         default:
