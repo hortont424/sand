@@ -109,7 +109,8 @@ namespace Sand.GameState
                                                 {
                                                     player.Team = Team.Blue;
                                                     player.Class = Class.Defense;
-                                                    Storage.Sound(AddRandomSuffix("DefenseClass")).CreateInstance().Play();
+                                                    Storage.Sound(AddRandomSuffix("DefenseClass")).CreateInstance().Play
+                                                        ();
                                                 }, null);
             Game.Components.Add(_blueDefenseButton);
             _blueOffenseButton = new PlayerClassButton(Game,
@@ -120,7 +121,8 @@ namespace Sand.GameState
                                                 {
                                                     player.Team = Team.Blue;
                                                     player.Class = Class.Offense;
-                                                    Storage.Sound(AddRandomSuffix("OffenseClass")).CreateInstance().Play();
+                                                    Storage.Sound(AddRandomSuffix("OffenseClass")).CreateInstance().Play
+                                                        ();
                                                 }, null);
             Game.Components.Add(_blueOffenseButton);
             _blueSupportButton = new PlayerClassButton(Game,
@@ -131,13 +133,16 @@ namespace Sand.GameState
                                                 {
                                                     player.Team = Team.Blue;
                                                     player.Class = Class.Support;
-                                                    Storage.Sound(AddRandomSuffix("SupportClass")).CreateInstance().Play();
+                                                    Storage.Sound(AddRandomSuffix("SupportClass")).CreateInstance().Play
+                                                        ();
                                                 }, null);
             Game.Components.Add(_blueSupportButton);
 
             _lobbyList = new LobbyList(Game)
                          {
-                             X = (_blueSupportButton.Button.X + _redSupportButton.Button.X + _redSupportButton.Button.Width) / 2,
+                             X =
+                                 (_blueSupportButton.Button.X + _redSupportButton.Button.X +
+                                  _redSupportButton.Button.Width) / 2,
                              Y = _redDefenseButton.Button.Y
                          };
 
@@ -168,8 +173,7 @@ namespace Sand.GameState
             var returns = new Dictionary<string, object>();
             returns["SandLogo"] = _sandLogo;
 
-            Storage.SandParticles = new ParticleSystem(Game, Storage.NetworkSession.LocalGamers[0].Tag as Player);
-            Storage.SandParticles.IsSand = true;
+            Storage.SandParticles = new ParticleSystem(Game, Storage.NetworkSession.LocalGamers[0].Tag as Player, true);
 
             return returns;
         }

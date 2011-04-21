@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Sand
 {
@@ -57,16 +58,26 @@ namespace Sand
         public Dictionary<string, Particle> Particles;
 
         public bool IsSand;
-        private HashSet<Particle> _particleQueue;
+        private readonly HashSet<Particle> _particleQueue;
+        private readonly SoundEffectInstance _burningSound;
 
         public delegate void EmitParticleDelegate(Particle particle);
 
-        public ParticleSystem(Game game, Player player) : base(game)
+        public ParticleSystem(Game game, Player player, bool isSand = false) : base(game)
         {
             DrawOrder = 50;
             Player = player;
             Particles = new Dictionary<string, Particle>(1000);
+            IsSand = isSand;
             _particleQueue = new HashSet<Particle>();
+
+            if(IsSand)
+            {
+                _burningSound = Storage.Sound("SandBurning").CreateInstance();
+                _burningSound.Volume = 0.0f;
+                _burningSound.IsLooped = true;
+                _burningSound.Play();
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -122,8 +133,8 @@ namespace Sand
                 {
                     particle.Fire = (byte)Math.Max(particle.Fire - 10, 0);
                     burningVolume +=
-                        Math.Sqrt(Math.Pow(particle.Position.X - Player.X, 2) +
-                                  Math.Pow(particle.Position.Y - Player.Y, 2)); // TODO: play burning sound
+                        1.0f / Math.Sqrt(Math.Pow(particle.Position.X - Player.X, 2) +
+                                         Math.Pow(particle.Position.Y - Player.Y, 2));
                 }
 
                 if(IsSand && particle.Owner == Player.Gamer.Id)
@@ -173,6 +184,13 @@ namespace Sand
             }
 
             _particleQueue.Clear();
+
+            if(IsSand)
+            {
+                // This is all wrong
+                burningVolume = Math.Min(burningVolume, 0.9f);
+                _burningSound.Volume = (float)burningVolume;
+            }
         }
 
         public override void Draw(GameTime gameTime)
