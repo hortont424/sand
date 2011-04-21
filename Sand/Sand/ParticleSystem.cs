@@ -91,45 +91,34 @@ namespace Sand
 
         private void UpdateRemoteSand()
         {
-            var sentUpdates = new HashSet<Particle>();
-            var sentCreates = new HashSet<Particle>();
+            int sentUpdates = 0, sentCreates = 0;
 
-            foreach (var sendParticle in _particleQueue)
+            while(_particleQueue.Count > 0 && sentUpdates <= 128)
             {
-                Messages.SendUpdateSandMessage(Player, sendParticle, Player.Gamer.Id, false);
-                sentUpdates.Add(sendParticle);
+                var particle = _particleQueue.ElementAt(Storage.Random.Next(_particleQueue.Count));
 
-                if (sentUpdates.Count > 128)
-                    break;
+                Messages.SendUpdateSandMessage(Player, particle, Player.Gamer.Id, false);
+                sentUpdates++;
+                _particleQueue.Remove(particle);
             }
 
-            if(sentUpdates.Count > 0)
+            if(sentUpdates > 0)
             {
                 Messages.SendOneOffMessage(Player, false);
             }
 
-            foreach (var sendParticle in _createParticleQueue)
+            while(_createParticleQueue.Count > 0 && sentCreates <= 128)
             {
-                Messages.SendCreateSandMessage(Player, sendParticle, Player.Gamer.Id, false);
-                sentCreates.Add(sendParticle);
+                var particle = _createParticleQueue.ElementAt(Storage.Random.Next(_createParticleQueue.Count));
 
-                if (sentCreates.Count > 128)
-                    break;
+                Messages.SendCreateSandMessage(Player, particle, Player.Gamer.Id, false);
+                sentCreates++;
+                _createParticleQueue.Remove(particle);
             }
 
-            if (sentCreates.Count > 0)
+            if(sentCreates > 0)
             {
                 Messages.SendOneOffMessage(Player);
-            }
-
-            foreach(var particle in sentUpdates)
-            {
-                _particleQueue.Remove(particle);
-            }
-
-            foreach(var particle in sentCreates)
-            {
-                _createParticleQueue.Remove(particle);
             }
         }
 
