@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 
@@ -67,31 +66,33 @@ namespace Sand
 
         public void Update(double newProgress)
         {
-            if(_obj != null)
+            if(_obj == null)
             {
-                float fromValue, toValue;
+                return;
+            }
 
-                if(!Reverse)
-                {
-                    fromValue = _startValue;
-                    toValue = _endValue;
-                }
-                else
-                {
-                    fromValue = _endValue;
-                    toValue = _startValue;
-                }
+            float fromValue, toValue;
 
-                Type propertyType = _property.PropertyType;
-                var easingProgress = _easeFunc(newProgress, _easeType);
+            if(!Reverse)
+            {
+                fromValue = _startValue;
+                toValue = _endValue;
+            }
+            else
+            {
+                fromValue = _endValue;
+                toValue = _startValue;
+            }
 
-                if(_property != null)
-                {
-                    _property.SetValue(_obj,
-                                       Convert.ChangeType(fromValue + (easingProgress * (toValue - fromValue)),
-                                                          propertyType),
-                                       null);
-                }
+            Type propertyType = _property.PropertyType;
+            var easingProgress = _easeFunc(newProgress, _easeType);
+
+            if(_property != null)
+            {
+                _property.SetValue(_obj,
+                                   Convert.ChangeType(fromValue + (easingProgress * (toValue - fromValue)),
+                                                      propertyType),
+                                   null);
             }
         }
     }
@@ -116,13 +117,16 @@ namespace Sand
             }
             set
             {
-                _progress = value;
+                _progress = Math.Min(value, 1.0);
 
                 if(_progress >= 1.0)
                 {
-                    foreach(var animation in Animations.Where(animation => animation.CompletedDelegate != null))
+                    foreach(var animation in Animations)
                     {
-                        animation.CompletedDelegate();
+                        if(animation.CompletedDelegate != null)
+                        {
+                            animation.CompletedDelegate();
+                        }
                     }
 
                     if(Loops)

@@ -90,6 +90,7 @@ namespace Sand
         public override void Draw(GameTime gameTime)
         {
             var teamColor = Teams.ColorForTeam(Team);
+            var originalTeamColor = teamColor;
 
             if(Utility != null)
             {
@@ -125,19 +126,12 @@ namespace Sand
                 double hue, saturation, value;
                 SandColor.ToHSV(teamColor, out hue, out saturation, out value);
 
-                if(this is LocalPlayer)
-                {
-                    teamColor = SandColor.FromHSV(hue, saturation, Math.Max(value - Invisible, 0.2));
-                }
-                else
-                {
-                    Console.WriteLine(value);
-                    teamColor = SandColor.FromHSV(hue, saturation, Math.Max(value - Invisible, 0.0));
-                }
+                teamColor = SandColor.FromHSV(hue, saturation,
+                                              Math.Max(value - Invisible, this is LocalPlayer ? 0.2 : 0.0));
             }
 
             // TODO: hack
-            if(Invisible == 1.0f && !(this is LocalPlayer))
+            if(Invisible == 1.0f && this is RemotePlayer)
             {
                 return;
             }
@@ -189,7 +183,7 @@ namespace Sand
                                                 (int)(virtualY + (_sprite.Height / 2.0f) + 15),
                                                 (int)((tool.Energy / tool.TotalEnergy) * _sprite.Width), 7),
                                   null,
-                                  teamColor, 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
+                                  originalTeamColor, 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
             }
         }
 
