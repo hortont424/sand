@@ -48,15 +48,17 @@ namespace Sand
             Storage.PacketWriter.Write(id);
         }
 
-        public static void SendOneOffMessage(Player player)
+        public static void SendOneOffMessage(Player player, bool reliable = true)
         {
+            var reliability = reliable ? SendDataOptions.Reliable : SendDataOptions.None;
+
             if(!Storage.NetworkSession.IsHost)
             {
                 var gamer = player.Gamer as LocalNetworkGamer;
 
                 if(gamer != null)
                 {
-                    gamer.SendData(Storage.PacketWriter, SendDataOptions.Reliable, Storage.NetworkSession.Host);
+                    gamer.SendData(Storage.PacketWriter, reliability, Storage.NetworkSession.Host);
                 }
             }
             else
@@ -65,7 +67,7 @@ namespace Sand
 
                 if(server != null)
                 {
-                    server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
+                    server.SendData(Storage.PacketWriter, reliability);
                 }
             }
         }

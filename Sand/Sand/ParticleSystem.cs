@@ -60,6 +60,9 @@ namespace Sand
         public bool IsSand;
         private readonly HashSet<Particle> _particleQueue;
         private readonly SoundEffectInstance _burningSound;
+        private readonly Animation _updateRemoteSandTimer;
+        private readonly AnimationGroup _updateRemoteSandTimerGroup;
+        private readonly HashSet<Particle> _createParticleQueue;
 
         public delegate void EmitParticleDelegate(Particle particle);
 
@@ -70,6 +73,7 @@ namespace Sand
             Particles = new Dictionary<string, Particle>(1000);
             IsSand = isSand;
             _particleQueue = new HashSet<Particle>();
+            _createParticleQueue = new HashSet<Particle>();
 
             if(IsSand)
             {
@@ -77,6 +81,55 @@ namespace Sand
                 _burningSound.Volume = 0.0f;
                 _burningSound.IsLooped = true;
                 _burningSound.Play();
+
+                _updateRemoteSandTimer = new Animation { CompletedDelegate = UpdateRemoteSand };
+                _updateRemoteSandTimerGroup = new AnimationGroup(_updateRemoteSandTimer, 60) { Loops = true };
+
+                Storage.AnimationController.AddGroup(_updateRemoteSandTimerGroup);
+            }
+        }
+
+        private void UpdateRemoteSand()
+        {
+            var sentUpdates = new HashSet<Particle>();
+            var sentCreates = new HashSet<Particle>();
+
+            foreach (var sendParticle in _particleQueue)
+            {
+                Messages.SendUpdateSandMessage(Player, sendParticle, Player.Gamer.Id, false);
+                sentUpdates.Add(sendParticle);
+
+                if (sentUpdates.Count > 128)
+                    break;
+            }
+
+            if(sentUpdates.Count > 0)
+            {
+                Messages.SendOneOffMessage(Player, false);
+            }
+
+            foreach (var sendParticle in _createParticleQueue)
+            {
+                Messages.SendCreateSandMessage(Player, sendParticle, Player.Gamer.Id, false);
+                sentCreates.Add(sendParticle);
+
+                if (sentCreates.Count > 128)
+                    break;
+            }
+
+            if (sentCreates.Count > 0)
+            {
+                Messages.SendOneOffMessage(Player);
+            }
+
+            foreach(var particle in sentUpdates)
+            {
+                _particleQueue.Remove(particle);
+            }
+
+            foreach(var particle in sentCreates)
+            {
+                _createParticleQueue.Remove(particle);
             }
         }
 
@@ -173,18 +226,6 @@ namespace Sand
                 }
             }
 
-            foreach(var sendParticle in _particleQueue)
-            {
-                Messages.SendCreateSandMessage(Player, sendParticle, Player.Gamer.Id, false);
-            }
-
-            if(_particleQueue.Count > 0)
-            {
-                Messages.SendOneOffMessage(Player);
-            }
-
-            _particleQueue.Clear();
-
             if(IsSand)
             {
                 // This is all wrong
@@ -233,7 +274,7 @@ namespace Sand
         {
             if(IsSand && broadcast)
             {
-                Messages.SendCreateSandMessage(Player, p, Player.Gamer.Id, true);
+                _createParticleQueue.Add(p);
             }
 
             Particles.Add(p.Id, p);

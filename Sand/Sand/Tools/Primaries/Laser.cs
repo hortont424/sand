@@ -151,6 +151,7 @@ namespace Sand.Tools.Primaries
 
         private void LaserUpdate()
         {
+            // TODO: do we need to do this?
             foreach(var particle in _particleQueue)
             {
                 Messages.SendUpdateSandMessage(Player, particle, Player.Gamer.Id, false);
