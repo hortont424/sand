@@ -64,6 +64,8 @@ namespace Sand
         private readonly AnimationGroup _updateRemoteSandTimerGroup;
         private readonly HashSet<Particle> _createParticleQueue;
 
+        private readonly ParticleSystem _fireParticles;
+
         public delegate void EmitParticleDelegate(Particle particle);
 
         public ParticleSystem(Game game, Player player, bool isSand = false) : base(game)
@@ -77,6 +79,10 @@ namespace Sand
 
             if(IsSand)
             {
+                _fireParticles = new ParticleSystem(Game, Player);
+
+                Children.Add(_fireParticles);
+
                 _burningSound = Storage.Sound("SandBurning").CreateInstance();
                 _burningSound.Volume = 0.0f;
                 _burningSound.IsLooped = true;
@@ -189,6 +195,20 @@ namespace Sand
                         {
                             particle.Alive = false;
 
+                            Particle particle1 = particle; // something about linq
+                            _fireParticles.Emit(10, (p) =>
+                                                    {
+                                                        p.LifeRemaining = p.Lifetime = 300;
+
+                                                        var angle = (float)(Storage.Random.NextDouble() * 2 * Math.PI);
+                                                        var length = (float)Storage.Random.Next(20, 150);
+
+                                                        p.Position = new Vector2(particle1.Position.X, particle1.Position.Y);
+                                                        p.Velocity = new Vector2(
+                                                                         (float)Math.Cos(angle) * length,
+                                                                         (float)Math.Sin(angle) * length);
+                                                    });
+
                             foreach(var pair in Storage.SandParticles.Particles)
                             {
                                 var id = pair.Key;
@@ -207,7 +227,7 @@ namespace Sand
                                 }
 
                                 neighborParticle.OnFire = true;
-                                neighborParticle.Fire = 255;
+                                neighborParticle.Fire = (byte)Storage.Random.Next(128, 255);
 
                                 _particleQueue.Add(neighborParticle);
                             }
