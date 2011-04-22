@@ -18,7 +18,37 @@ namespace Sand
         private readonly Bitmap _bitmap;
         private readonly Graphics _graphics;
         private byte[] _bitmapBytes;
-        public bool Disabled;
+
+        private bool _disabled;
+        private bool _sawDisabled = false;
+        public float Scale { get; set; }
+
+        public bool Disabled
+        {
+            get
+            {
+                return _disabled;
+            }
+            set
+            {
+                var oldDisabled = _disabled;
+                _disabled = value;
+
+                var newScale = _disabled ? 0.75f : 1.0f;
+
+                if(_sawDisabled == false)
+                {
+                    _sawDisabled = true;
+                    Scale = newScale;
+                    return;
+                }
+
+                if(_disabled != oldDisabled)
+                {
+                    Storage.AnimationController.Add(new Animation(this, "Scale", newScale), 150);
+                }
+            }
+        }
 
         public Vector2 Position { get; set; }
 
@@ -35,6 +65,8 @@ namespace Sand
             _graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
             _drainTexture = null;
             _bitmapBytes = null;
+
+            Scale = 1.0f;
         }
 
         protected override void LoadContent()
@@ -73,7 +105,8 @@ namespace Sand
                 UpdateDrainMeter();
             }
 
-            var mulColor = Disabled ? new Microsoft.Xna.Framework.Color(0.2f, 0.2f, 0.2f) : Microsoft.Xna.Framework.Color.White;
+            var mulColorComponent = (Scale - 0.75f) * 3 + 0.25f;
+            var mulColor = new Microsoft.Xna.Framework.Color(mulColorComponent, mulColorComponent, mulColorComponent);
 
             if(_drainTexture != null && _tool.Energy > 0.0f)
             {
@@ -81,12 +114,12 @@ namespace Sand
                                   Position,
                                   null, mulColor, 0.0f,
                                   new Vector2(_drainTexture.Width / 2.0f, _drainTexture.Height / 2.0f),
-                                  Disabled ? 0.75f : 1.0f,
+                                  Scale,
                                   SpriteEffects.None, 0);
             }
 
             _spriteBatch.Draw(_tool.Icon, Position, null, mulColor, 0.0f,
-                new Vector2(_tool.Icon.Width / 2.0f, _tool.Icon.Height / 2.0f), Disabled ? 0.75f : 1.0f, SpriteEffects.None,
+                new Vector2(_tool.Icon.Width / 2.0f, _tool.Icon.Height / 2.0f), Scale, SpriteEffects.None,
                               0);
         }
     }
