@@ -35,7 +35,7 @@ namespace Sand.GameState
 
             var weapons = new List<Type> { typeof(Cannon), typeof(EMP) };
             var utilities = new List<Type> { typeof(Shield) };
-            var mobilities = new List<Type> { typeof(BoostDrive), typeof(WinkDrive) };
+            var mobilities = new List<Type> { typeof(BoostDrive), typeof(WinkDrive), typeof(BlinkDrive) };
 
             var primaries = new List<Type>();
 

@@ -151,6 +151,8 @@ namespace Sand
             Storage.AddSound("OffenseClass3", Content.Load<SoundEffect>("Sounds/Offense_3"));
             Storage.AddSound("SupportClass3", Content.Load<SoundEffect>("Sounds/Support_3"));
 
+            Storage.AddSprite("BlinkDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BlinkDrive"));
+
             Storage.AddSprite("BoostDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BoostDrive"));
             Storage.AddSound("BoostDrive_Start", Content.Load<SoundEffect>("Sounds/BoostDrive_Start"));
             Storage.AddSound("BoostDrive_Stop", Content.Load<SoundEffect>("Sounds/BoostDrive_Stop"));

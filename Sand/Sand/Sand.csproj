@@ -162,6 +162,7 @@
     <Compile Include="ToolChooserButton.cs" />
     <Compile Include="ToolIcon.cs" />
     <Compile Include="Tools\Mobilities\BoostDrive.cs" />
+    <Compile Include="Tools\Mobilities\BlinkDrive.cs" />
     <Compile Include="Tools\Mobilities\WinkDrive.cs" />
     <Compile Include="Tools\Primaries\FlameCharge.cs" />
     <Compile Include="Tools\Primaries\Jet.cs" />

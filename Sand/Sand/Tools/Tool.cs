@@ -44,7 +44,8 @@ namespace Sand.Tools
         SandCharge,
         FlameCharge,
         PressureCharge,
-        EMP
+        EMP,
+        BlinkDrive
     }
 
     public abstract class Tool
@@ -252,6 +253,8 @@ namespace Sand.Tools
                     return new PressureCharge(player);
                 case ToolType.EMP:
                     return new EMP(player);
+                case ToolType.BlinkDrive:
+                    return new BlinkDrive(player);
                 default:
                     throw new ArgumentOutOfRangeException("type");
             }

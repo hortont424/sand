@@ -208,7 +208,7 @@ namespace Sand
 
             if(!Stunned)
             {
-                if(!_sandGame.GameMap.CollisionTest(_texture,
+                if(!_sandGame.GameMap.CollisionTest(Texture,
                                                     new Rectangle((int)(newPosition.X - (Width / 2.0)),
                                                                   (int)(newPosition.Y - (Height / 2.0)),
                                                                   (int)Width, (int)Height)))
@@ -218,14 +218,14 @@ namespace Sand
                 }
                 else
                 {
-                    if(!_sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(newPosition.X - (Width / 2.0)),
+                    if(!_sandGame.GameMap.CollisionTest(Texture, new Rectangle((int)(newPosition.X - (Width / 2.0)),
                                                                                 (int)(Y - (Height / 2.0)), (int)Width,
                                                                                 (int)Height)))
                     {
                         Velocity.Y = -Velocity.Y;
                         X = newPosition.X;
                     }
-                    else if(!_sandGame.GameMap.CollisionTest(_texture, new Rectangle((int)(X - (Width / 2.0)),
+                    else if(!_sandGame.GameMap.CollisionTest(Texture, new Rectangle((int)(X - (Width / 2.0)),
                                                                                      (int)
                                                                                      (newPosition.Y - (Height / 2.0)),
                                                                                      (int)Width, (int)Height)))

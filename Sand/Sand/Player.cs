@@ -10,7 +10,7 @@ namespace Sand
     {
         public NetworkGamer Gamer;
 
-        protected Color[] _texture;
+        public Color[] Texture;
 
         public float Angle;
 
@@ -60,7 +60,7 @@ namespace Sand
             {
                 _class = value;
                 _sprite = Teams.SpriteForClass(_class);
-                _sprite.GetData(_texture);
+                _sprite.GetData(Texture);
 
                 if(this is LocalPlayer)
                 {
@@ -83,7 +83,7 @@ namespace Sand
             X = 60;
             Y = 60;
 
-            _texture = new Color[(int)(Width * Height)];
+            Texture = new Color[(int)(Width * Height)];
             Class = Class.None;
         }
 
