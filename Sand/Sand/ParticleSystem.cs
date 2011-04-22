@@ -194,6 +194,9 @@ namespace Sand
                                 var id = pair.Key;
                                 var neighborParticle = pair.Value;
 
+                                if (neighborParticle.OnFire)
+                                    continue;
+
                                 var distanceToParticle =
                                     Math.Pow(neighborParticle.Position.X - particle.Position.X, 2) +
                                     Math.Pow(neighborParticle.Position.Y - particle.Position.Y, 2);

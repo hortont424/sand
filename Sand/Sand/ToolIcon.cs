@@ -32,6 +32,7 @@ namespace Sand
             _bitmap = new Bitmap(128 + 20 + 6, 128 + 20 + 6);
             _graphics = Graphics.FromImage(_bitmap);
             _graphics.SmoothingMode = SmoothingMode.HighQuality;
+            _graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
             _drainTexture = null;
             _bitmapBytes = null;
         }
