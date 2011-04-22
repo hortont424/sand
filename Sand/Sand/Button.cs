@@ -13,6 +13,8 @@ namespace Sand
         private Action _action;
         private object _hoverActionUserInfo;
         private Action _hoverAction;
+        private object _unhoverActionUserInfo;
+        private Action _unhoverAction;
         private string _text;
         public Color BaseColor;
         private Color _clickColor;
@@ -103,6 +105,12 @@ namespace Sand
             _hoverActionUserInfo = userInfo;
         }
 
+        public void SetUnhoverAction(Action action, object userInfo)
+        {
+            _unhoverAction = action;
+            _unhoverActionUserInfo = userInfo;
+        }
+
         protected override void LoadContent()
         {
             base.LoadContent();
@@ -142,6 +150,15 @@ namespace Sand
                     if((_hoverAction != null) && _hovered && !oldHovered)
                     {
                         _hoverAction(this, _hoverActionUserInfo);
+                    }
+                }
+                else
+                {
+                    _hovered = false;
+
+                    if((_unhoverAction != null) && !_hovered && oldHovered)
+                    {
+                        _unhoverAction(this, _unhoverActionUserInfo);
                     }
                 }
 

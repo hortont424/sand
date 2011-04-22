@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Sand.Tools.Mobilities;
@@ -255,6 +256,41 @@ namespace Sand.Tools
                     return new EMP(player);
                 case ToolType.BlinkDrive:
                     return new BlinkDrive(player);
+                default:
+                    throw new ArgumentOutOfRangeException("type");
+            }
+        }
+
+        public static SoundEffect SoundForTool(ToolType type)
+        {
+            switch(type)
+            {
+                case ToolType.None:
+                    return null;
+                case ToolType.BoostDrive:
+                    return Storage.Sound("BoostDrive_Start");
+                case ToolType.WinkDrive:
+                    return Storage.Sound("WinkDrive_Start");
+                case ToolType.Jet:
+                    return Storage.Sound("BoostDrive_Start");
+                case ToolType.Laser:
+                    return Storage.Sound("Laser");
+                case ToolType.Plow:
+                    return Storage.Sound("Plow");
+                case ToolType.Shield:
+                    return Storage.Sound("Shield");
+                case ToolType.Cannon:
+                    return Storage.Sound("Cannon");
+                case ToolType.SandCharge:
+                    return Storage.Sound("BoostDrive_Start");
+                case ToolType.FlameCharge:
+                    return Storage.Sound("FlameCharge");
+                case ToolType.PressureCharge:
+                    return Storage.Sound("PressureCharge");
+                case ToolType.EMP:
+                    return Storage.Sound("EMP");
+                case ToolType.BlinkDrive:
+                    return Storage.Sound("BoostDrive_Start");
                 default:
                     throw new ArgumentOutOfRangeException("type");
             }
