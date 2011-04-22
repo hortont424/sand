@@ -9,6 +9,7 @@ namespace Sand.GameState
     {
         private Crosshair _crosshair;
         private ToolIcon _primaryAIcon, _primaryBIcon;
+        private SandMeter _redSandMeter, _blueSandMeter;
 
         public PlayState(Sand game) : base(game)
         {
@@ -84,6 +85,20 @@ namespace Sand.GameState
             }
 
             Game.Components.Add(Storage.SandParticles);
+
+            _redSandMeter = new SandMeter(Game, Team.Red)
+                            {
+                                X = _primaryAIcon.Position.X,
+                                Y = _primaryAIcon.Position.Y + 450
+                            };
+            _blueSandMeter = new SandMeter(Game, Team.Blue)
+                             {
+                                 X = _primaryBIcon.Position.X,
+                                 Y = _primaryBIcon.Position.Y + 450
+                             };
+
+            Game.Components.Add(_redSandMeter);
+            Game.Components.Add(_blueSandMeter);
         }
 
         public override void Update()
@@ -113,6 +128,9 @@ namespace Sand.GameState
 
             Game.Components.Remove(sandGame.GameMap);
             Game.Components.Remove(Storage.SandParticles);
+
+            Game.Components.Remove(_redSandMeter);
+            Game.Components.Remove(_blueSandMeter);
 
             return null;
         }

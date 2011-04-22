@@ -156,6 +156,7 @@
     <Compile Include="RemotePlayer.cs" />
     <Compile Include="Sand.cs" />
     <Compile Include="SandColor.cs" />
+    <Compile Include="SandMeter.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Teams.cs" />
     <Compile Include="ToolChooserButton.cs" />
