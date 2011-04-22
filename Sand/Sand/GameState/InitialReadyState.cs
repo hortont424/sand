@@ -10,6 +10,7 @@ namespace Sand.GameState
     {
         private Billboard _sandLogo;
         private Label _readyLabel;
+        private Label _serverLabel;
 
         public InitialReadyState(Sand game) : base(game)
         {
@@ -23,8 +24,11 @@ namespace Sand.GameState
             _sandLogo = new Billboard(Game, sandLogoOrigin, logoSprite);
             _readyLabel = new Label(Game, Game.BaseScreenSize.X * 0.5f, Game.BaseScreenSize.Y * 0.5f,
                                     "Click to Begin", "Calibri48Bold") { PositionGravity = Gravity.Center };
+            _serverLabel = new Label(Game, Game.BaseScreenSize.X - 15.0f, 10.0f,
+                                    "", "Calibri24Bold") { PositionGravity = new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Top, Gravity.Horizontal.Right) };
 
             Game.Components.Add(_sandLogo);
+            Game.Components.Add(_serverLabel);
             Game.Components.Add(_readyLabel);
         }
 
@@ -36,11 +40,14 @@ namespace Sand.GameState
             {
                 Game.TransitionState(States.Lobby);
             }
+
+            _serverLabel.Text = Storage.NetworkSession.IsHost ? "Server" : "";
         }
 
         public override Dictionary<string, object> Leave()
         {
             Game.Components.Remove(_sandLogo);
+            Game.Components.Remove(_serverLabel);
             Game.Components.Remove(_readyLabel);
 
             return new Dictionary<string, object> { { "SandLogo", _sandLogo } };
