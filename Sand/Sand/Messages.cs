@@ -324,7 +324,8 @@ namespace Sand
 
         #region ActivateTool Message
 
-        public static void SendActivateToolMessage(Player player, ToolSlot slot, ToolType type, bool newState, string propertyName,
+        public static void SendActivateToolMessage(Player player, ToolSlot slot, ToolType type, bool newState,
+                                                   string propertyName,
                                                    float propertyValue, byte id, bool immediate)
         {
             SendMessageHeader(MessageType.ActivateTool, id);
@@ -354,6 +355,8 @@ namespace Sand
 
             if(player is RemotePlayer)
             {
+                Console.WriteLine("Slot: {0}, Type: {1}, PropertyName: {2}, Value: {3}", slot, type, propertyName,
+                                  propertyValue);
                 var tool = player.ToolInSlot(slot, type);
                 tool.Active = state;
 
@@ -473,12 +476,12 @@ namespace Sand
             Storage.PacketWriter.Write(p.Alive);
             Storage.PacketWriter.Write(p.OnFire);
 
-            if (p.OnFire)
+            if(p.OnFire)
             {
                 Storage.PacketWriter.Write(p.Fire);
             }
 
-            if (immediate)
+            if(immediate)
             {
                 SendOneOffMessage(player);
             }
@@ -498,7 +501,7 @@ namespace Sand
             p.Alive = Storage.PacketReader.ReadBoolean();
             p.OnFire = Storage.PacketReader.ReadBoolean();
 
-            if (p.OnFire)
+            if(p.OnFire)
             {
                 p.Fire = Storage.PacketReader.ReadByte();
             }
@@ -514,7 +517,7 @@ namespace Sand
             Storage.PacketReader.ReadBoolean();
             var onFire = Storage.PacketReader.ReadBoolean();
 
-            if (onFire)
+            if(onFire)
             {
                 Storage.PacketReader.ReadByte();
             }
@@ -775,11 +778,11 @@ namespace Sand
                             var stunId = stunInfo.Item1;
                             var stunEnergy = stunInfo.Item2;
 
-                            foreach (var clientGamer in Storage.NetworkSession.AllGamers)
+                            foreach(var clientGamer in Storage.NetworkSession.AllGamers)
                             {
                                 var clientPlayer = clientGamer.Tag as Player;
 
-                                if (clientGamer.Id == stunId)
+                                if(clientGamer.Id == stunId)
                                 {
                                     SendStunMessage(gamer.Tag as Player, clientPlayer, stunEnergy, gamerId, false);
                                 }
@@ -792,7 +795,8 @@ namespace Sand
                         case MessageType.ActivateTool:
                             var aInfo = ProcessActivateToolMessage(player);
 
-                            SendActivateToolMessage(gamer.Tag as Player, aInfo.Slot, aInfo.Type, aInfo.State, aInfo.PropertyName,
+                            SendActivateToolMessage(gamer.Tag as Player, aInfo.Slot, aInfo.Type, aInfo.State,
+                                                    aInfo.PropertyName,
                                                     aInfo.PropertyValue, gamerId, false);
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;

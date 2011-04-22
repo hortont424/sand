@@ -24,6 +24,7 @@ namespace Sand
 
         public static bool AcceptInput = true;
         public static GameTime CurrentTime;
+        public static Sand Game;
 
         public static void AddSprite(string name, Texture2D texture)
         {

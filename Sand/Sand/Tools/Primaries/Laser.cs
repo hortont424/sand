@@ -8,8 +8,6 @@ namespace Sand.Tools.Primaries
 {
     internal class Laser : Tool
     {
-        private readonly Animation _laserTimer;
-        private readonly AnimationGroup _laserTimerGroup;
         private readonly HashSet<Particle> _particleQueue;
         private readonly Animation _laserUpdateTimer;
         private readonly AnimationGroup _laserUpdateTimerGroup;
@@ -17,6 +15,8 @@ namespace Sand.Tools.Primaries
         public int DrawLaserLength { get; set; }
         private Vector2 _laserPosition;
         private readonly ParticleSystem _laserParticles;
+        private bool _lastActive;
+        private int _lastDrawLaserLength;
 
         public Laser(Player player) : base(player)
         {
@@ -26,9 +26,6 @@ namespace Sand.Tools.Primaries
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
             EnergyConsumptionRate = 1;
             EnergyRechargeRate = 0.2;
-
-            _laserTimer = new Animation { CompletedDelegate = LaserZap };
-            _laserTimerGroup = new AnimationGroup(_laserTimer, 10) { Loops = true };
 
             _particleQueue = new HashSet<Particle>();
             _laserUpdateTimer = new Animation { CompletedDelegate = LaserUpdate };
@@ -114,18 +111,6 @@ namespace Sand.Tools.Primaries
 
             _laserPosition = laserPosition;
 
-            _laserParticles.Emit(10, (p) =>
-                                     {
-                                         var velocity =
-                                            new Vector2(Storage.Random.Next(-300, 300),
-                                                        Storage.Random.Next(-300, 300));
-
-                                         p.LifeRemaining = p.Lifetime = Storage.Random.Next(50, 150);
-
-                                         p.Position = _laserPosition;
-                                         p.Velocity = velocity;
-                                     });
-
             foreach(var pair in Storage.SandParticles.Particles)
             {
                 var id = pair.Key;
@@ -147,11 +132,18 @@ namespace Sand.Tools.Primaries
 
                 _particleQueue.Add(particle);
             }
+
+            if(Active != _lastActive || DrawLaserLength != _lastDrawLaserLength)
+            {
+                SendActivationMessage();
+            }
+
+            _lastActive = Active;
+            _lastDrawLaserLength = DrawLaserLength;
         }
 
         private void LaserUpdate()
         {
-            // TODO: do we need to do this?
             foreach(var particle in _particleQueue)
             {
                 Messages.SendUpdateSandMessage(Player, particle, Player.Gamer.Id, false);
@@ -163,14 +155,11 @@ namespace Sand.Tools.Primaries
             }
 
             _particleQueue.Clear();
-
-            SendActivationMessage();
         }
 
         protected override void Activate()
         {
             _laserSound.Play();
-            Storage.AnimationController.AddGroup(_laserTimerGroup);
 
             base.Activate();
         }
@@ -178,15 +167,19 @@ namespace Sand.Tools.Primaries
         protected override void Deactivate()
         {
             _laserSound.Stop();
-            Storage.AnimationController.RemoveGroup(_laserTimerGroup);
 
             base.Deactivate();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if(DrawLaserLength != 0)
+            if(Active)
             {
+                if(Player is LocalPlayer)
+                {
+                    LaserZap();
+                }
+
                 if(Player.Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
                 {
                     spriteBatch.Draw(Storage.Sprite("pixel"),
@@ -200,13 +193,29 @@ namespace Sand.Tools.Primaries
                                      Color.Orange, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
                 }
 
-                DrawLaserLength = 0;
+                var laserAngle = Player.Angle - ((float)Math.PI / 2.0f);
+                var laserPosition = new Vector2(Player.X, Player.Y) +
+                                    (new Vector2((float)Math.Cos(laserAngle), (float)Math.Sin(laserAngle)) *
+                                     new Vector2(DrawLaserLength));
+
+                _laserParticles.Emit(20, (p) =>
+                                         {
+                                             var velocity =
+                                                 new Vector2(Storage.Random.Next(-300, 300),
+                                                             Storage.Random.Next(-300, 300));
+
+                                             p.LifeRemaining = p.Lifetime = Storage.Random.Next(50, 150);
+
+                                             p.Position = laserPosition;
+                                             p.Velocity = velocity;
+                                         });
             }
         }
 
         public override void SendActivationMessage()
         {
-            Messages.SendActivateToolMessage(Player, Slot, Type, Active, "DrawLaserLength", DrawLaserLength, Player.Gamer.Id, true);
+            Messages.SendActivateToolMessage(Player, Slot, Type, Active, "DrawLaserLength", DrawLaserLength,
+                                             Player.Gamer.Id, true);
         }
     }
 }

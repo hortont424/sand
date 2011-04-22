@@ -65,6 +65,7 @@ namespace Sand
 
             Components.Add(new GamerServicesComponent(this));
 
+            Storage.Game = this;
             Storage.AnimationController = new AnimationController(this);
             Components.Add(Storage.AnimationController);
         }
