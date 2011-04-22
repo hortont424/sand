@@ -7,10 +7,6 @@ namespace Sand.Tools.Mobilities
 {
     public class BlinkDrive : Tool
     {
-        private SoundEffectInstance _startSound, _stopSound;
-        private Animation _animation;
-        private AnimationGroup _animationGroup;
-
         public BlinkDrive(Player player) : base(player)
         {
             Modifier = 0.5;
