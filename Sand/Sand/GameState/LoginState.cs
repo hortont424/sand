@@ -16,12 +16,19 @@ namespace Sand.GameState
             {
                 Console.WriteLine("Player already signed in!");
                 Game.TransitionState(States.AcquireSession);
+                return;
             }
 
-            if(!Guide.IsVisible)
+            Console.WriteLine("Nobody's signed in, show the guide!");
+            SignedInGamer.SignedIn += (o, args) => Game.TransitionState(States.AcquireSession);
+
+            Storage.AnimationController.Add(new Animation { CompletedDelegate = ShowGuide }, 500);
+        }
+
+        private void ShowGuide()
+        {
+            if(!Guide.IsVisible && Gamer.SignedInGamers.Count == 0)
             {
-                Console.WriteLine("Nobody's signed in, show the guide!");
-                SignedInGamer.SignedIn += (o, args) => Game.TransitionState(States.AcquireSession);
                 Guide.ShowSignIn(1, false);
             }
         }
