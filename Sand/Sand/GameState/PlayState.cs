@@ -10,6 +10,7 @@ namespace Sand.GameState
         private Crosshair _crosshair;
         private ToolIcon _primaryAIcon, _primaryBIcon;
         private SandMeter _redSandMeter, _blueSandMeter;
+        private Label _winLabel;
 
         public PlayState(Sand game) : base(game)
         {
@@ -146,6 +147,14 @@ namespace Sand.GameState
         private void WinPhase1(Team team)
         {
             Game.Phase = GamePhases.WonPhase1;
+            var teamName = team == Team.Red ? "Purple" : "Green";
+
+            _winLabel = new Label(Game, Game.BaseScreenSize.X / 2.0f, Game.BaseScreenSize.Y / 2.0f, teamName + " Wins Round One!", "Calibri48Bold")
+                        {
+                            PositionGravity = Gravity.Center
+                        };
+
+            Game.Components.Add(_winLabel);
         }
 
         public override Dictionary<string, object> Leave()
@@ -165,6 +174,11 @@ namespace Sand.GameState
 
             Game.Components.Remove(_redSandMeter);
             Game.Components.Remove(_blueSandMeter);
+
+            if(_winLabel != null)
+            {
+                Game.Components.Remove(_winLabel);
+            }
 
             return null;
         }

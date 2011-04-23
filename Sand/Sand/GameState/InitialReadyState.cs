@@ -84,7 +84,6 @@ namespace Sand.GameState
             Game.Components.Remove(_sandLogo);
             Game.Components.Remove(_serverLabel);
             Game.Components.Remove(_versionLabel);
-            //Game.Components.Remove(_debugLabel);
             Game.Components.Remove(_readyLabel);
 
             return new Dictionary<string, object> { { "SandLogo", _sandLogo } };

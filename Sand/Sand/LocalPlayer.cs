@@ -45,6 +45,8 @@ namespace Sand
             var newKeyState = Keyboard.GetState();
             var newMouseState = Mouse.GetState();
 
+            Acceleration.X = Acceleration.Y = 0.0f;
+
             if(!Storage.AcceptInput || _sandGame.Phase == GamePhases.WonPhase1 || _sandGame.Phase == GamePhases.WonPhase2)
             {
                 _oldKeyState = newKeyState;
@@ -52,8 +54,6 @@ namespace Sand
 
                 return;
             }
-
-            Acceleration.X = Acceleration.Y = 0.0f;
 
             if(newKeyState.IsKeyDown(Keys.A))
             {
