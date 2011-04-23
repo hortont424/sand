@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand.Tools.Primaries
@@ -8,6 +9,7 @@ namespace Sand.Tools.Primaries
     {
         private readonly Animation _jetTimer;
         private readonly AnimationGroup _jetTimerGroup;
+        private readonly SoundEffectInstance _jetSound;
 
         public Jet(Player player) : base(player)
         {
@@ -20,6 +22,9 @@ namespace Sand.Tools.Primaries
 
             _jetTimer = new Animation { CompletedDelegate = JetEmit };
             _jetTimerGroup = new AnimationGroup(_jetTimer, 10) { Loops = true };
+
+            _jetSound = Storage.Sound("Jet").CreateInstance();
+            _jetSound.IsLooped = true;
         }
 
         public static string _name()
@@ -76,6 +81,8 @@ namespace Sand.Tools.Primaries
         protected override void Activate()
         {
             base.Activate();
+            
+            _jetSound.Play();
 
             Storage.AnimationController.AddGroup(_jetTimerGroup);
         }
@@ -83,6 +90,8 @@ namespace Sand.Tools.Primaries
         protected override void Deactivate()
         {
             base.Deactivate();
+
+            _jetSound.Stop();
 
             Storage.AnimationController.RemoveGroup(_jetTimerGroup);
         }

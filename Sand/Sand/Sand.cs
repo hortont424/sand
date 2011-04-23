@@ -162,6 +162,7 @@ namespace Sand
             Storage.AddSound("SupportClass3", Content.Load<SoundEffect>("Sounds/Support_3"));
 
             Storage.AddSprite("BlinkDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BlinkDrive"));
+            Storage.AddSound("BlinkDrive", Content.Load<SoundEffect>("Sounds/blinkdrive"));
 
             Storage.AddSprite("BoostDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BoostDrive"));
             Storage.AddSound("BoostDrive_Start", Content.Load<SoundEffect>("Sounds/BoostDrive_Start"));
@@ -181,6 +182,7 @@ namespace Sand
             Storage.AddSound("Shield", Content.Load<SoundEffect>("Sounds/Shield"));
 
             Storage.AddSprite("Jet", Content.Load<Texture2D>("Textures/Tools/Primaries/Jet"));
+            Storage.AddSound("Jet", Content.Load<SoundEffect>("Sounds/jet_drain"));
 
             Storage.AddSprite("Plow", Content.Load<Texture2D>("Textures/Tools/Primaries/Plow"));
             Storage.AddSound("Plow", Content.Load<SoundEffect>("Sounds/Plow"));
@@ -189,6 +191,7 @@ namespace Sand
             Storage.AddSound("Laser", Content.Load<SoundEffect>("Sounds/Laser"));
 
             Storage.AddSprite("SandCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/SandCharge"));
+            Storage.AddSound("SandCharge", Content.Load<SoundEffect>("Sounds/sandcharge"));
             Storage.AddSprite("FlameCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/FlameCharge"));
             Storage.AddSound("FlameCharge", Content.Load<SoundEffect>("Sounds/FlameCharge"));
             Storage.AddSprite("PressureCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/PressureCharge"));

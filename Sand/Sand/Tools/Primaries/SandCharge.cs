@@ -50,6 +50,8 @@ namespace Sand.Tools.Primaries
         {
             base.Activate();
 
+            Storage.Sound("SandCharge").CreateInstance().Play();
+
             Storage.SandParticles.Emit(100, (p) =>
                                             {
                                                 p.LifeRemaining = p.Lifetime = 100;

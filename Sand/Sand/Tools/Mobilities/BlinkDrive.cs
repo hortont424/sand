@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -50,6 +49,8 @@ namespace Sand.Tools.Mobilities
         protected override void Activate()
         {
             base.Activate();
+
+            Storage.Sound("BlinkDrive").CreateInstance().Play();
 
             if(!Storage.Game.GameMap.CollisionTest(Player.Texture,
                                                    new Rectangle(
