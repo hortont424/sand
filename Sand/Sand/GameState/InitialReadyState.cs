@@ -14,6 +14,7 @@ namespace Sand.GameState
         private Label _serverLabel;
         private Label _versionLabel;
         private Label _debugLabel;
+        private KeyboardState _oldKeyState;
 
         public InitialReadyState(Sand game) : base(game)
         {
@@ -66,13 +67,15 @@ namespace Sand.GameState
                 Game.TransitionState(States.Lobby);
             }
 
-            if(keyState.IsKeyDown(Keys.OemTilde))
+            if(keyState.IsKeyDown(Keys.OemTilde) && _oldKeyState.IsKeyUp(Keys.OemTilde))
             {
-                Storage.DebugMode = true;
+                Storage.DebugMode = !Storage.DebugMode;
             }
 
             _serverLabel.Text = Storage.NetworkSession.IsHost ? "Server" : "";
             _debugLabel.Text = Storage.DebugMode ? "Debug" : "";
+
+            _oldKeyState = keyState;
         }
 
         public override Dictionary<string, object> Leave()
