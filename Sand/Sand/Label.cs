@@ -24,6 +24,7 @@ namespace Sand
         }
 
         private readonly string _fontName;
+        public Color Color { get; set; }
 
         public Label(Game game, float x, float y, string text) : this(game, x, y, text, "Calibri24")
         {
@@ -37,6 +38,9 @@ namespace Sand
             _fontName = font;
 
             Text = text;
+            Color = Color.White;
+
+            DrawOrder = 1000;
         }
 
         public override void Update(GameTime gameTime)
@@ -48,7 +52,7 @@ namespace Sand
             var textOrigin = new Vector2(Width, Height) * Gravity.Offset(PositionGravity);
             _spriteBatch.DrawString(Storage.Font(_fontName), Text,
                                     new Vector2(Bounds.X, Bounds.Y),
-                                    Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
+                                    Color, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
         }
     }
 }

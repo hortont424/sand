@@ -47,7 +47,8 @@ namespace Sand.GameState
                           {
                               PositionGravity =
                                   new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Bottom,
-                                                                                  Gravity.Horizontal.Left)
+                                                                                  Gravity.Horizontal.Left),
+                              Color = Color.Red
                           };
 
             Game.Components.Add(_sandLogo);
@@ -83,7 +84,7 @@ namespace Sand.GameState
             Game.Components.Remove(_sandLogo);
             Game.Components.Remove(_serverLabel);
             Game.Components.Remove(_versionLabel);
-            Game.Components.Remove(_debugLabel);
+            //Game.Components.Remove(_debugLabel);
             Game.Components.Remove(_readyLabel);
 
             return new Dictionary<string, object> { { "SandLogo", _sandLogo } };
