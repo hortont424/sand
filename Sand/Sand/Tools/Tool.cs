@@ -275,7 +275,7 @@ namespace Sand.Tools
                 case ToolType.WinkDrive:
                     return Storage.Sound("WinkDrive_Start");
                 case ToolType.Jet:
-                    return Storage.Sound("BoostDrive_Start");
+                    return Storage.Sound("Jet");
                 case ToolType.Laser:
                     return Storage.Sound("Laser");
                 case ToolType.Plow:
@@ -285,7 +285,7 @@ namespace Sand.Tools
                 case ToolType.Cannon:
                     return Storage.Sound("Cannon");
                 case ToolType.SandCharge:
-                    return Storage.Sound("BoostDrive_Start");
+                    return Storage.Sound("SandCharge");
                 case ToolType.FlameCharge:
                     return Storage.Sound("FlameCharge");
                 case ToolType.PressureCharge:
@@ -293,7 +293,7 @@ namespace Sand.Tools
                 case ToolType.EMP:
                     return Storage.Sound("EMP");
                 case ToolType.BlinkDrive:
-                    return Storage.Sound("BoostDrive_Start");
+                    return Storage.Sound("BlinkDrive");
                 case ToolType.Ground:
                     return Storage.Sound("BoostDrive_Start");
                 default:
