@@ -17,7 +17,7 @@ namespace Sand.GameState
 
         public override void Enter(Dictionary<string, object> data)
         {
-            var sandGame = Game;
+            Game.Phase = GamePhases.Phase1;
 
             Cursor.Hide();
             _crosshair = new Crosshair(Game);
@@ -28,15 +28,15 @@ namespace Sand.GameState
                 Game.Components.Add((Player)gamer.Tag);
             }
 
-            sandGame.GameMap = new Map(Game, "02");
+            Game.GameMap = new Map(Game, "02");
 
-            Game.Components.Add(sandGame.GameMap);
+            Game.Components.Add(Game.GameMap);
 
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
             if(localPlayer != null)
             {
-                var centerSidebar = (sandGame.GameMap.Width + Game.BaseScreenSize.X) / 2.0f;
+                var centerSidebar = (Game.GameMap.Width + Game.BaseScreenSize.X) / 2.0f;
 
                 var mobilityIcon = new ToolIcon(Game, localPlayer.Mobility)
                                    {
@@ -112,6 +112,40 @@ namespace Sand.GameState
                 _primaryAIcon.Disabled = !(localPlayer.CurrentPrimary == localPlayer.PrimaryA);
                 _primaryBIcon.Disabled = !(localPlayer.CurrentPrimary == localPlayer.PrimaryB);
             }
+
+            if(Game.Phase == GamePhases.Phase1)
+            {
+                int redCount = 0, blueCount = 0;
+
+                foreach(var particle in Storage.SandParticles.Particles)
+                {
+                    if(particle.Value.Team == Team.Red)
+                    {
+                        redCount++;
+                    }
+                    else if(particle.Value.Team == Team.Blue)
+                    {
+                        blueCount++;
+                    }
+                }
+
+                _redSandMeter.Progress = (redCount / 3000.0f);
+                _blueSandMeter.Progress = (blueCount / 3000.0f);
+
+                if(_redSandMeter.Progress == 1.0f)
+                {
+                    WinPhase1(Team.Red);
+                }
+                else if(_blueSandMeter.Progress == 1.0f)
+                {
+                    WinPhase1(Team.Blue);
+                }
+            }
+        }
+
+        private void WinPhase1(Team team)
+        {
+            Game.Phase = GamePhases.WonPhase1;
         }
 
         public override Dictionary<string, object> Leave()

@@ -26,6 +26,8 @@ namespace Sand
         public static GameTime CurrentTime;
         public static Sand Game;
 
+        public static bool DebugMode = false;
+
         public static void AddSprite(string name, Texture2D texture)
         {
             _sprites.Add(name, texture);

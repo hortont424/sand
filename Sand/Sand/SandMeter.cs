@@ -8,6 +8,18 @@ namespace Sand
     {
         public Team Team;
         private readonly Color _fillColor, _borderColor, _darkColor;
+        private float _progress;
+        public float Progress
+        {
+            get
+            {
+                return _progress;
+            }
+            set
+            {
+                _progress = Math.Min(value, 1.0f);
+            }
+        }
 
         public SandMeter(Game game, Team team) : base(game)
         {
@@ -23,6 +35,8 @@ namespace Sand
 
             Width = 100;
             Height = 600;
+
+            Progress = 0.0f;
         }
 
         public override void Draw(GameTime gameTime)
@@ -35,7 +49,7 @@ namespace Sand
                               null, _borderColor, 0.0f, Gravity.Offset(Gravity.Center), SpriteEffects.None, 0.0f);
             _spriteBatch.Draw(Storage.Sprite("pixel"), Bounds,
                               null, _darkColor, 0.0f, Gravity.Offset(Gravity.Center), SpriteEffects.None, 0.0f);
-            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle(Bounds.X, (int)(Bounds.Y + (Bounds.Height / 2.0f)), Bounds.Width, 50),
+            _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle(Bounds.X, (int)(Bounds.Y + (Bounds.Height / 2.0f)), Bounds.Width, (int)(Bounds.Height * Progress)),
                               null, _fillColor, 0.0f, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
         }
     }

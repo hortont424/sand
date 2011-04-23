@@ -45,7 +45,7 @@ namespace Sand
             var newKeyState = Keyboard.GetState();
             var newMouseState = Mouse.GetState();
 
-            if(!Storage.AcceptInput)
+            if(!Storage.AcceptInput || _sandGame.Phase == GamePhases.WonPhase1 || _sandGame.Phase == GamePhases.WonPhase2)
             {
                 _oldKeyState = newKeyState;
                 _oldMouseState = newMouseState;
@@ -83,56 +83,59 @@ namespace Sand
                 CurrentPrimary = PrimaryA;
             }
 
-            if(newKeyState.IsKeyDown(Keys.R))
+            if(Storage.DebugMode)
             {
-                if(Mobility != null)
+                if (newKeyState.IsKeyDown(Keys.R))
                 {
-                    Mobility.Reset();
+                    if (Mobility != null)
+                    {
+                        Mobility.Reset();
+                    }
+
+                    if (Weapon != null)
+                    {
+                        Weapon.Reset();
+                    }
+
+                    if (Utility != null)
+                    {
+                        Utility.Reset();
+                    }
+
+                    if (PrimaryA != null)
+                    {
+                        PrimaryA.Reset();
+                    }
+
+                    if (PrimaryB != null)
+                    {
+                        PrimaryB.Reset();
+                    }
                 }
 
-                if(Weapon != null)
+                if (newKeyState.IsKeyDown(Keys.P))
                 {
-                    Weapon.Reset();
+                    var p = new Particle(null, Gamer.Id);
+
+                    p.LifeRemaining = p.Lifetime = 100;
+
+                    var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
+                    var length = (float)Storage.Random.Next(200, 450);
+
+                    p.Team = Team;
+                    p.Position = new Vector2(X, Y);
+                    p.Velocity = Velocity +
+                                 new Vector2(
+                                     (float)Math.Cos(Angle - (Math.PI / 2.0f) + angle) * length,
+                                     (float)Math.Sin(Angle - (Math.PI / 2.0f) + angle) * length);
+
+                    Storage.SandParticles.Emit(p);
                 }
 
-                if(Utility != null)
+                if (newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
                 {
-                    Utility.Reset();
+                    Stun(25.0f);
                 }
-
-                if(PrimaryA != null)
-                {
-                    PrimaryA.Reset();
-                }
-
-                if(PrimaryB != null)
-                {
-                    PrimaryB.Reset();
-                }
-            }
-
-            if(newKeyState.IsKeyDown(Keys.P))
-            {
-                var p = new Particle(null, Gamer.Id);
-
-                p.LifeRemaining = p.Lifetime = 100;
-
-                var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
-                var length = (float)Storage.Random.Next(200, 450);
-
-                p.Team = Team;
-                p.Position = new Vector2(X, Y);
-                p.Velocity = Velocity +
-                             new Vector2(
-                                 (float)Math.Cos(Angle - (Math.PI / 2.0f) + angle) * length,
-                                 (float)Math.Sin(Angle - (Math.PI / 2.0f) + angle) * length);
-
-                Storage.SandParticles.Emit(p);
-            }
-
-            if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
-            {
-                Stun(25.0f);
             }
 
             if(!Stunned)

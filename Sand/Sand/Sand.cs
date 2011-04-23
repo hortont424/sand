@@ -9,6 +9,14 @@ using Sand.GameState;
 
 namespace Sand
 {
+    public enum GamePhases
+    {
+        Phase1,
+        WonPhase1,
+        Phase2,
+        WonPhase2
+    }
+
     public class Sand : Game
     {
         public GraphicsDeviceManager Graphics;
@@ -23,6 +31,8 @@ namespace Sand
         public Vector2 MouseLocation;
 
         public Map GameMap;
+
+        public GamePhases Phase;
 
         // E27 white rice wonton soup ("I'll go with the boned")
         // E16 chicken fried rice wonton soup
