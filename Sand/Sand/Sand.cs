@@ -187,6 +187,8 @@ namespace Sand
             Storage.AddSprite("EMP", Content.Load<Texture2D>("Textures/Tools/Weapons/EMP"));
             Storage.AddSound("EMP", Content.Load<SoundEffect>("Sounds/EMP"));
 
+            Storage.AddSprite("Ground", Content.Load<Texture2D>("Textures/Tools/Utilities/Ground"));
+
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });
             Storage.AddSprite("pixel", rectTexture);

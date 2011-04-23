@@ -171,6 +171,7 @@
     <Compile Include="Tools\Primaries\PressureCharge.cs" />
     <Compile Include="Tools\Primaries\SandCharge.cs" />
     <Compile Include="Tools\Tool.cs" />
+    <Compile Include="Tools\Utilities\Ground.cs" />
     <Compile Include="Tools\Utilities\Shield.cs" />
     <Compile Include="Tools\Weapons\Cannon.cs" />
     <Compile Include="Tools\Weapons\EMP.cs" />
