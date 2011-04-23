@@ -132,7 +132,9 @@ namespace Sand
         {
             var size = IsSand ? 4 : 2;
 
-            double burningVolume = 0.0;
+            var burningVolume = 0.0;
+
+            var drag = new Vector2(3.0f, 3.0f);
 
             foreach(var particle in Particles.Values.Where(particle => particle.Alive))
             {
@@ -147,7 +149,8 @@ namespace Sand
 
                 if(IsSand)
                 {
-                    particle.Velocity *= new Vector2(0.95f, 0.95f);
+                    var accel = -drag * particle.Velocity;
+                    particle.Velocity += accel * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
                 else
                 {

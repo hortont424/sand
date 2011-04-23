@@ -63,6 +63,12 @@ namespace Sand.GameState
             MouseState mouse = Mouse.GetState();
             KeyboardState keyState = Keyboard.GetState();
 
+            if(!Storage.AcceptInput)
+            {
+                _oldKeyState = keyState;
+                return;
+            }
+
             if(mouse.LeftButton == ButtonState.Pressed && !Guide.IsVisible)
             {
                 Game.TransitionState(States.Lobby);

@@ -11,6 +11,7 @@ namespace Sand.GameState
         private ToolIcon _primaryAIcon, _primaryBIcon;
         private SandMeter _redSandMeter, _blueSandMeter;
         private Label _winLabel;
+        private Label _fpsMeter;
 
         public PlayState(Sand game) : base(game)
         {
@@ -100,6 +101,15 @@ namespace Sand.GameState
 
             Game.Components.Add(_redSandMeter);
             Game.Components.Add(_blueSandMeter);
+
+            if(Storage.DebugMode)
+            {
+                _fpsMeter = new Label(Game, 10, 15, "")
+                            {
+                                Color = Color.Red
+                            };
+                Game.Components.Add(_fpsMeter);
+            }
         }
 
         public override void Update()
@@ -142,6 +152,11 @@ namespace Sand.GameState
                     WinPhase1(Team.Blue);
                 }
             }
+
+            if(Storage.DebugMode)
+            {
+                _fpsMeter.Text = string.Format("{0} s", Storage.CurrentTime.ElapsedGameTime.TotalSeconds);
+            }
         }
 
         private void WinPhase1(Team team)
@@ -178,6 +193,11 @@ namespace Sand.GameState
             if(_winLabel != null)
             {
                 Game.Components.Remove(_winLabel);
+            }
+
+            if(_fpsMeter != null)
+            {
+                Game.Components.Remove(_fpsMeter);
             }
 
             return null;
