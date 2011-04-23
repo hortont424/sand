@@ -185,6 +185,25 @@ namespace Sand
                                          Math.Pow(particle.Position.Y - Player.Y, 2));
                 }
 
+                if(IsSand && particle.OnFire && particle.Fire == 0 && particle.Alive)
+                {
+                    particle.Alive = false;
+
+                    Particle particle1 = particle; // something about linq
+                    _fireParticles.Emit(10, (p) =>
+                                            {
+                                                p.LifeRemaining = p.Lifetime = 300;
+
+                                                var angle = (float)(Storage.Random.NextDouble() * 2 * Math.PI);
+                                                var length = (float)Storage.Random.Next(20, 150);
+
+                                                p.Position = new Vector2(particle1.Position.X, particle1.Position.Y);
+                                                p.Velocity = new Vector2(
+                                                    (float)Math.Cos(angle) * length,
+                                                    (float)Math.Sin(angle) * length);
+                                            });
+                }
+
                 if(IsSand && particle.Owner == Player.Gamer.Id)
                 {
                     const int fireSpreadRadius = 10 * 10;
@@ -193,29 +212,15 @@ namespace Sand
                     {
                         if(particle.Fire == 0)
                         {
-                            particle.Alive = false;
-
-                            Particle particle1 = particle; // something about linq
-                            _fireParticles.Emit(10, (p) =>
-                                                    {
-                                                        p.LifeRemaining = p.Lifetime = 300;
-
-                                                        var angle = (float)(Storage.Random.NextDouble() * 2 * Math.PI);
-                                                        var length = (float)Storage.Random.Next(20, 150);
-
-                                                        p.Position = new Vector2(particle1.Position.X, particle1.Position.Y);
-                                                        p.Velocity = new Vector2(
-                                                                         (float)Math.Cos(angle) * length,
-                                                                         (float)Math.Sin(angle) * length);
-                                                    });
-
                             foreach(var pair in Storage.SandParticles.Particles)
                             {
                                 var id = pair.Key;
                                 var neighborParticle = pair.Value;
 
-                                if (neighborParticle.OnFire)
+                                if(neighborParticle.OnFire)
+                                {
                                     continue;
+                                }
 
                                 var distanceToParticle =
                                     Math.Pow(neighborParticle.Position.X - particle.Position.X, 2) +
