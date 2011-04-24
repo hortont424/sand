@@ -7,6 +7,8 @@ namespace Sand.Tools.Primaries
 {
     public class FlameCharge : Tool
     {
+        public byte DrawFlameRing { get; set; }
+
         public FlameCharge(Player player) : base(player)
         {
             Modifier = 0.5;
@@ -49,14 +51,15 @@ namespace Sand.Tools.Primaries
 
         protected override void Activate()
         {
+            DrawFlameRing = 255;
+
             var particleQueue = new HashSet<Particle>();
-            base.Activate();
 
             Storage.Sound("FlameCharge").CreateInstance().Play();
 
             const int flameChargeRadius = 50 * 50;
 
-            foreach (var pair in Storage.SandParticles.Particles)
+            foreach(var pair in Storage.SandParticles.Particles)
             {
                 var id = pair.Key;
                 var particle = pair.Value;
@@ -65,7 +68,7 @@ namespace Sand.Tools.Primaries
                     Math.Pow(Player.X - particle.Position.X, 2) +
                     Math.Pow(Player.Y - particle.Position.Y, 2);
 
-                if (distanceToParticle > flameChargeRadius)
+                if(distanceToParticle > flameChargeRadius)
                 {
                     continue;
                 }
@@ -78,20 +81,40 @@ namespace Sand.Tools.Primaries
                 particleQueue.Add(particle);
             }
 
-            foreach (var particle in particleQueue)
+            foreach(var particle in particleQueue)
             {
                 Messages.SendUpdateSandMessage(Player, particle, Player.Gamer.Id, false);
             }
 
-            if (particleQueue.Count > 0)
+            if(particleQueue.Count > 0)
             {
                 Messages.SendOneOffMessage(Player);
             }
+
+            base.Activate();
         }
 
-        protected override void Deactivate()
+        public override void SendActivationMessage()
         {
-            base.Deactivate();
+            Messages.SendActivateToolMessage(Player, Slot, Type, Active, "DrawFlameRing", DrawFlameRing,
+                                             Player.Gamer.Id, true);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if(DrawFlameRing > 24)
+            {
+                var sprite = Storage.Sprite("ShieldCircle");
+                var grayLevel = DrawFlameRing / 255.0f;
+
+                spriteBatch.Draw(sprite, new Vector2((int)Player.X, (int)Player.Y), null,
+                                 new Color(grayLevel, grayLevel, grayLevel), 0.0f,
+                                 new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f),
+                                 (((255 - DrawFlameRing) / 255.0f) * 3.125f) + 1.0f,
+                                 SpriteEffects.None, 0.0f);
+
+                DrawFlameRing -= 24;
+            }
         }
     }
 }

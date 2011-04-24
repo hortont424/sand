@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Sand.Tools.Weapons
 {
@@ -52,7 +51,7 @@ namespace Sand.Tools.Weapons
 
         protected override void Activate()
         {
-            DrawEMPRing = (byte)255;
+            DrawEMPRing = 255;
 
             Storage.Sound("EMP").CreateInstance().Play();
             Messages.SendPlaySoundMessage(Player, "EMP", Player.Gamer.Id, true);
@@ -93,14 +92,15 @@ namespace Sand.Tools.Weapons
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (DrawEMPRing > 24)
+            if(DrawEMPRing > 24)
             {
-                var sprite = Storage.Sprite("ShieldCircle");
+                var sprite = Storage.Sprite("WhiteCircle");
                 var grayLevel = DrawEMPRing / 255.0f;
 
                 spriteBatch.Draw(sprite, new Vector2((int)Player.X, (int)Player.Y), null,
                                  new Color(grayLevel, grayLevel, grayLevel), 0.0f,
-                                 new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), (((255 - DrawEMPRing) / 255.0f) * 3.125f) + 1.0f,
+                                 new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f),
+                                 (((255 - DrawEMPRing) / 255.0f) * 3.125f) + 1.0f,
                                  SpriteEffects.None, 0.0f);
 
                 DrawEMPRing -= 24;
