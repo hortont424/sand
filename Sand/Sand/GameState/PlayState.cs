@@ -133,11 +133,11 @@ namespace Sand.GameState
 
                 foreach(var particle in Storage.SandParticles.Particles)
                 {
-                    if(particle.Value.Team == Team.Red)
+                    if(particle.Value.Alive && !particle.Value.OnFire && particle.Value.Team == Team.Red)
                     {
                         redCount++;
                     }
-                    else if(particle.Value.Team == Team.Blue)
+                    else if(particle.Value.Alive && !particle.Value.OnFire && particle.Value.Team == Team.Blue)
                     {
                         blueCount++;
                     }

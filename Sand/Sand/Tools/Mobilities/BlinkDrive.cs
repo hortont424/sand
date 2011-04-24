@@ -50,8 +50,6 @@ namespace Sand.Tools.Mobilities
         {
             base.Activate();
 
-            
-
             if(!Storage.Game.GameMap.CollisionTest(Player.Texture,
                                                    new Rectangle(
                                                        (int)(Storage.Game.MouseLocation.X - (Player.Width / 2.0)),

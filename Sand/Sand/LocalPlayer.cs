@@ -268,14 +268,22 @@ namespace Sand
             var shield = Utility as Shield;
             var wasStunned = Stunned;
 
-            if(shield != null)
+            if(energy < 0.0f)
             {
-                energy = shield.DeflectShock(energy);
+                if (shield != null)
+                {
+                    energy = shield.DeflectShock(energy);
+                }
+                else
+                {
+                    Stunned = true;
+                }
             }
             else
             {
-                Stunned = true;
+                Stunned = false;
             }
+            
 
             if(Stunned)
             {

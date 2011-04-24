@@ -7,6 +7,8 @@ namespace Sand.Tools.Utilities
 {
     public class Ground : Tool
     {
+        private float DrawGroundLength;
+
         public Ground(Player player) : base(player)
         {
             Modifier = 0.5;
@@ -50,14 +52,81 @@ namespace Sand.Tools.Utilities
 
         protected override void Activate()
         {
+            Storage.Sound("Ground").CreateInstance().Play();
+            Messages.SendPlaySoundMessage(Player, "Ground", Player.Gamer.Id, true);
+
+            var cannonRay = Player.ForwardRay();
+            Player closestIntersectionPlayer = null;
+            float? closestIntersectionDistance = null;
+
+            DrawGroundLength = 3000;
+
+            foreach (var remoteGamer in Storage.NetworkSession.RemoteGamers)
+            {
+                var remotePlayer = remoteGamer.Tag as Player;
+
+                if (remotePlayer == null || remotePlayer == Player)
+                {
+                    continue;
+                }
+
+                var intersectionPosition = remotePlayer.Intersects(cannonRay);
+
+                if (intersectionPosition != null)
+                {
+                    if (closestIntersectionDistance == null || intersectionPosition < closestIntersectionDistance)
+                    {
+                        closestIntersectionDistance = intersectionPosition;
+                        closestIntersectionPlayer = remotePlayer;
+                    }
+                }
+            }
+
+            if (closestIntersectionDistance != null)
+            {
+                DrawGroundLength = closestIntersectionDistance.Value;
+            }
+
+            var wallIntersection = (Player.Game as Sand).GameMap.Intersects(cannonRay);
+
+            if (wallIntersection != null && (wallIntersection < closestIntersectionDistance || closestIntersectionDistance == null))
+            {
+                closestIntersectionDistance = null;
+                DrawGroundLength = wallIntersection.Value;
+            }
+
+            if (closestIntersectionDistance != null)
+            {
+                Messages.SendStunMessage(Player, closestIntersectionPlayer, -1, Player.Gamer.Id, true);
+            }
+
             base.Activate();
-
-
         }
 
-        protected override void Deactivate()
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            base.Deactivate();
+            if (DrawGroundLength != 0)
+            {
+                if (Player.Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
+                {
+                    spriteBatch.Draw(Storage.Sprite("pixel"),
+                                     new Rectangle((int)Player.X, (int)Player.Y, 6, (int)DrawGroundLength), null,
+                                     Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+                }
+                else
+                {
+                    spriteBatch.Draw(Storage.Sprite("pixel"),
+                                     new Rectangle((int)Player.X, (int)Player.Y, 7, (int)DrawGroundLength), null,
+                                     Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+                }
+
+                DrawGroundLength = 0;
+            }
+        }
+
+        public override void SendActivationMessage()
+        {
+            Messages.SendActivateToolMessage(Player, Slot, Type, Active, "DrawGroundLength", DrawGroundLength, Player.Gamer.Id, true);
         }
     }
 }

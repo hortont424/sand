@@ -295,7 +295,7 @@ namespace Sand.Tools
                 case ToolType.BlinkDrive:
                     return Storage.Sound("BlinkDrive");
                 case ToolType.Ground:
-                    return Storage.Sound("BoostDrive_Start");
+                    return Storage.Sound("Ground");
                 default:
                     throw new ArgumentOutOfRangeException("type");
             }
