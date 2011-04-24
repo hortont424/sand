@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework.Net;
 using Sand.Tools;
 
+// E28 boneless spare ribs white rice, wonton soup
+// E16 general tso's chicken beef fried rice, wonton soup
+
 namespace Sand
 {
     public enum MessageType
