@@ -50,7 +50,7 @@ namespace Sand.Tools.Mobilities
         {
             base.Activate();
 
-            Storage.Sound("BlinkDrive").CreateInstance().Play();
+            
 
             if(!Storage.Game.GameMap.CollisionTest(Player.Texture,
                                                    new Rectangle(
@@ -62,11 +62,15 @@ namespace Sand.Tools.Mobilities
             {
                 Player.X = Storage.Game.MouseLocation.X;
                 Player.Y = Storage.Game.MouseLocation.Y;
+
+                Storage.Sound("BlinkDrive").CreateInstance().Play();
             }
             else
             {
                 // TODO: make a noise
                 Energy += EnergyConsumptionRate;
+
+                Storage.Sound("Fail").CreateInstance().Play();
             }
         }
     }

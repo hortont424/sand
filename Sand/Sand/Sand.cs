@@ -137,6 +137,8 @@ namespace Sand
 
             Storage.AddSprite("Crosshair", Content.Load<Texture2D>("Textures/Crosshair"));
 
+            Storage.AddSound("Fail", Content.Load<SoundEffect>("Sounds/fail"));
+
             Storage.AddSound("Drained", Content.Load<SoundEffect>("Sounds/Drained"));
             Storage.AddSound("SandBurning", Content.Load<SoundEffect>("Sounds/sand_burning_loop"));
 
