@@ -12,6 +12,7 @@ namespace Sand.GameState
         private SandMeter _redSandMeter, _blueSandMeter;
         private Label _fpsMeter;
         private WinDialog _winDialog;
+        private int _fpsSkip;
 
         public PlayState(Sand game) : base(game)
         {
@@ -249,7 +250,14 @@ namespace Sand.GameState
 
             if(Storage.DebugMode)
             {
-                _fpsMeter.Text = string.Format("{0:0.00} fps", 1.0 / Storage.CurrentTime.ElapsedGameTime.TotalSeconds);
+                _fpsSkip++;
+
+                if(_fpsSkip >= 30)
+                {
+                    _fpsMeter.Text = string.Format("{0:0.00} fps",
+                                                   1.0 / Storage.CurrentTime.ElapsedGameTime.TotalSeconds);
+                    _fpsSkip = 0;
+                }
             }
         }
 
