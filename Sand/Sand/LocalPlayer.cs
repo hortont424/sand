@@ -13,13 +13,13 @@ namespace Sand
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
 
-        public Tool CurrentPrimary, LastTool;
+        public Tool CurrentPrimary, LastTool, AlternatePrimary;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             MovementAcceleration = DefaultAcceleration;
         }
-        
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -47,7 +47,8 @@ namespace Sand
 
             Acceleration.X = Acceleration.Y = 0.0f;
 
-            if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 || Phase == GamePhases.WonPhase2 || Phase == GamePhases.WaitForPhase2)
+            if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 || Phase == GamePhases.WonPhase2 ||
+               Phase == GamePhases.WaitForPhase2)
             {
                 _oldKeyState = newKeyState;
                 _oldMouseState = newMouseState;
@@ -76,44 +77,46 @@ namespace Sand
             if(newKeyState.IsKeyDown(Keys.Q) && _oldKeyState.IsKeyUp(Keys.Q))
             {
                 CurrentPrimary = CurrentPrimary == PrimaryA ? PrimaryB : PrimaryA;
+                AlternatePrimary = CurrentPrimary == PrimaryB ? PrimaryA : PrimaryB;
             }
 
             if(CurrentPrimary == null)
             {
                 CurrentPrimary = PrimaryA;
+                AlternatePrimary = PrimaryB;
             }
 
             if(Storage.DebugMode)
             {
-                if (newKeyState.IsKeyDown(Keys.R))
+                if(newKeyState.IsKeyDown(Keys.R))
                 {
-                    if (Mobility != null)
+                    if(Mobility != null)
                     {
                         Mobility.Reset();
                     }
 
-                    if (Weapon != null)
+                    if(Weapon != null)
                     {
                         Weapon.Reset();
                     }
 
-                    if (Utility != null)
+                    if(Utility != null)
                     {
                         Utility.Reset();
                     }
 
-                    if (PrimaryA != null)
+                    if(PrimaryA != null)
                     {
                         PrimaryA.Reset();
                     }
 
-                    if (PrimaryB != null)
+                    if(PrimaryB != null)
                     {
                         PrimaryB.Reset();
                     }
                 }
 
-                if (newKeyState.IsKeyDown(Keys.P))
+                if(newKeyState.IsKeyDown(Keys.P))
                 {
                     var p = new Particle(null, Gamer.Id);
 
@@ -132,16 +135,18 @@ namespace Sand
                     Storage.SandParticles.Emit(p);
                 }
 
-                if (newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
+                if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
                 {
                     Stun(25.0f);
                 }
             }
 
+            AlternatePrimary.Active = false;
+
             if(!Stunned)
             {
-                Tool [] tools = {};
-                
+                Tool[] tools = { };
+
                 if(Phase == GamePhases.Phase1)
                 {
                     tools = new[] { Mobility, Utility, Weapon, CurrentPrimary };
@@ -231,16 +236,16 @@ namespace Sand
                 else
                 {
                     if(!_sandGame.GameMap.CollisionTest(Texture, new Rectangle((int)(newPosition.X - (Width / 2.0)),
-                                                                                (int)(Y - (Height / 2.0)), (int)Width,
-                                                                                (int)Height)))
+                                                                               (int)(Y - (Height / 2.0)), (int)Width,
+                                                                               (int)Height)))
                     {
                         Velocity.Y = -Velocity.Y;
                         X = newPosition.X;
                     }
                     else if(!_sandGame.GameMap.CollisionTest(Texture, new Rectangle((int)(X - (Width / 2.0)),
-                                                                                     (int)
-                                                                                     (newPosition.Y - (Height / 2.0)),
-                                                                                     (int)Width, (int)Height)))
+                                                                                    (int)
+                                                                                    (newPosition.Y - (Height / 2.0)),
+                                                                                    (int)Width, (int)Height)))
                     {
                         Velocity.X = -Velocity.X;
                         Y = newPosition.Y;
