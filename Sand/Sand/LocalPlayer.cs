@@ -268,7 +268,7 @@ namespace Sand
             var shield = Utility as Shield;
             var wasStunned = Stunned;
 
-            if(energy < 0.0f)
+            if(energy > 0.0f)
             {
                 if (shield != null)
                 {

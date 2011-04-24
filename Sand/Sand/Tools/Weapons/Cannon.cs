@@ -54,13 +54,13 @@ namespace Sand.Tools.Weapons
             Storage.Sound("Cannon").CreateInstance().Play();
             Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
 
-            const int maxCannonDistance = 500;
+            const int maxCannonDistance = 600;
 
             var cannonRay = Player.ForwardRay();
             Player closestIntersectionPlayer = null;
             float ? closestIntersectionDistance = null;
 
-            DrawCannonLength = 600;
+            DrawCannonLength = maxCannonDistance;
 
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {

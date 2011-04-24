@@ -318,7 +318,10 @@ namespace Sand
 
                 emitDelegate(particle);
 
-                _createParticleQueue.Add(particle);
+                if(IsSand)
+                {
+                    _createParticleQueue.Add(particle);
+                }
 
                 if(number == 0)
                 {
