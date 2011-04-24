@@ -189,13 +189,9 @@ namespace Sand.GameState
                 var foundRed = false;
                 var foundBlue = false;
 
-                Console.WriteLine("checking");
-
                 foreach(var gamer in Storage.NetworkSession.AllGamers)
                 {
                     var player = (gamer.Tag as Player);
-
-                    Console.WriteLine("found {0} {1} {2}", gamer.Gamertag, player.Stunned, player.Team);
 
                     switch(player.Team)
                     {
