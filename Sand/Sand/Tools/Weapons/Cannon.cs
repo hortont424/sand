@@ -54,11 +54,13 @@ namespace Sand.Tools.Weapons
             Storage.Sound("Cannon").CreateInstance().Play();
             Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
 
+            const int maxCannonDistance = 500;
+
             var cannonRay = Player.ForwardRay();
             Player closestIntersectionPlayer = null;
             float ? closestIntersectionDistance = null;
 
-            DrawCannonLength = 3000;
+            DrawCannonLength = 600;
 
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {
@@ -73,7 +75,7 @@ namespace Sand.Tools.Weapons
 
                 if(intersectionPosition != null)
                 {
-                    if(closestIntersectionDistance == null || intersectionPosition < closestIntersectionDistance)
+                    if((closestIntersectionDistance == null || intersectionPosition < closestIntersectionDistance) && intersectionPosition < maxCannonDistance)
                     {
                         closestIntersectionDistance = intersectionPosition;
                         closestIntersectionPlayer = remotePlayer;
@@ -88,7 +90,7 @@ namespace Sand.Tools.Weapons
 
             var wallIntersection = (Player.Game as Sand).GameMap.Intersects(cannonRay);
 
-            if(wallIntersection != null && (wallIntersection < closestIntersectionDistance || closestIntersectionDistance == null))
+            if(wallIntersection != null && (wallIntersection < closestIntersectionDistance || closestIntersectionDistance == null) && wallIntersection < maxCannonDistance)
             {
                 closestIntersectionDistance = null;
                 DrawCannonLength = wallIntersection.Value;
