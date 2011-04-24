@@ -30,7 +30,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>62</ApplicationRevision>
+    <ApplicationRevision>63</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -175,6 +175,7 @@
     <Compile Include="Tools\Utilities\Shield.cs" />
     <Compile Include="Tools\Weapons\Cannon.cs" />
     <Compile Include="Tools\Weapons\EMP.cs" />
+    <Compile Include="WinDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

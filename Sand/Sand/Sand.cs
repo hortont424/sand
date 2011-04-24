@@ -13,8 +13,10 @@ namespace Sand
     {
         Phase1,
         WonPhase1,
+        WaitForPhase2,
         Phase2,
-        WonPhase2
+        WonPhase2,
+        Done
     }
 
     public class Sand : Game
@@ -31,8 +33,6 @@ namespace Sand
         public Vector2 MouseLocation;
 
         public Map GameMap;
-
-        public GamePhases Phase;
 
         // E27 white rice wonton soup ("I'll go with the boned")
         // E16 chicken fried rice wonton soup

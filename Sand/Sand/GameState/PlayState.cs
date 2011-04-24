@@ -10,8 +10,8 @@ namespace Sand.GameState
         private Crosshair _crosshair;
         private ToolIcon _primaryAIcon, _primaryBIcon;
         private SandMeter _redSandMeter, _blueSandMeter;
-        private Label _winLabel;
         private Label _fpsMeter;
+        private WinDialog _winDialog;
 
         public PlayState(Sand game) : base(game)
         {
@@ -19,7 +19,12 @@ namespace Sand.GameState
 
         public override void Enter(Dictionary<string, object> data)
         {
-            Game.Phase = GamePhases.Phase1;
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            if(localPlayer != null)
+            {
+                localPlayer.Phase = GamePhases.Phase1;
+            }
 
             Cursor.Hide();
             _crosshair = new Crosshair(Game);
@@ -33,8 +38,6 @@ namespace Sand.GameState
             Game.GameMap = new Map(Game, "02");
 
             Game.Components.Add(Game.GameMap);
-
-            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
             if(localPlayer != null)
             {
@@ -120,11 +123,11 @@ namespace Sand.GameState
 
             if(localPlayer != null)
             {
-                _primaryAIcon.Disabled = !(localPlayer.CurrentPrimary == localPlayer.PrimaryA);
-                _primaryBIcon.Disabled = !(localPlayer.CurrentPrimary == localPlayer.PrimaryB);
+                _primaryAIcon.Disabled = localPlayer.CurrentPrimary != localPlayer.PrimaryA;
+                _primaryBIcon.Disabled = localPlayer.CurrentPrimary != localPlayer.PrimaryB;
             }
 
-            if(Game.Phase == GamePhases.Phase1)
+            if(localPlayer.Phase == GamePhases.Phase1)
             {
                 int redCount = 0, blueCount = 0;
 
@@ -153,23 +156,143 @@ namespace Sand.GameState
                 }
             }
 
+            if(localPlayer.Phase == GamePhases.WaitForPhase2)
+            {
+                var anyNotWaiting = false;
+
+                foreach(var gamer in Storage.NetworkSession.AllGamers)
+                {
+                    if((gamer.Tag as Player).Phase != GamePhases.WaitForPhase2)
+                    {
+                        anyNotWaiting = true;
+                    }
+                }
+
+                if(!anyNotWaiting)
+                {
+                    localPlayer.Phase = GamePhases.Phase2;
+                    Cursor.Hide();
+
+                    if(_winDialog != null)
+                    {
+                        Game.Components.Remove(_winDialog);
+                        _winDialog = null;
+                    }
+                }
+            }
+
+            if(localPlayer.Phase == GamePhases.Phase2)
+            {
+                var anyRedNotStunned = false;
+                var anyBlueNotStunned = false;
+
+                var foundRed = false;
+                var foundBlue = false;
+
+                Console.WriteLine("checking");
+
+                foreach(var gamer in Storage.NetworkSession.AllGamers)
+                {
+                    var player = (gamer.Tag as Player);
+
+                    Console.WriteLine("found {0} {1} {2}", gamer.Gamertag, player.Stunned, player.Team);
+
+                    switch(player.Team)
+                    {
+                        case Team.None:
+                            continue;
+                        case Team.Red:
+                            foundRed = true;
+                            anyRedNotStunned = (!player.Stunned) ? true : anyRedNotStunned;
+                            break;
+                        case Team.Blue:
+                            foundBlue = true;
+                            anyBlueNotStunned = (!player.Stunned) ? true : anyBlueNotStunned;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+
+                if(!anyRedNotStunned && foundRed)
+                {
+                    WinPhase2(Team.Blue);
+                }
+                else if(!anyBlueNotStunned && foundBlue)
+                {
+                    WinPhase2(Team.Red);
+                }
+            }
+
+            if(localPlayer.Phase == GamePhases.Done)
+            {
+                var anyNotWaiting = false;
+
+                foreach(var gamer in Storage.NetworkSession.AllGamers)
+                {
+                    if((gamer.Tag as Player).Phase != GamePhases.Done)
+                    {
+                        anyNotWaiting = true;
+                    }
+                }
+
+                if(!anyNotWaiting)
+                {
+                    localPlayer.Phase = GamePhases.Phase1;
+                    Cursor.Hide();
+
+                    if(_winDialog != null)
+                    {
+                        Game.Components.Remove(_winDialog);
+                        _winDialog = null;
+                    }
+
+                    Storage.SandParticles.Particles.Clear();
+                }
+            }
+
             if(Storage.DebugMode)
             {
-                _fpsMeter.Text = string.Format("{0} s", Storage.CurrentTime.ElapsedGameTime.TotalSeconds);
+                _fpsMeter.Text = string.Format("{0:0.00} fps", 1.0 / Storage.CurrentTime.ElapsedGameTime.TotalSeconds);
             }
         }
 
         private void WinPhase1(Team team)
         {
-            Game.Phase = GamePhases.WonPhase1;
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            Cursor.Show();
+
+            localPlayer.Phase = GamePhases.WonPhase1;
             var teamName = team == Team.Red ? "Purple" : "Green";
 
-            _winLabel = new Label(Game, Game.BaseScreenSize.X / 2.0f, Game.BaseScreenSize.Y / 2.0f, teamName + " Wins Round One!", "Calibri48Bold")
-                        {
-                            PositionGravity = Gravity.Center
-                        };
+            _winDialog = new WinDialog(Game, teamName + " Wins Round One!",
+                                       (s, ud) =>
+                                       {
+                                           _winDialog.Text = "Waiting for Players";
+                                           localPlayer.Phase = GamePhases.WaitForPhase2;
+                                       }, null);
 
-            Game.Components.Add(_winLabel);
+            Game.Components.Add(_winDialog);
+        }
+
+        private void WinPhase2(Team team)
+        {
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            Cursor.Show();
+
+            localPlayer.Phase = GamePhases.WonPhase2;
+            var teamName = team == Team.Red ? "Purple" : "Green";
+
+            _winDialog = new WinDialog(Game, teamName + " Wins Round Two!",
+                                       (s, ud) =>
+                                       {
+                                           _winDialog.Text = "Waiting for Players";
+                                           localPlayer.Phase = GamePhases.Done;
+                                       }, null);
+
+            Game.Components.Add(_winDialog);
         }
 
         public override Dictionary<string, object> Leave()
@@ -190,9 +313,9 @@ namespace Sand.GameState
             Game.Components.Remove(_redSandMeter);
             Game.Components.Remove(_blueSandMeter);
 
-            if(_winLabel != null)
+            if(_winDialog != null)
             {
-                Game.Components.Remove(_winLabel);
+                Game.Components.Remove(_winDialog);
             }
 
             if(_fpsMeter != null)

@@ -1,11 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand
 {
     internal class Billboard : Actor
     {
-        private Texture2D _texture;
+        private readonly Texture2D _texture;
+        public Color Color { get; set; }
 
         public delegate void Action(object sender, object userInfo);
 
@@ -13,19 +15,25 @@ namespace Sand
         {
         }
 
-        public Billboard(Game game, int x, int y, Texture2D texture) : base(game)
+        public Billboard(Game game, int x, int y, Texture2D texture) : this(game, x, y, texture.Width, texture.Height, texture)
+        {
+        }
+
+        public Billboard(Game game, int x, int y, int w, int h, Texture2D texture) : base(game)
         {
             X = x;
             Y = y;
-            Width = texture.Width;
-            Height = texture.Height;
+            Width = w;
+            Height = h;
 
             _texture = texture;
+
+            Color = Color.White;
         }
 
         public override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Draw(_texture, Bounds, null, Color.White, 0.0f, Gravity.Offset(PositionGravity), SpriteEffects.None, 1.0f);
+            _spriteBatch.Draw(_texture, Bounds, null, Color, 0.0f, Gravity.Offset(PositionGravity), SpriteEffects.None, 1.0f);
         }
     }
 }

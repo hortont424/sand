@@ -47,7 +47,7 @@ namespace Sand
 
             Acceleration.X = Acceleration.Y = 0.0f;
 
-            if(!Storage.AcceptInput || _sandGame.Phase == GamePhases.WonPhase1 || _sandGame.Phase == GamePhases.WonPhase2)
+            if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 || Phase == GamePhases.WonPhase2 || Phase == GamePhases.WaitForPhase2)
             {
                 _oldKeyState = newKeyState;
                 _oldMouseState = newMouseState;
@@ -140,7 +140,16 @@ namespace Sand
 
             if(!Stunned)
             {
-                var tools = new[] { Mobility, Utility, Weapon, CurrentPrimary };
+                Tool [] tools = {};
+                
+                if(Phase == GamePhases.Phase1)
+                {
+                    tools = new[] { Mobility, Utility, Weapon, CurrentPrimary };
+                }
+                else if(Phase == GamePhases.Phase2)
+                {
+                    tools = new[] { Mobility, Utility, Weapon };
+                }
 
                 foreach(var tool in tools.Where(tool => tool != null))
                 {

@@ -33,6 +33,8 @@ namespace Sand
         public Tool Weapon;
         public Tool Utility;
 
+        public GamePhases Phase { get; set; }
+
         public Team Team
         {
             get
