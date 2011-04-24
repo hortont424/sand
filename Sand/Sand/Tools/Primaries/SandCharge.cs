@@ -52,12 +52,12 @@ namespace Sand.Tools.Primaries
 
             Storage.Sound("SandCharge").CreateInstance().Play();
 
-            Storage.SandParticles.Emit(100, (p) =>
+            Storage.SandParticles.Emit(50, (p) =>
                                             {
                                                 p.LifeRemaining = p.Lifetime = 100;
 
                                                 var angle = (float)(Storage.Random.NextDouble() * 2 * Math.PI);
-                                                var length = (float)Storage.Random.Next(50, 200);
+                                                var length = (float)Storage.Random.Next(0, 250);
 
                                                 p.Team = Player.Team;
                                                 p.Position = new Vector2(Player.X, Player.Y);

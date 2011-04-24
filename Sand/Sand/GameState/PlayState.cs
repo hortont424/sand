@@ -144,8 +144,8 @@ namespace Sand.GameState
                     }
                 }
 
-                _redSandMeter.Progress = (redCount / 3000.0f);
-                _blueSandMeter.Progress = (blueCount / 3000.0f);
+                _redSandMeter.Progress = (redCount / 1000.0f);
+                _blueSandMeter.Progress = (blueCount / 1000.0f);
 
                 if(_redSandMeter.Progress == 1.0f)
                 {
@@ -172,6 +172,13 @@ namespace Sand.GameState
                 if(!anyNotWaiting)
                 {
                     localPlayer.Phase = GamePhases.Phase2;
+
+                    if (_primaryAIcon != null)
+                        Game.Components.Remove(_primaryAIcon);
+
+                    if (_primaryBIcon != null)
+                        Game.Components.Remove(_primaryBIcon);
+
                     Cursor.Hide();
 
                     if(_winDialog != null)
@@ -235,6 +242,12 @@ namespace Sand.GameState
 
                 if(!anyNotWaiting)
                 {
+                    if (_primaryAIcon != null)
+                        Game.Components.Add(_primaryAIcon);
+
+                    if (_primaryBIcon != null)
+                        Game.Components.Add(_primaryBIcon);
+
                     localPlayer.Phase = GamePhases.Phase1;
                     Cursor.Hide();
 
