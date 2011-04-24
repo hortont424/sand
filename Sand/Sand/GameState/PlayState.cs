@@ -179,6 +179,9 @@ namespace Sand.GameState
                     if (_primaryBIcon != null)
                         Game.Components.Remove(_primaryBIcon);
 
+                    Game.Components.Remove(_redSandMeter);
+                    Game.Components.Remove(_blueSandMeter);
+
                     Cursor.Hide();
 
                     if(_winDialog != null)
@@ -247,6 +250,9 @@ namespace Sand.GameState
 
                     if (_primaryBIcon != null)
                         Game.Components.Add(_primaryBIcon);
+
+                    Game.Components.Add(_redSandMeter);
+                    Game.Components.Add(_blueSandMeter);
 
                     localPlayer.Phase = GamePhases.Phase1;
                     Cursor.Hide();
