@@ -110,7 +110,7 @@ namespace Sand.Tools.Primaries
                 spriteBatch.Draw(sprite, new Vector2((int)Player.X, (int)Player.Y), null,
                                  new Color(grayLevel, grayLevel, grayLevel), 0.0f,
                                  new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f),
-                                 (((255 - DrawFlameRing) / 255.0f) * 3.125f) + 1.0f,
+                                 (((255 - DrawFlameRing) / 255.0f) * 1.041f) + 1.0f,
                                  SpriteEffects.None, 0.0f);
 
                 DrawFlameRing -= 24;
