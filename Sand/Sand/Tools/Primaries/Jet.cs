@@ -10,6 +10,7 @@ namespace Sand.Tools.Primaries
         private readonly Animation _jetTimer;
         private readonly AnimationGroup _jetTimerGroup;
         private readonly SoundEffectInstance _jetSound;
+        private Animation _jetSoundAnimation;
 
         public Jet(Player player) : base(player)
         {
@@ -25,6 +26,7 @@ namespace Sand.Tools.Primaries
 
             _jetSound = Storage.Sound("Jet").CreateInstance();
             _jetSound.IsLooped = true;
+            _jetSound.Volume = 0.0f;
         }
 
         public static string _name()
@@ -80,20 +82,44 @@ namespace Sand.Tools.Primaries
 
         protected override void Activate()
         {
-            base.Activate();
-            
+            Storage.AnimationController.AddGroup(_jetTimerGroup);
+
             _jetSound.Play();
 
-            Storage.AnimationController.AddGroup(_jetTimerGroup);
+            if (_jetSoundAnimation != null)
+            {
+                Storage.AnimationController.Remove(_jetSoundAnimation);
+            }
+
+            _jetSoundAnimation = new Animation(_jetSound, "Volume", 1.0f) { CompletedDelegate = FinishStartingSound };
+            Storage.AnimationController.Add(_jetSoundAnimation, 300);
         }
 
         protected override void Deactivate()
         {
-            base.Deactivate();
-
-            _jetSound.Stop();
-
             Storage.AnimationController.RemoveGroup(_jetTimerGroup);
+
+            if (_jetSoundAnimation != null)
+            {
+                Storage.AnimationController.Remove(_jetSoundAnimation);
+            }
+
+            _jetSoundAnimation = new Animation(_jetSound, "Volume", 0.0f) { CompletedDelegate = FinishStoppingSound };
+            Storage.AnimationController.Add(_jetSoundAnimation, 300);
+
+            base.Deactivate();
         }
+
+        private void FinishStartingSound()
+        {
+            _jetSoundAnimation = null;
+        }
+
+        private void FinishStoppingSound()
+        {
+            _jetSound.Stop();
+            _jetSoundAnimation = null;
+        }
+
     }
 }
