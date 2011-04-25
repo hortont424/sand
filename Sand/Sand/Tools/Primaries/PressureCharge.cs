@@ -13,7 +13,7 @@ namespace Sand.Tools.Primaries
 
             Energy = TotalEnergy = 100;
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
-            EnergyConsumptionRate = 50;
+            EnergyConsumptionRate = 25;
             EnergyRechargeRate = 0.2;
         }
 

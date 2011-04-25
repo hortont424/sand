@@ -15,7 +15,7 @@ namespace Sand.Tools.Weapons
 
             Energy = TotalEnergy = 100;
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
-            EnergyConsumptionRate = 100;
+            EnergyConsumptionRate = 50;
             EnergyRechargeRate = 0.2;
         }
 
