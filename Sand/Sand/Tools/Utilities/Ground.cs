@@ -52,9 +52,6 @@ namespace Sand.Tools.Utilities
 
         protected override void Activate()
         {
-            Storage.Sound("Ground").CreateInstance().Play();
-            Messages.SendPlaySoundMessage(Player, "Ground", Player.Gamer.Id, true);
-
             var cannonRay = Player.ForwardRay();
             Player closestIntersectionPlayer = null;
             float? closestIntersectionDistance = null;
@@ -98,6 +95,16 @@ namespace Sand.Tools.Utilities
             if (closestIntersectionDistance != null)
             {
                 Messages.SendStunMessage(Player, closestIntersectionPlayer, -1, Player.Gamer.Id, true);
+
+                Storage.Sound("Ground").CreateInstance().Play();
+                Messages.SendPlaySoundMessage(Player, "Ground", Player.Gamer.Id, true);
+            }
+            else
+            {
+                Energy += EnergyConsumptionRate;
+
+                Storage.Sound("Fail").CreateInstance().Play();
+                Messages.SendPlaySoundMessage(Player, "Fail", Player.Gamer.Id, true);
             }
 
             base.Activate();

@@ -24,7 +24,7 @@ namespace Sand.Tools.Primaries
 
             Energy = TotalEnergy = 150;
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
-            EnergyConsumptionRate = 1;
+            EnergyConsumptionRate = 0.5;
             EnergyRechargeRate = 0.2;
 
             _particleQueue = new HashSet<Particle>();
