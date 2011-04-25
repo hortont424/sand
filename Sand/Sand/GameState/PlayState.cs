@@ -36,8 +36,6 @@ namespace Sand.GameState
                 Game.Components.Add((Player)gamer.Tag);
             }
 
-            Game.GameMap = new Map(Game, "02");
-
             Game.Components.Add(Game.GameMap);
 
             if(localPlayer != null)

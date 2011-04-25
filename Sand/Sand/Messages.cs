@@ -142,6 +142,15 @@ namespace Sand
             Storage.PacketWriter.Write((byte)(player.Weapon != null ? player.Weapon.Type : ToolType.None));
             Storage.PacketWriter.Write((byte)(player.Mobility != null ? player.Mobility.Type : ToolType.None));
             Storage.PacketWriter.Write((byte)(player.Utility != null ? player.Utility.Type : ToolType.None));
+
+            if(Storage.Game.GameMap == null)
+            {
+                Storage.PacketWriter.Write("");
+            }
+            else
+            {
+                Storage.PacketWriter.Write(Storage.Game.GameMap.Name);
+            }
         }
 
         private static void ProcessUpdatePlayerMenuStateMessage(Player player)
@@ -181,6 +190,19 @@ namespace Sand
             {
                 player.Utility = Tool.OfType(utilityType, player);
             }
+
+            var mapName = Storage.PacketReader.ReadString();
+
+            if(player.Gamer.IsHost)
+            {
+                foreach(var pair in Storage.Game.MapManager.Maps)
+                {
+                    if(pair.Value.Name == mapName)
+                    {
+                        Storage.Game.GameMap = pair.Value;
+                    }
+                }
+            }
         }
 
         private static void DiscardUpdatePlayerMenuStateMessage()
@@ -193,6 +215,8 @@ namespace Sand
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
+
+            Storage.PacketReader.ReadString();
         }
 
         #endregion

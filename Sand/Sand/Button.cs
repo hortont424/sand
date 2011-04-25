@@ -215,7 +215,7 @@ namespace Sand
 
             if(_sprite != null)
             {
-                _spriteBatch.Draw(_sprite, new Vector2(Bounds.X + Padding, Bounds.Y + Padding), TeamColor);
+                _spriteBatch.Draw(_sprite, new Rectangle(Bounds.X + Padding, Bounds.Y + Padding, Bounds.Width - (Padding * 2), Bounds.Height - (Padding * 2)), TeamColor);
             }
         }
     }

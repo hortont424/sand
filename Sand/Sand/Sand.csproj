@@ -30,7 +30,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>65</ApplicationRevision>
+    <ApplicationRevision>67</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -131,7 +131,9 @@
     <Compile Include="Animation.cs" />
     <Compile Include="Billboard.cs" />
     <Compile Include="Button.cs" />
+    <Compile Include="MapChooserButton.cs" />
     <Compile Include="Crosshair.cs" />
+    <Compile Include="GameState\ChooseMapState.cs" />
     <Compile Include="GameState\LoadoutState.cs" />
     <Compile Include="Gravity.cs" />
     <Compile Include="Label.cs" />

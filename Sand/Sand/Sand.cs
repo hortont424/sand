@@ -32,6 +32,7 @@ namespace Sand
         private Matrix _globalTransformMatrix, _invGlobalTransformMatrix;
         public Vector2 MouseLocation;
 
+        public MapManager MapManager;
         public Map GameMap;
 
         // E27 white rice wonton soup ("I'll go with the boned")
@@ -69,6 +70,7 @@ namespace Sand
             _gameStateInstances[States.Loadout] = new LoadoutState(this);
             _gameStateInstances[States.ReadyWait] = new ReadyWaitState(this);
             _gameStateInstances[States.Play] = new PlayState(this);
+            _gameStateInstances[States.ChooseMap] = new ChooseMapState(this);
 
             Components.ComponentAdded += ComponentAdded;
             Components.ComponentRemoved += ComponentRemoved;
@@ -78,6 +80,8 @@ namespace Sand
             Storage.Game = this;
             Storage.AnimationController = new AnimationController(this);
             Components.Add(Storage.AnimationController);
+
+            
         }
 
         private void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -209,6 +213,8 @@ namespace Sand
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });
             Storage.AddSprite("pixel", rectTexture);
+
+            MapManager = new MapManager(this);
         }
 
         private void ComputeTransform()

@@ -1,21 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand
 {
+    public class MapManager
+    {
+        public Dictionary<string,Map> Maps;
+
+        public Game Game;
+
+        public MapManager(Game game)
+        {
+            Game = game;
+
+            Maps = new Dictionary<string, Map>
+                   {
+                       { "Desert", new Map(game, "desert") },
+                       { "Lab", new Map(game, "lab") }
+                   };
+        }
+    }
+
     public class Map : Actor
     {
         public string Name { get; set; }
 
         private Texture2D _map;
-        private Texture2D _mapImage;
+        public Texture2D MapImage;
         private Color[] _mapTexture;
 
         public Map(Game game, string name) : base(game)
         {
             Name = name;
             DrawOrder = 1;
+
+            MapImage = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}-image", Name));
         }
 
         protected override void LoadContent()
@@ -23,7 +44,6 @@ namespace Sand
             base.LoadContent();
 
             _map = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}", Name));
-            _mapImage = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}-image", Name));
 
             Width = _map.Width;
             Height = _map.Height;
@@ -35,7 +55,7 @@ namespace Sand
         public override void Draw(GameTime gameTime)
         {
             // If we change drawing location, we need to change ray intersection offset
-            _spriteBatch.Draw(_mapImage, new Vector2(0.0f, 0.0f), Color.White);
+            _spriteBatch.Draw(MapImage, new Vector2(0.0f, 0.0f), Color.White);
         }
 
         public bool CollisionTest(Vector2 position, int size)
@@ -101,12 +121,12 @@ namespace Sand
 
             var point = ray.Position;
 
-            while(point.X < _mapImage.Width && point.Y < _mapImage.Height && point.X >= 0 && point.Y >= 0)
+            while(point.X < MapImage.Width && point.Y < MapImage.Height && point.X >= 0 && point.Y >= 0)
             {
                 point.X += ray.Direction.X;
                 point.Y += ray.Direction.Y;
 
-                Color color = _mapTexture[(int)((int)Math.Floor(point.X) + (Math.Floor(point.Y) * _mapImage.Width))];
+                Color color = _mapTexture[(int)((int)Math.Floor(point.X) + (Math.Floor(point.Y) * MapImage.Width))];
 
                 if(color == Color.White)
                 {

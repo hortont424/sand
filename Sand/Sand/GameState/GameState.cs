@@ -11,7 +11,8 @@ namespace Sand.GameState
         Lobby,
         Loadout,
         ReadyWait,
-        Play
+        Play,
+        ChooseMap
     }
 
     public abstract class GameState

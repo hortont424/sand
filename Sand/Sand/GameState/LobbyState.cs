@@ -63,7 +63,7 @@ namespace Sand.GameState
             readyButtonRect.X = (int)Game.BaseScreenSize.X - readyButtonRect.Width - 50;
             readyButtonRect.Y = (int)Game.BaseScreenSize.Y - readyButtonRect.Height - 50;
             _readyButton = new Button(Game, readyButtonRect, "Ready", new Color(0.1f, 0.7f, 0.1f));
-            _readyButton.SetAction((a, userInfo) => Game.TransitionState(States.Loadout), null);
+            _readyButton.SetAction((a, userInfo) => Game.TransitionState(Storage.NetworkSession.IsHost ? States.ChooseMap : States.Loadout), null);
 
             var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 128,
                                                 sandLogoOrigin.Y + logoSprite.Height + 32);
