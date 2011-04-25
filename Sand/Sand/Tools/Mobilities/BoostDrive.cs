@@ -19,7 +19,7 @@ namespace Sand.Tools.Mobilities
         {
             Modifier = 0.5;
 
-            Energy = TotalEnergy = 100;
+            Energy = TotalEnergy = 200;
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
             EnergyConsumptionRate = 1;
             EnergyRechargeRate = 0.2;
