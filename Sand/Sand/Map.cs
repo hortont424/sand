@@ -31,6 +31,8 @@ namespace Sand
         private Texture2D _map;
         public Texture2D MapImage;
         private Color[] _mapTexture;
+        public Vector2 RedSpawn;
+        public Vector2 BlueSpawn;
 
         public Map(Game game, string name) : base(game)
         {
@@ -38,11 +40,6 @@ namespace Sand
             DrawOrder = 1;
 
             MapImage = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}-image", Name));
-        }
-
-        protected override void LoadContent()
-        {
-            base.LoadContent();
 
             _map = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}", Name));
 
@@ -51,6 +48,21 @@ namespace Sand
 
             _mapTexture = new Color[(int)(Width * Height)];
             _map.GetData(_mapTexture);
+
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    if (_mapTexture[(int)(x + (y * Width))] == Color.Red)
+                    {
+                        RedSpawn = new Vector2(x, y);
+                    }
+                    else if (_mapTexture[(int)(x + (y * Width))] == Color.Green)
+                    {
+                        BlueSpawn = new Vector2(x, y);
+                    }
+                }
+            }
         }
 
         public override void Draw(GameTime gameTime)

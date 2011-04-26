@@ -82,9 +82,6 @@ namespace Sand
             Width = Storage.Sprite("DefenseClass").Width;
             Height = Storage.Sprite("DefenseClass").Height;
 
-            X = 60;
-            Y = 60;
-
             Texture = new Color[(int)(Width * Height)];
             Class = Class.None;
         }
