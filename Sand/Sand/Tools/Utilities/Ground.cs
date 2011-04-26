@@ -66,7 +66,7 @@ namespace Sand.Tools.Utilities
                     continue;
                 }
 
-                if (Math.Pow(remotePlayer.X - Player.X, 2) + Math.Pow(remotePlayer.Y - Player.Y, 2) > groundDistance)
+                if(Math.Pow(remotePlayer.X - Player.X, 2) + Math.Pow(remotePlayer.Y - Player.Y, 2) > groundDistance)
                 {
                     continue;
                 }

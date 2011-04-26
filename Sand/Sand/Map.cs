@@ -18,7 +18,8 @@ namespace Sand
             Maps = new Dictionary<string, Map>
                    {
                        { "Desert", new Map(game, "desert") },
-                       { "Lab", new Map(game, "lab") }
+                       { "Lab", new Map(game, "lab") },
+                       { "Simple", new Map(game, "02") }
                    };
         }
     }
