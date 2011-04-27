@@ -96,7 +96,7 @@ namespace Sand.Tools.Mobilities
         {
             base.Activate();
 
-            Player.MovementAcceleration = new Vector2(1200.0f, 1200.0f);
+            Player.MovementAcceleration = new Vector2(1500.0f, 1500.0f);
 
             _startSound.Play();
 

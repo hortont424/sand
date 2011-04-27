@@ -64,11 +64,26 @@ namespace Sand
                 return;
             }
 
-            if(Storage.SandParticles.TeamParticlesWithinRadius(new Vector2(X, Y), 10, Team) != 0)
+            var ourSandQuantity = Storage.SandParticles.TeamParticlesWithinRadius(new Vector2(X, Y), 10, Team);
+            var theirSandQuantity = Storage.SandParticles.TeamParticlesWithinRadius(new Vector2(X, Y), 10,
+                                                                                    Team == Team.Blue
+                                                                                        ? Team.Red
+                                                                                        : Team.Blue);
+            if(!(ourSandQuantity != 0 && theirSandQuantity != 0))
             {
-                modifiedAcceleration.X *= 2.0f;
-                modifiedAcceleration.Y *= 2.0f;
+                if (ourSandQuantity != 0)
+                {
+                    modifiedAcceleration.X *= 1.4f;
+                    modifiedAcceleration.Y *= 1.4f;
+                }
+
+                if (theirSandQuantity != 0)
+                {
+                    modifiedAcceleration.X *= 0.5f;
+                    modifiedAcceleration.Y *= 0.5f;
+                }
             }
+            
 
             if(newKeyState.IsKeyDown(Keys.A))
             {
