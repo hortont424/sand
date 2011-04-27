@@ -51,6 +51,8 @@ namespace Sand
             var newKeyState = Keyboard.GetState();
             var newMouseState = Mouse.GetState();
 
+            var modifiedAcceleration = MovementAcceleration;
+
             Acceleration.X = Acceleration.Y = 0.0f;
 
             if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 || Phase == GamePhases.WonPhase2 ||
@@ -64,22 +66,28 @@ namespace Sand
                 return;
             }
 
+            if (Storage.SandParticles.TeamParticlesWithinRadius(new Vector2(X, Y), 10, Team) != 0)
+            {
+                modifiedAcceleration.X *= 2.0f;
+                modifiedAcceleration.Y *= 2.0f;
+            }
+
             if(newKeyState.IsKeyDown(Keys.A))
             {
-                Acceleration.X = -MovementAcceleration.X;
+                Acceleration.X = -modifiedAcceleration.X;
             }
             else if(newKeyState.IsKeyDown(Keys.D))
             {
-                Acceleration.X = MovementAcceleration.X;
+                Acceleration.X = modifiedAcceleration.X;
             }
 
             if(newKeyState.IsKeyDown(Keys.W))
             {
-                Acceleration.Y = -MovementAcceleration.Y;
+                Acceleration.Y = -modifiedAcceleration.Y;
             }
             else if(newKeyState.IsKeyDown(Keys.S))
             {
-                Acceleration.Y = MovementAcceleration.Y;
+                Acceleration.Y = modifiedAcceleration.Y;
             }
 
             if(newKeyState.IsKeyDown(Keys.Q) && _oldKeyState.IsKeyUp(Keys.Q))
@@ -151,7 +159,7 @@ namespace Sand
 
             AlternatePrimary.Active = false;
 
-            if ((!Stunned || StunType != StunType.ToolStun) && (Phase == GamePhases.Phase1 || Phase == GamePhases.Phase2))
+            if((!Stunned || StunType != StunType.ToolStun) && (Phase == GamePhases.Phase1 || Phase == GamePhases.Phase2))
             {
                 Tool[] tools = { };
 
@@ -199,27 +207,27 @@ namespace Sand
 
         private void DisableAllTools()
         {
-            if (Mobility != null)
+            if(Mobility != null)
             {
                 Mobility.Active = false;
             }
 
-            if (Weapon != null)
+            if(Weapon != null)
             {
                 Weapon.Active = false;
             }
 
-            if (Utility != null)
+            if(Utility != null)
             {
                 Utility.Active = false;
             }
 
-            if (PrimaryA != null)
+            if(PrimaryA != null)
             {
                 PrimaryA.Active = false;
             }
 
-            if (PrimaryB != null)
+            if(PrimaryB != null)
             {
                 PrimaryB.Active = false;
             }

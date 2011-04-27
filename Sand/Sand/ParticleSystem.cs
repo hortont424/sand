@@ -128,6 +128,25 @@ namespace Sand
             }
         }
 
+        public int TeamParticlesWithinRadius(Vector2 position, int radius, Team team)
+        {
+            var count = 0;
+            var r2 = radius * radius;
+
+            foreach(var particle in Particles.Values.Where(particle => particle.Alive && particle.Team == team))
+            {
+                var distanceToParticle = Math.Pow(position.X - particle.Position.X, 2) +
+                                         Math.Pow(position.Y - particle.Position.Y, 2);
+
+                if(distanceToParticle < r2)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
         public override void Update(GameTime gameTime)
         {
             var size = IsSand ? 4 : 2;
