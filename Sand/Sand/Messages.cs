@@ -91,8 +91,6 @@ namespace Sand
             Storage.PacketWriter.Write(player.PureAcceleration);
             Storage.PacketWriter.Write((byte)player.Phase);
 
-            Console.WriteLine("{0}: {1}", player.Gamer.Gamertag, player.Phase);
-
             if(player.Stunned)
             {
                 Storage.PacketWriter.Write((UInt64)player.StunTimeRemaining.Ticks);
@@ -109,6 +107,8 @@ namespace Sand
             player.Invisible = Storage.PacketReader.ReadSingle();
             player.PureAcceleration = Storage.PacketReader.ReadVector2();
             player.Phase = (GamePhases)Storage.PacketReader.ReadByte();
+
+            Console.WriteLine("Update {0}: {1}", player.Gamer.Gamertag, player.Phase);
 
             if(player.Stunned)
             {
