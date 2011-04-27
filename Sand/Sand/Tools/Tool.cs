@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -54,6 +55,10 @@ namespace Sand.Tools
     {
         public double Modifier { get; set; }
         public Player Player { get; protected set; }
+
+        public bool HasMaxDistance { get; set; }
+        public int MaxDistance { get; set; }
+        public Color MaxDistanceColor { get; set; }
 
         public string Name
         {

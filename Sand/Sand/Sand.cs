@@ -186,6 +186,7 @@ namespace Sand
             Storage.AddSprite("Shield", Content.Load<Texture2D>("Textures/Tools/Utilities/Shield"));
             Storage.AddSprite("ShieldCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/ShieldCircle"));
             Storage.AddSprite("WhiteCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/WhiteCircle"));
+            Storage.AddSprite("ToolDot", Content.Load<Texture2D>("Textures/Tools/Utilities/ToolDot"));
             Storage.AddSound("Shield", Content.Load<SoundEffect>("Sounds/Shield"));
 
             Storage.AddSprite("Jet", Content.Load<Texture2D>("Textures/Tools/Primaries/Jet"));

@@ -39,6 +39,8 @@ namespace Sand
         public Tool Weapon;
         public Tool Utility;
 
+        public Tool CurrentPrimary, LastTool, AlternatePrimary;
+
         public GamePhases Phase { get; set; }
 
         public Team Team
@@ -194,6 +196,40 @@ namespace Sand
                                       null,
                                       originalTeamColor, 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
                 }
+            }
+
+            Tool[] drawBoundaryTools = { };
+
+            if(Phase == GamePhases.Phase1)
+            {
+                drawBoundaryTools = new[] { Mobility, Utility, Weapon, CurrentPrimary };
+            }
+            else if(Phase == GamePhases.Phase2)
+            {
+                drawBoundaryTools = new[] { Mobility, Utility, Weapon };
+            }
+
+            var toolAngle = Angle - ((float)Math.PI / 2.0f);
+
+            foreach(var tool in drawBoundaryTools)
+            {
+                if(!tool.HasMaxDistance)
+                {
+                    continue;
+                }
+
+                var actualDistance = wallIntersection < tool.MaxDistance ? wallIntersection : tool.MaxDistance;
+
+                var sprite = Storage.Sprite("ToolDot");
+
+                var toolCirclePosition = new Vector2(virtualX, virtualY) +
+                                    (new Vector2((float)Math.Cos(toolAngle), (float)Math.Sin(toolAngle)) *
+                                     new Vector2(actualDistance));
+
+                _spriteBatch.Draw(sprite, toolCirclePosition, null,
+                                  tool.MaxDistanceColor, 0.0f,
+                                  new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.0f,
+                                  SpriteEffects.None, 0.0f);
             }
         }
 

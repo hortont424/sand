@@ -13,8 +13,6 @@ namespace Sand
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
 
-        public Tool CurrentPrimary, LastTool, AlternatePrimary;
-
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             MovementAcceleration = DefaultAcceleration;
@@ -66,7 +64,7 @@ namespace Sand
                 return;
             }
 
-            if (Storage.SandParticles.TeamParticlesWithinRadius(new Vector2(X, Y), 10, Team) != 0)
+            if(Storage.SandParticles.TeamParticlesWithinRadius(new Vector2(X, Y), 10, Team) != 0)
             {
                 modifiedAcceleration.X *= 2.0f;
                 modifiedAcceleration.Y *= 2.0f;

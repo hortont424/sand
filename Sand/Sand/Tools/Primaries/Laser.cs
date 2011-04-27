@@ -37,6 +37,10 @@ namespace Sand.Tools.Primaries
 
             _laserParticles = new ParticleSystem(Player.Game, Player);
             Player.Game.Components.Add(_laserParticles);
+
+            HasMaxDistance = true;
+            MaxDistance = 300;
+            MaxDistanceColor = Color.Orange;
         }
 
         public static string _name()
@@ -79,20 +83,19 @@ namespace Sand.Tools.Primaries
             }
 
             var wallIntersection = (Player.Game as Sand).GameMap.Intersects(Player.ForwardRay());
-            const int maxLaserDistance = 300;
 
             int ? laserDistance = null;
 
             int idealDistance = (int)Math.Sqrt(Math.Pow(sandGame.MouseLocation.X - Player.X, 2) +
                                                Math.Pow(sandGame.MouseLocation.Y - Player.Y, 2));
 
-            if(idealDistance < maxLaserDistance)
+            if(idealDistance < MaxDistance)
             {
                 laserDistance = idealDistance;
             }
             else
             {
-                laserDistance = maxLaserDistance;
+                laserDistance = MaxDistance;
             }
 
             if(wallIntersection != null && wallIntersection < laserDistance)
