@@ -126,7 +126,8 @@ namespace Sand.GameState
                 _primaryBIcon.Disabled = localPlayer.CurrentPrimary != localPlayer.PrimaryB;
             }
 
-            if(localPlayer.Phase == GamePhases.Phase1)
+            if(localPlayer.Phase == GamePhases.Phase1 || localPlayer.Phase == GamePhases.WonPhase1 ||
+               localPlayer.Phase == GamePhases.WaitForPhase2)
             {
                 int redCount = 0, blueCount = 0;
 
@@ -144,18 +145,23 @@ namespace Sand.GameState
 
                 _redSandMeter.Progress = (redCount / 1000.0f);
                 _blueSandMeter.Progress = (blueCount / 1000.0f);
+            }
 
+            if(localPlayer.Phase == GamePhases.Phase1)
+            {
                 if(Storage.NetworkSession.IsHost)
                 {
                     if(_redSandMeter.Progress == 1.0f)
                     {
                         WinPhase1(Team.Red);
-                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Red, localPlayer.Gamer.Id, true);
+                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Red,
+                                                           localPlayer.Gamer.Id, true);
                     }
                     else if(_blueSandMeter.Progress == 1.0f)
                     {
                         WinPhase1(Team.Blue);
-                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Blue, localPlayer.Gamer.Id, true);
+                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Blue,
+                                                           localPlayer.Gamer.Id, true);
                     }
                 }
             }
@@ -228,15 +234,20 @@ namespace Sand.GameState
                     }
                 }
 
-                if(!anyRedNotStunned && foundRed)
+                if(Storage.NetworkSession.IsHost)
                 {
-                    WinPhase2(Team.Blue);
-                    Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Blue, localPlayer.Gamer.Id, true);
-                }
-                else if(!anyBlueNotStunned && foundBlue)
-                {
-                    WinPhase2(Team.Red);
-                    Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Red, localPlayer.Gamer.Id, true);
+                    if(!anyRedNotStunned && foundRed)
+                    {
+                        WinPhase2(Team.Blue);
+                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Blue,
+                                                           localPlayer.Gamer.Id, true);
+                    }
+                    else if(!anyBlueNotStunned && foundBlue)
+                    {
+                        WinPhase2(Team.Red);
+                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Red,
+                                                           localPlayer.Gamer.Id, true);
+                    }
                 }
             }
 

@@ -108,14 +108,6 @@ namespace Sand
             player.PureAcceleration = Storage.PacketReader.ReadVector2();
             player.Phase = (GamePhases)Storage.PacketReader.ReadByte();
 
-            if(player.Gamer.IsHost)
-            {
-                foreach(var gamer in Storage.NetworkSession.LocalGamers)
-                {
-                    (gamer.Tag as Player).Phase = player.Phase;
-                }
-            }
-
             if(player.Stunned)
             {
                 player.StunTimeRemaining = new TimeSpan((long)Storage.PacketReader.ReadUInt64());
@@ -743,6 +735,9 @@ namespace Sand
                             case MessageType.RemoveSand:
                                 DiscardRemoveSandMessage();
                                 break;
+                            case MessageType.ChangeWinState:
+                                DiscardChangeWinStateMessage();
+                                break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -783,6 +778,9 @@ namespace Sand
                             break;
                         case MessageType.RemoveSand:
                             ProcessRemoveSandMessage(player);
+                            break;
+                        case MessageType.ChangeWinState:
+                            ProcessChangeWinStateMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -915,6 +913,9 @@ namespace Sand
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
+                            break;
+                        case MessageType.ChangeWinState:
+                            Console.WriteLine("server got a changewinstate update, seems wrong.");
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
