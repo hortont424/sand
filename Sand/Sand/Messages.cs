@@ -17,7 +17,8 @@ namespace Sand
         CreateSand,
         RemoveSand,
         UpdateSand,
-        ChangeWinState
+        ChangeWinState,
+        UpdateScore
     }
 
     internal class ActivationInfo
@@ -110,7 +111,7 @@ namespace Sand
             player.Phase = (GamePhases)Storage.PacketReader.ReadByte();
             var remainingTime = Storage.PacketReader.ReadInt64();
 
-            if (player.Gamer.IsHost)
+            if(player.Gamer.IsHost)
             {
                 Storage.RemainingTime = new TimeSpan(remainingTime);
             }
@@ -617,7 +618,7 @@ namespace Sand
             Storage.PacketWriter.Write((byte)state);
             Storage.PacketWriter.Write((byte)team);
 
-            if (immediate)
+            if(immediate)
             {
                 SendOneOffMessage(player);
             }
@@ -630,8 +631,10 @@ namespace Sand
 
             var playState = Storage.Game.CurrentState() as PlayState;
 
-            if (playState == null)
+            if(playState == null)
+            {
                 return;
+            }
 
             switch(state)
             {
@@ -650,6 +653,38 @@ namespace Sand
         {
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
+        }
+
+        #endregion
+
+        #region UpdateScore Message
+
+        public static void SendUpdateScoreMessage(Player player, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.UpdateScore, id);
+
+            Storage.PacketWriter.Write(Storage.Scores[Team.Red]);
+            Storage.PacketWriter.Write(Storage.Scores[Team.Blue]);
+
+            if(immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static void ProcessUpdateScoreMessage(Player player)
+        {
+            if(player.Gamer.IsHost)
+            {
+                Storage.Scores[Team.Red] = Storage.PacketReader.ReadInt32();
+                Storage.Scores[Team.Blue] = Storage.PacketReader.ReadInt32();
+            }
+        }
+
+        private static void DiscardUpdateScoreMessage()
+        {
+            Storage.PacketReader.ReadInt32();
+            Storage.PacketReader.ReadInt32();
         }
 
         #endregion
@@ -744,6 +779,9 @@ namespace Sand
                             case MessageType.ChangeWinState:
                                 DiscardChangeWinStateMessage();
                                 break;
+                            case MessageType.UpdateScore:
+                                DiscardUpdateScoreMessage();
+                                break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -787,6 +825,9 @@ namespace Sand
                             break;
                         case MessageType.ChangeWinState:
                             ProcessChangeWinStateMessage(player);
+                            break;
+                        case MessageType.UpdateScore:
+                            ProcessUpdateScoreMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -921,7 +962,10 @@ namespace Sand
 
                             break;
                         case MessageType.ChangeWinState:
-                            Console.WriteLine("server got a changewinstate update, seems wrong.");
+                            Console.WriteLine("server got a changewinstate message, seems wrong.");
+                            break;
+                        case MessageType.UpdateScore:
+                            Console.WriteLine("server got a updatescore message, seems wrong.");
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

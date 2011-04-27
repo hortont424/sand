@@ -96,16 +96,31 @@ namespace Sand.GameState
             _redSandMeter = new SandMeter(Game, Team.Red)
                             {
                                 X = _primaryAIcon.Position.X,
-                                Y = _primaryAIcon.Position.Y + 450
+                                Y = _primaryAIcon.Position.Y + 430
                             };
             _blueSandMeter = new SandMeter(Game, Team.Blue)
                              {
                                  X = _primaryBIcon.Position.X,
-                                 Y = _primaryBIcon.Position.Y + 450
+                                 Y = _primaryBIcon.Position.Y + 430
                              };
 
             Game.Components.Add(_redSandMeter);
             Game.Components.Add(_blueSandMeter);
+
+            var redScoreMeter = new ScoreMeter(Game, Team.Red)
+                                {
+                                    X = _redSandMeter.X,
+                                    Y = _redSandMeter.Y + (_redSandMeter.Height / 2.0f) + 85
+                                    
+                                };
+            var blueScoreMeter = new ScoreMeter(Game, Team.Blue)
+                                 {
+                                     X = _blueSandMeter.X,
+                                     Y = _blueSandMeter.Y + (_blueSandMeter.Height / 2.0f) + 85
+                                 };
+
+            Game.Components.Add(redScoreMeter);
+            Game.Components.Add(blueScoreMeter);
 
             if(Storage.DebugMode)
             {
@@ -337,6 +352,12 @@ namespace Sand.GameState
             if(_phase2Timer != null)
             {
                 Game.Components.Remove(_phase2Timer);
+            }
+
+            if(localPlayer.Gamer.IsHost && _teamWonPhase1 == team)
+            {
+                Storage.Scores[team]++;
+                Messages.SendUpdateScoreMessage(localPlayer, localPlayer.Gamer.Id, true);
             }
 
             localPlayer.Phase = GamePhases.WonPhase2;

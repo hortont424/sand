@@ -132,6 +132,7 @@
     <Compile Include="Billboard.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="ClassDescription.cs" />
+    <Compile Include="ScoreMeter.cs" />
     <Compile Include="MapChooserButton.cs" />
     <Compile Include="Crosshair.cs" />
     <Compile Include="GameState\ChooseMapState.cs" />
