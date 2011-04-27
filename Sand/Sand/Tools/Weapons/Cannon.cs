@@ -51,7 +51,7 @@ namespace Sand.Tools.Weapons
 
         protected override void Activate()
         {
-            Storage.Sound("Cannon").CreateInstance().Play();
+            Sounds.Add(Storage.Sound("Cannon").CreateInstance()).Play();
             Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
 
             const int maxCannonDistance = 600;

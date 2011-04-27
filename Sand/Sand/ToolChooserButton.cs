@@ -86,7 +86,7 @@ namespace Sand
 
             if(playSound)
             {
-                Tool.SoundForTool(toolType).CreateInstance().Play();
+                Sounds.Add(Tool.SoundForTool(toolType).CreateInstance()).Play();
             }
 
             UnhoverTool(null, null);

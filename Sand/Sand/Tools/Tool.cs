@@ -319,7 +319,7 @@ namespace Sand.Tools
                         {
                             Energy = 0.0f;
 
-                            Storage.Sound("Drained").CreateInstance().Play();
+                            Sounds.Add(Storage.Sound("Drained").CreateInstance()).Play();
 
                             _inCooldown = true;
                             _cooldownTime =

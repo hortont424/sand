@@ -53,7 +53,7 @@ namespace Sand.Tools.Weapons
         {
             DrawEMPRing = 255;
 
-            Storage.Sound("EMP").CreateInstance().Play();
+            Sounds.Add(Storage.Sound("EMP").CreateInstance()).Play();
             Messages.SendPlaySoundMessage(Player, "EMP", Player.Gamer.Id, true);
 
             var shockPlayers = new List<Player>();

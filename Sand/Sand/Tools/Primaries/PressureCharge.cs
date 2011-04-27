@@ -51,7 +51,7 @@ namespace Sand.Tools.Primaries
         {
             base.Activate();
 
-            Storage.Sound("PressureCharge").CreateInstance().Play();
+            Sounds.Add(Storage.Sound("PressureCharge").CreateInstance()).Play();
 
             var particleQueue = new HashSet<Particle>();
             const int maxDistance = 75 * 75;

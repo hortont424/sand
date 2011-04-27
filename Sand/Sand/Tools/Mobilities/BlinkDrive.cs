@@ -61,14 +61,14 @@ namespace Sand.Tools.Mobilities
                 Player.X = Storage.Game.MouseLocation.X;
                 Player.Y = Storage.Game.MouseLocation.Y;
 
-                Storage.Sound("BlinkDrive").CreateInstance().Play();
+                Sounds.Add(Storage.Sound("BlinkDrive").CreateInstance()).Play();
             }
             else
             {
                 // TODO: make a noise
                 Energy += EnergyConsumptionRate;
 
-                Storage.Sound("Fail").CreateInstance().Play();
+                Sounds.Add(Storage.Sound("Fail").CreateInstance()).Play();
             }
         }
     }

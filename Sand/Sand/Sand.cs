@@ -277,6 +277,8 @@ namespace Sand
                 Storage.NetworkSession.Update();
             }
 
+            Sounds.Update();
+
             base.Update(gameTime);
         }
 

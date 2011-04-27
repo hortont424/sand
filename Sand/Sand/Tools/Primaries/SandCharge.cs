@@ -50,7 +50,7 @@ namespace Sand.Tools.Primaries
         {
             base.Activate();
 
-            Storage.Sound("SandCharge").CreateInstance().Play();
+            Sounds.Add(Storage.Sound("SandCharge").CreateInstance()).Play();
 
             Storage.SandParticles.Emit(50, (p) =>
                                             {

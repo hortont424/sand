@@ -296,7 +296,7 @@ namespace Sand
         {
             var soundName = Storage.PacketReader.ReadString();
 
-            Storage.Sound(soundName).Play();
+            Sounds.Add(Storage.Sound(soundName).CreateInstance()).Play();
 
             return soundName;
         }

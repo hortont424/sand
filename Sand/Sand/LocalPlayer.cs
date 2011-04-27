@@ -325,7 +325,7 @@ namespace Sand
             {
                 if(Stunned)
                 {
-                    Storage.Sound("Shock").CreateInstance().Play();
+                    Sounds.Add(Storage.Sound("Shock").CreateInstance()).Play();
                     Messages.SendPlaySoundMessage(this, "Shock", Gamer.Id, true);
                 }
 

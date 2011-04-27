@@ -77,7 +77,7 @@ namespace Sand.GameState
                                                {
                                                    player.Team = Team.Red;
                                                    player.Class = Class.Defense;
-                                                   Storage.Sound(AddRandomSuffix("DefenseClass")).CreateInstance().Play();
+                                                   Sounds.Add(Storage.Sound(AddRandomSuffix("DefenseClass")).CreateInstance()).Play();
                                                }, null);
             Game.Components.Add(_redDefenseButton);
             _redOffenseButton = new PlayerClassButton(Game,
@@ -88,7 +88,7 @@ namespace Sand.GameState
                                                {
                                                    player.Team = Team.Red;
                                                    player.Class = Class.Offense;
-                                                   Storage.Sound(AddRandomSuffix("OffenseClass")).CreateInstance().Play();
+                                                   Sounds.Add(Storage.Sound(AddRandomSuffix("OffenseClass")).CreateInstance()).Play();
                                                }, null);
             Game.Components.Add(_redOffenseButton);
             _redSupportButton = new PlayerClassButton(Game,
@@ -99,7 +99,7 @@ namespace Sand.GameState
                                                {
                                                    player.Team = Team.Red;
                                                    player.Class = Class.Support;
-                                                   Storage.Sound(AddRandomSuffix("SupportClass")).CreateInstance().Play();
+                                                   Sounds.Add(Storage.Sound(AddRandomSuffix("SupportClass")).CreateInstance()).Play();
                                                }, null);
             Game.Components.Add(_redSupportButton);
 
@@ -109,7 +109,7 @@ namespace Sand.GameState
                                                 {
                                                     player.Team = Team.Blue;
                                                     player.Class = Class.Defense;
-                                                    Storage.Sound(AddRandomSuffix("DefenseClass")).CreateInstance().Play
+                                                    Sounds.Add(Storage.Sound(AddRandomSuffix("DefenseClass")).CreateInstance()).Play
                                                         ();
                                                 }, null);
             Game.Components.Add(_blueDefenseButton);
@@ -121,7 +121,7 @@ namespace Sand.GameState
                                                 {
                                                     player.Team = Team.Blue;
                                                     player.Class = Class.Offense;
-                                                    Storage.Sound(AddRandomSuffix("OffenseClass")).CreateInstance().Play
+                                                    Sounds.Add(Storage.Sound(AddRandomSuffix("OffenseClass")).CreateInstance()).Play
                                                         ();
                                                 }, null);
             Game.Components.Add(_blueOffenseButton);
@@ -133,7 +133,7 @@ namespace Sand.GameState
                                                 {
                                                     player.Team = Team.Blue;
                                                     player.Class = Class.Support;
-                                                    Storage.Sound(AddRandomSuffix("SupportClass")).CreateInstance().Play
+                                                    Sounds.Add(Storage.Sound(AddRandomSuffix("SupportClass")).CreateInstance()).Play
                                                         ();
                                                 }, null);
             Game.Components.Add(_blueSupportButton);
