@@ -47,19 +47,22 @@ namespace Sand.GameState
 
                 var mobilityIcon = new ToolIcon(Game, localPlayer.Mobility)
                                    {
-                                       Position = new Vector2(centerSidebar - 20.0f - 148.0f, 10.0f + 148.0f)
+                                       X = centerSidebar - 20.0f - 148.0f,
+                                       Y = 10.0f + 148.0f
                                    };
                 Game.Components.Add(mobilityIcon);
 
                 _weaponIcon = new ToolIcon(Game, localPlayer.Weapon)
                               {
-                                  Position = new Vector2(centerSidebar, 10.0f + 148.0f)
+                                  X = centerSidebar,
+                                  Y = 10.0f + 148.0f
                               };
                 Game.Components.Add(_weaponIcon);
 
                 var utilityIcon = new ToolIcon(Game, localPlayer.Utility)
                                   {
-                                      Position = new Vector2(centerSidebar + 20.0f + 148.0f, 10.0f + 148.0f)
+                                      X = centerSidebar + 20.0f + 148.0f,
+                                      Y = 10.0f + 148.0f
                                   };
                 Game.Components.Add(utilityIcon);
 
@@ -67,7 +70,8 @@ namespace Sand.GameState
                 {
                     _primaryAIcon = new ToolIcon(Game, localPlayer.PrimaryA)
                                     {
-                                        Position = new Vector2(centerSidebar - 10.0f - 74.0f, (10.0f + 148.0f) * 2.0f)
+                                        X = centerSidebar - 10.0f - 74.0f,
+                                        Y = (10.0f + 148.0f) * 2.0f
                                     };
                     Game.Components.Add(_primaryAIcon);
                 }
@@ -76,7 +80,9 @@ namespace Sand.GameState
                 {
                     _primaryBIcon = new ToolIcon(Game, localPlayer.PrimaryB)
                                     {
-                                        Position = new Vector2(centerSidebar + 20.0f + 74.0f, (10.0f + 148.0f) * 2.0f)
+                                        X = centerSidebar + 20.0f + 74.0f,
+                                        Y = (10.0f + 148.0f) * 2.0f,
+                                        Disabled = true
                                     };
                     Game.Components.Add(_primaryBIcon);
                 }
@@ -95,13 +101,13 @@ namespace Sand.GameState
 
             _redSandMeter = new SandMeter(Game, Team.Red)
                             {
-                                X = _primaryAIcon.Position.X,
-                                Y = _primaryAIcon.Position.Y + 430
+                                X = _primaryAIcon.X,
+                                Y = _primaryAIcon.Y + 430
                             };
             _blueSandMeter = new SandMeter(Game, Team.Blue)
                              {
-                                 X = _primaryBIcon.Position.X,
-                                 Y = _primaryBIcon.Position.Y + 430
+                                 X = _primaryBIcon.X,
+                                 Y = _primaryBIcon.Y + 430
                              };
 
             Game.Components.Add(_redSandMeter);
@@ -316,7 +322,7 @@ namespace Sand.GameState
 
             localPlayer.Phase = GamePhases.Phase2;
 
-            _phase2Timer = new Label(Game, _weaponIcon.Position.X, _primaryAIcon.Position.Y + 30, "", "Calibri120Bold")
+            _phase2Timer = new Label(Game, _weaponIcon.X, _primaryAIcon.Y + 30, "", "Calibri120Bold")
                            { PositionGravity = Gravity.Center };
             Game.Components.Add(_phase2Timer);
 

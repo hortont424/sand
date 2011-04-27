@@ -22,7 +22,6 @@ namespace Sand
 
         public void DrawScore(string str, string font)
         {
-            Console.WriteLine(str);
             var textSize = Storage.Font(font).MeasureString(str);
             var textOrigin = new Vector2(textSize.X, textSize.Y) * Gravity.Offset(PositionGravity);
 
