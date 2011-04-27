@@ -19,6 +19,8 @@ namespace Sand
         public static PacketReader PacketReader = new PacketReader();
         public static PacketWriter PacketWriter = new PacketWriter();
 
+        public static TimeSpan RemainingTime, Phase2EndTime;
+
         public static ParticleSystem SandParticles;
         public static Random Random = new Random();
 

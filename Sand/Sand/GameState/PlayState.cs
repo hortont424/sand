@@ -13,6 +13,9 @@ namespace Sand.GameState
         private Label _fpsMeter;
         private WinDialog _winDialog;
         private int _fpsSkip;
+        private Label _phase2Timer;
+        private Team _teamWonPhase1;
+        private ToolIcon _weaponIcon;
 
         public PlayState(Sand game) : base(game)
         {
@@ -48,11 +51,11 @@ namespace Sand.GameState
                                    };
                 Game.Components.Add(mobilityIcon);
 
-                var weaponIcon = new ToolIcon(Game, localPlayer.Weapon)
-                                 {
-                                     Position = new Vector2(centerSidebar, 10.0f + 148.0f)
-                                 };
-                Game.Components.Add(weaponIcon);
+                _weaponIcon = new ToolIcon(Game, localPlayer.Weapon)
+                              {
+                                  Position = new Vector2(centerSidebar, 10.0f + 148.0f)
+                              };
+                Game.Components.Add(_weaponIcon);
 
                 var utilityIcon = new ToolIcon(Game, localPlayer.Utility)
                                   {
@@ -174,6 +177,14 @@ namespace Sand.GameState
                 var foundRed = false;
                 var foundBlue = false;
 
+                if(localPlayer.Gamer.IsHost)
+                {
+                    Storage.RemainingTime =
+                        new TimeSpan(Storage.Phase2EndTime.Ticks - Storage.CurrentTime.TotalGameTime.Ticks);
+                }
+
+                _phase2Timer.Text = string.Format("{0}", Storage.RemainingTime.Seconds);
+
                 foreach(var gamer in Storage.NetworkSession.AllGamers)
                 {
                     var player = (gamer.Tag as Player);
@@ -207,6 +218,12 @@ namespace Sand.GameState
                     {
                         WinPhase2(Team.Red);
                         Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Red,
+                                                           localPlayer.Gamer.Id, true);
+                    }
+                    else if(Storage.RemainingTime.Ticks <= 0)
+                    {
+                        WinPhase2(_teamWonPhase1);
+                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, _teamWonPhase1,
                                                            localPlayer.Gamer.Id, true);
                     }
                 }
@@ -250,7 +267,11 @@ namespace Sand.GameState
                         _winDialog = null;
                     }
 
-                    Storage.SandParticles.Particles.Clear();
+                    foreach(var particle in Storage.SandParticles.Particles)
+                    {
+                        particle.Value.OnFire = true;
+                        particle.Value.Fire = (byte)Storage.Random.Next(0, 255);
+                    }
                 }
             }
 
@@ -271,6 +292,8 @@ namespace Sand.GameState
         {
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
+            _teamWonPhase1 = team;
+
             Cursor.Show();
 
             localPlayer.Phase = GamePhases.Phase2;
@@ -278,18 +301,28 @@ namespace Sand.GameState
 
             localPlayer.Phase = GamePhases.Phase2;
 
-            if (_primaryAIcon != null)
+            _phase2Timer = new Label(Game, _weaponIcon.Position.X, _primaryAIcon.Position.Y + 30, "", "Calibri120Bold")
+                           { PositionGravity = Gravity.Center };
+            Game.Components.Add(_phase2Timer);
+
+            if(_primaryAIcon != null)
             {
                 Game.Components.Remove(_primaryAIcon);
             }
 
-            if (_primaryBIcon != null)
+            if(_primaryBIcon != null)
             {
                 Game.Components.Remove(_primaryBIcon);
             }
 
             Game.Components.Remove(_redSandMeter);
             Game.Components.Remove(_blueSandMeter);
+
+            if(localPlayer.Gamer.IsHost)
+            {
+                Storage.RemainingTime = new TimeSpan(0, 0, 1, 0);
+                Storage.Phase2EndTime = Storage.CurrentTime.TotalGameTime + Storage.RemainingTime;
+            }
 
             Cursor.Hide();
         }
@@ -299,6 +332,12 @@ namespace Sand.GameState
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
             Cursor.Show();
+            Storage.Game.GameMap.EndWinPulse();
+
+            if(_phase2Timer != null)
+            {
+                Game.Components.Remove(_phase2Timer);
+            }
 
             localPlayer.Phase = GamePhases.WonPhase2;
 
@@ -329,6 +368,11 @@ namespace Sand.GameState
 
             Game.Components.Remove(_redSandMeter);
             Game.Components.Remove(_blueSandMeter);
+
+            if(_phase2Timer != null)
+            {
+                Game.Components.Remove(_phase2Timer);
+            }
 
             if(_winDialog != null)
             {

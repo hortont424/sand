@@ -31,7 +31,7 @@ namespace Sand
 
         private static readonly Dictionary<Team, String> TeamNames = new Dictionary<Team, String>()
             {
-                  { Team.None, "None" },
+                  { Team.None, "Nobody" },
                   { Team.Red, "Purple" },
                   { Team.Blue, "Green" }
             };
