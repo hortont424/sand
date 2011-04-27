@@ -34,6 +34,14 @@ namespace Sand
             }
         }
 
+        public Vector2 Size
+        {
+            get
+            {
+                return new Vector2((int)Width, (int)Height);
+            }
+        }
+
         public Actor(Game game) : base(game)
         {
             _sandGame = Game as Sand;

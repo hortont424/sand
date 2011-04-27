@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
+using Sand.Tools;
 
 namespace Sand.GameState
 {
@@ -19,6 +20,18 @@ namespace Sand.GameState
 
         public PlayState(Sand game) : base(game)
         {
+        }
+
+        private ToolIcon AddToolIconForTool(Tool tool, float x, float y)
+        {
+            if(tool == null)
+                return null;
+
+            var icon = new ToolIcon(Game, tool) { X = x, Y = y };
+
+            Game.Components.Add(icon);
+
+            return icon;
         }
 
         public override void Enter(Dictionary<string, object> data)
@@ -45,46 +58,17 @@ namespace Sand.GameState
             {
                 var centerSidebar = (Game.GameMap.Width + Game.BaseScreenSize.X) / 2.0f;
 
-                var mobilityIcon = new ToolIcon(Game, localPlayer.Mobility)
-                                   {
-                                       X = centerSidebar - 20.0f - 148.0f,
-                                       Y = 10.0f + 148.0f
-                                   };
-                Game.Components.Add(mobilityIcon);
+                AddToolIconForTool(localPlayer.Mobility, centerSidebar - 20.0f - 148.0f, 10.0f + 148.0f);
+                _weaponIcon = AddToolIconForTool(localPlayer.Weapon, centerSidebar, 10.0f + 148.0f);
+                AddToolIconForTool(localPlayer.Utility, centerSidebar + 20.0f + 148.0f, 10.0f + 148.0f);
+                _primaryAIcon = AddToolIconForTool(localPlayer.PrimaryA, centerSidebar - 10.0f - 74.0f,
+                                                   (10.0f + 148.0f) * 2.0f);
+                _primaryBIcon = AddToolIconForTool(localPlayer.PrimaryB, centerSidebar + 20.0f + 74.0f,
+                                                   (10.0f + 148.0f) * 2.0f);
 
-                _weaponIcon = new ToolIcon(Game, localPlayer.Weapon)
-                              {
-                                  X = centerSidebar,
-                                  Y = 10.0f + 148.0f
-                              };
-                Game.Components.Add(_weaponIcon);
-
-                var utilityIcon = new ToolIcon(Game, localPlayer.Utility)
-                                  {
-                                      X = centerSidebar + 20.0f + 148.0f,
-                                      Y = 10.0f + 148.0f
-                                  };
-                Game.Components.Add(utilityIcon);
-
-                if(localPlayer.PrimaryA != null)
+                if(_primaryBIcon != null)
                 {
-                    _primaryAIcon = new ToolIcon(Game, localPlayer.PrimaryA)
-                                    {
-                                        X = centerSidebar - 10.0f - 74.0f,
-                                        Y = (10.0f + 148.0f) * 2.0f
-                                    };
-                    Game.Components.Add(_primaryAIcon);
-                }
-
-                if(localPlayer.PrimaryB != null)
-                {
-                    _primaryBIcon = new ToolIcon(Game, localPlayer.PrimaryB)
-                                    {
-                                        X = centerSidebar + 20.0f + 74.0f,
-                                        Y = (10.0f + 148.0f) * 2.0f,
-                                        Disabled = true
-                                    };
-                    Game.Components.Add(_primaryBIcon);
+                    _primaryBIcon.Disabled = true;
                 }
 
                 var nameLabel = new Label(Game, centerSidebar, 2.0f,
