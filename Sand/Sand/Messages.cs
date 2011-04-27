@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Net;
+using Sand.GameState;
 using Sand.Tools;
 
 namespace Sand
@@ -15,7 +16,8 @@ namespace Sand
         ActivateTool,
         CreateSand,
         RemoveSand,
-        UpdateSand
+        UpdateSand,
+        ChangeWinState
     }
 
     internal class ActivationInfo
@@ -105,6 +107,14 @@ namespace Sand
             player.Invisible = Storage.PacketReader.ReadSingle();
             player.PureAcceleration = Storage.PacketReader.ReadVector2();
             player.Phase = (GamePhases)Storage.PacketReader.ReadByte();
+
+            if(player.Gamer.IsHost)
+            {
+                foreach(var gamer in Storage.NetworkSession.LocalGamers)
+                {
+                    (gamer.Tag as Player).Phase = player.Phase;
+                }
+            }
 
             if(player.Stunned)
             {
@@ -596,6 +606,52 @@ namespace Sand
         private static void DiscardRemoveSandMessage()
         {
             Storage.PacketReader.ReadString();
+        }
+
+        #endregion
+
+        #region ChangeWinState Message
+
+        public static void SendChangeWinStateMessage(Player player, GamePhases state, Team team, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.ChangeWinState, id);
+
+            Storage.PacketWriter.Write((byte)state);
+            Storage.PacketWriter.Write((byte)team);
+
+            if (immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static void ProcessChangeWinStateMessage(Player player)
+        {
+            var state = (GamePhases)Storage.PacketReader.ReadByte();
+            var team = (Team)Storage.PacketReader.ReadByte();
+
+            var playState = Storage.Game.CurrentState() as PlayState;
+
+            if (playState == null)
+                return;
+
+            switch(state)
+            {
+                case GamePhases.WonPhase1:
+                    playState.WinPhase1(team);
+                    break;
+                case GamePhases.WonPhase2:
+                    playState.WinPhase2(team);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private static void DiscardChangeWinStateMessage()
+        {
+            Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadByte();
         }
 
         #endregion

@@ -256,6 +256,11 @@ namespace Sand
             return true;
         }
 
+        public GameState.GameState CurrentState()
+        {
+            return _gameStateInstances[_gameState];
+        }
+
         protected override void Update(GameTime gameTime)
         {
             Storage.CurrentTime = gameTime;

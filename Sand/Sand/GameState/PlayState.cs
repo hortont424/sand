@@ -145,13 +145,18 @@ namespace Sand.GameState
                 _redSandMeter.Progress = (redCount / 1000.0f);
                 _blueSandMeter.Progress = (blueCount / 1000.0f);
 
-                if(_redSandMeter.Progress == 1.0f)
+                if(Storage.NetworkSession.IsHost)
                 {
-                    WinPhase1(Team.Red);
-                }
-                else if(_blueSandMeter.Progress == 1.0f)
-                {
-                    WinPhase1(Team.Blue);
+                    if(_redSandMeter.Progress == 1.0f)
+                    {
+                        WinPhase1(Team.Red);
+                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Red, localPlayer.Gamer.Id, true);
+                    }
+                    else if(_blueSandMeter.Progress == 1.0f)
+                    {
+                        WinPhase1(Team.Blue);
+                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Blue, localPlayer.Gamer.Id, true);
+                    }
                 }
             }
 
@@ -171,11 +176,15 @@ namespace Sand.GameState
                 {
                     localPlayer.Phase = GamePhases.Phase2;
 
-                    if (_primaryAIcon != null)
+                    if(_primaryAIcon != null)
+                    {
                         Game.Components.Remove(_primaryAIcon);
+                    }
 
-                    if (_primaryBIcon != null)
+                    if(_primaryBIcon != null)
+                    {
                         Game.Components.Remove(_primaryBIcon);
+                    }
 
                     Game.Components.Remove(_redSandMeter);
                     Game.Components.Remove(_blueSandMeter);
@@ -222,10 +231,12 @@ namespace Sand.GameState
                 if(!anyRedNotStunned && foundRed)
                 {
                     WinPhase2(Team.Blue);
+                    Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Blue, localPlayer.Gamer.Id, true);
                 }
                 else if(!anyBlueNotStunned && foundBlue)
                 {
                     WinPhase2(Team.Red);
+                    Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Red, localPlayer.Gamer.Id, true);
                 }
             }
 
@@ -243,11 +254,15 @@ namespace Sand.GameState
 
                 if(!anyNotWaiting)
                 {
-                    if (_primaryAIcon != null)
+                    if(_primaryAIcon != null)
+                    {
                         Game.Components.Add(_primaryAIcon);
+                    }
 
-                    if (_primaryBIcon != null)
+                    if(_primaryBIcon != null)
+                    {
                         Game.Components.Add(_primaryBIcon);
+                    }
 
                     Game.Components.Add(_redSandMeter);
                     Game.Components.Add(_blueSandMeter);
@@ -278,16 +293,15 @@ namespace Sand.GameState
             }
         }
 
-        private void WinPhase1(Team team)
+        public void WinPhase1(Team team)
         {
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
             Cursor.Show();
 
             localPlayer.Phase = GamePhases.WonPhase1;
-            var teamName = team == Team.Red ? "Purple" : "Green";
 
-            _winDialog = new WinDialog(Game, teamName + " Wins Round One!",
+            _winDialog = new WinDialog(Game, Teams.NameForTeam(team) + " Wins Round One!",
                                        (s, ud) =>
                                        {
                                            _winDialog.Text = "Waiting for Players";
@@ -297,16 +311,15 @@ namespace Sand.GameState
             Game.Components.Add(_winDialog);
         }
 
-        private void WinPhase2(Team team)
+        public void WinPhase2(Team team)
         {
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
             Cursor.Show();
 
             localPlayer.Phase = GamePhases.WonPhase2;
-            var teamName = team == Team.Red ? "Purple" : "Green";
 
-            _winDialog = new WinDialog(Game, teamName + " Wins Round Two!",
+            _winDialog = new WinDialog(Game, Teams.NameForTeam(team) + " Wins Round Two!",
                                        (s, ud) =>
                                        {
                                            _winDialog.Text = "Waiting for Players";

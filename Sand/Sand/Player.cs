@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Net;
+using Sand.GameState;
 using Sand.Tools;
 
 namespace Sand
