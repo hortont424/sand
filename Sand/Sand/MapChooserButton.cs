@@ -35,7 +35,7 @@ namespace Sand
                 toolButton.Y -= toolButton.Height / 2;
                 toolButton.SetAction(ChooseTool, map);
 
-                offsetX += toolButton.Width + 48;
+                offsetX += toolButton.Width + 100;
 
                 Children.Add(toolButton);
                 _mapButtons.Add(map, toolButton);
