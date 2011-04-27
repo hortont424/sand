@@ -387,8 +387,6 @@ namespace Sand
 
             if(player is RemotePlayer)
             {
-                Console.WriteLine("Slot: {0}, Type: {1}, PropertyName: {2}, Value: {3}", slot, type, propertyName,
-                                  propertyValue);
                 var tool = player.ToolInSlot(slot, type);
                 tool.Active = state;
 
