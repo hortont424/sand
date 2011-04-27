@@ -53,8 +53,7 @@ namespace Sand
 
             Acceleration.X = Acceleration.Y = 0.0f;
 
-            if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 || Phase == GamePhases.WonPhase2 ||
-               Phase == GamePhases.WaitForPhase2)
+            if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 || Phase == GamePhases.WonPhase2)
             {
                 _oldKeyState = newKeyState;
                 _oldMouseState = newMouseState;

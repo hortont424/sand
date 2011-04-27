@@ -25,7 +25,9 @@ namespace Sand.GameState
         private ToolIcon AddToolIconForTool(Tool tool, float x, float y)
         {
             if(tool == null)
+            {
                 return null;
+            }
 
             var icon = new ToolIcon(Game, tool) { X = x, Y = y };
 
@@ -101,7 +103,6 @@ namespace Sand.GameState
                                 {
                                     X = _redSandMeter.X,
                                     Y = _redSandMeter.Y + (_redSandMeter.Height / 2.0f) + 85
-                                    
                                 };
             var blueScoreMeter = new ScoreMeter(Game, Team.Blue)
                                  {
@@ -128,156 +129,38 @@ namespace Sand.GameState
 
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
-            if(localPlayer != null)
+            if(localPlayer == null)
             {
-                _primaryAIcon.Disabled = localPlayer.CurrentPrimary != localPlayer.PrimaryA;
-                _primaryBIcon.Disabled = localPlayer.CurrentPrimary != localPlayer.PrimaryB;
+                return;
             }
 
-            if(localPlayer.Phase == GamePhases.Phase1 || localPlayer.Phase == GamePhases.WonPhase1 ||
-               localPlayer.Phase == GamePhases.WaitForPhase2)
+            _primaryAIcon.Disabled = localPlayer.CurrentPrimary != localPlayer.PrimaryA;
+            _primaryBIcon.Disabled = localPlayer.CurrentPrimary != localPlayer.PrimaryB;
+
+            if(localPlayer.Phase == GamePhases.Phase1 ||
+               localPlayer.Phase == GamePhases.WonPhase1)
             {
-                int redCount = 0, blueCount = 0;
-
-                foreach(var particle in Storage.SandParticles.Particles)
-                {
-                    if(particle.Value.Alive && !particle.Value.OnFire && particle.Value.Team == Team.Red)
-                    {
-                        redCount++;
-                    }
-                    else if(particle.Value.Alive && !particle.Value.OnFire && particle.Value.Team == Team.Blue)
-                    {
-                        blueCount++;
-                    }
-                }
-
-                _redSandMeter.Progress = (redCount / 1000.0f);
-                _blueSandMeter.Progress = (blueCount / 1000.0f);
+                UpdateSandMeter();
             }
 
-            if(localPlayer.Phase == GamePhases.Phase1)
+            if(Storage.NetworkSession.IsHost && localPlayer.Phase == GamePhases.Phase1)
             {
-                if(Storage.NetworkSession.IsHost)
-                {
-                    if(_redSandMeter.Progress == 1.0f)
-                    {
-                        WinPhase1(Team.Red);
-                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Red,
-                                                           localPlayer.Gamer.Id, true);
-                    }
-                    else if(_blueSandMeter.Progress == 1.0f)
-                    {
-                        WinPhase1(Team.Blue);
-                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Blue,
-                                                           localPlayer.Gamer.Id, true);
-                    }
-                }
+                CheckWinPhase1();
             }
 
             if(localPlayer.Phase == GamePhases.Phase2)
             {
-                var anyRedNotStunned = false;
-                var anyBlueNotStunned = false;
+                UpdatePhase2Timer();
+            }
 
-                var foundRed = false;
-                var foundBlue = false;
-
-                if(localPlayer.Gamer.IsHost)
-                {
-                    Storage.RemainingTime =
-                        new TimeSpan(Storage.Phase2EndTime.Ticks - Storage.CurrentTime.TotalGameTime.Ticks);
-                }
-
-                _phase2Timer.Text = string.Format("{0}", Storage.RemainingTime.Seconds);
-
-                foreach(var gamer in Storage.NetworkSession.AllGamers)
-                {
-                    var player = (gamer.Tag as Player);
-
-                    switch(player.Team)
-                    {
-                        case Team.None:
-                            continue;
-                        case Team.Red:
-                            foundRed = true;
-                            anyRedNotStunned = (!player.Stunned) ? true : anyRedNotStunned;
-                            break;
-                        case Team.Blue:
-                            foundBlue = true;
-                            anyBlueNotStunned = (!player.Stunned) ? true : anyBlueNotStunned;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-
-                if(Storage.NetworkSession.IsHost)
-                {
-                    if(!anyRedNotStunned && foundRed)
-                    {
-                        WinPhase2(Team.Blue);
-                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Blue,
-                                                           localPlayer.Gamer.Id, true);
-                    }
-                    else if(!anyBlueNotStunned && foundBlue)
-                    {
-                        WinPhase2(Team.Red);
-                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Red,
-                                                           localPlayer.Gamer.Id, true);
-                    }
-                    else if(Storage.RemainingTime.Ticks <= 0)
-                    {
-                        WinPhase2(_teamWonPhase1);
-                        Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, _teamWonPhase1,
-                                                           localPlayer.Gamer.Id, true);
-                    }
-                }
+            if(Storage.NetworkSession.IsHost && localPlayer.Phase == GamePhases.Phase2)
+            {
+                CheckWinPhase2();
             }
 
             if(localPlayer.Phase == GamePhases.Done)
             {
-                var anyNotWaiting = false;
-
-                foreach(var gamer in Storage.NetworkSession.AllGamers)
-                {
-                    var phase = (gamer.Tag as Player).Phase;
-
-                    if(phase != GamePhases.Done && phase != GamePhases.Phase1)
-                    {
-                        anyNotWaiting = true;
-                    }
-                }
-
-                if(!anyNotWaiting)
-                {
-                    if(_primaryAIcon != null)
-                    {
-                        Game.Components.Add(_primaryAIcon);
-                    }
-
-                    if(_primaryBIcon != null)
-                    {
-                        Game.Components.Add(_primaryBIcon);
-                    }
-
-                    Game.Components.Add(_redSandMeter);
-                    Game.Components.Add(_blueSandMeter);
-
-                    localPlayer.Phase = GamePhases.Phase1;
-                    Cursor.Hide();
-
-                    if(_winDialog != null)
-                    {
-                        Game.Components.Remove(_winDialog);
-                        _winDialog = null;
-                    }
-
-                    foreach(var particle in Storage.SandParticles.Particles)
-                    {
-                        particle.Value.OnFire = true;
-                        particle.Value.Fire = (byte)Storage.Random.Next(0, 255);
-                    }
-                }
+                WaitForAllToFinish();
             }
 
             if(Storage.DebugMode)
@@ -290,6 +173,120 @@ namespace Sand.GameState
                                                    1.0 / Storage.CurrentTime.ElapsedGameTime.TotalSeconds);
                     _fpsSkip = 0;
                 }
+            }
+        }
+
+        private void WaitForAllToFinish()
+        {
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            if(localPlayer == null)
+            {
+                return;
+            }
+
+            var anyNotWaiting = false;
+
+            foreach(var gamer in Storage.NetworkSession.AllGamers)
+            {
+                var phase = (gamer.Tag as Player).Phase;
+
+                if(phase != GamePhases.Done && phase != GamePhases.Phase1)
+                {
+                    anyNotWaiting = true;
+                }
+            }
+
+            if(!anyNotWaiting)
+            {
+                if(_primaryAIcon != null)
+                {
+                    Game.Components.Add(_primaryAIcon);
+                }
+
+                if(_primaryBIcon != null)
+                {
+                    Game.Components.Add(_primaryBIcon);
+                }
+
+                Game.Components.Add(_redSandMeter);
+                Game.Components.Add(_blueSandMeter);
+
+                localPlayer.Phase = GamePhases.Phase1;
+                Cursor.Hide();
+
+                if(_winDialog != null)
+                {
+                    Game.Components.Remove(_winDialog);
+                    _winDialog = null;
+                }
+
+                foreach(var particle in Storage.SandParticles.Particles)
+                {
+                    particle.Value.OnFire = true;
+                    particle.Value.Fire = (byte)Storage.Random.Next(0, 255);
+                }
+            }
+        }
+
+        private void UpdatePhase2Timer()
+        {
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            if(localPlayer == null)
+            {
+                return;
+            }
+
+            if(localPlayer.Gamer.IsHost)
+            {
+                Storage.RemainingTime =
+                    new TimeSpan(Storage.Phase2EndTime.Ticks - Storage.CurrentTime.TotalGameTime.Ticks);
+            }
+
+            _phase2Timer.Text = string.Format("{0}", Storage.RemainingTime.Seconds);
+        }
+
+        private void UpdateSandMeter()
+        {
+            int redCount = 0, blueCount = 0;
+
+            foreach(var particle in Storage.SandParticles.Particles)
+            {
+                if(particle.Value.Alive && !particle.Value.OnFire && particle.Value.Team == Team.Red)
+                {
+                    redCount++;
+                }
+                else if(particle.Value.Alive && !particle.Value.OnFire && particle.Value.Team == Team.Blue)
+                {
+                    blueCount++;
+                }
+            }
+
+            _redSandMeter.Progress = (redCount / 1000.0f);
+            _blueSandMeter.Progress = (blueCount / 1000.0f);
+        }
+
+        public void CheckWinPhase1()
+        {
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            if(localPlayer == null)
+            {
+                return;
+            }
+
+            if(_redSandMeter.Progress == 1.0f)
+            {
+                WinPhase1(Team.Red);
+                Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Red,
+                                                   localPlayer.Gamer.Id, true);
+            }
+            else if(_blueSandMeter.Progress == 1.0f)
+            {
+                WinPhase1(Team.Blue);
+                Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Blue,
+                                                   localPlayer.Gamer.Id, true);
             }
         }
 
@@ -330,6 +327,57 @@ namespace Sand.GameState
             }
 
             Cursor.Hide();
+        }
+
+        public void CheckWinPhase2()
+        {
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            var anyRedNotStunned = false;
+            var anyBlueNotStunned = false;
+
+            var foundRed = false;
+            var foundBlue = false;
+
+            foreach(var gamer in Storage.NetworkSession.AllGamers)
+            {
+                var player = (gamer.Tag as Player);
+
+                switch(player.Team)
+                {
+                    case Team.None:
+                        continue;
+                    case Team.Red:
+                        foundRed = true;
+                        anyRedNotStunned = (!player.Stunned) ? true : anyRedNotStunned;
+                        break;
+                    case Team.Blue:
+                        foundBlue = true;
+                        anyBlueNotStunned = (!player.Stunned) ? true : anyBlueNotStunned;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            if(!anyRedNotStunned && foundRed)
+            {
+                WinPhase2(Team.Blue);
+                Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Blue,
+                                                   localPlayer.Gamer.Id, true);
+            }
+            else if(!anyBlueNotStunned && foundBlue)
+            {
+                WinPhase2(Team.Red);
+                Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Red,
+                                                   localPlayer.Gamer.Id, true);
+            }
+            else if(Storage.RemainingTime.Ticks <= 0)
+            {
+                WinPhase2(_teamWonPhase1);
+                Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, _teamWonPhase1,
+                                                   localPlayer.Gamer.Id, true);
+            }
         }
 
         public void WinPhase2(Team team)

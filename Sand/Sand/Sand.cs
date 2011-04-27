@@ -13,7 +13,6 @@ namespace Sand
     {
         Phase1,
         WonPhase1,
-        WaitForPhase2,
         Phase2,
         WonPhase2,
         Done
