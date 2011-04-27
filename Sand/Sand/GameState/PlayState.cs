@@ -172,9 +172,12 @@ namespace Sand.GameState
 
                 foreach(var gamer in Storage.NetworkSession.AllGamers)
                 {
-                    Console.WriteLine("{0}: {1}", gamer.Gamertag, (gamer.Tag as Player).Phase);
+                    var phase = (gamer.Tag as Player).Phase;
 
-                    if((gamer.Tag as Player).Phase != GamePhases.WaitForPhase2)
+                    if (gamer == Storage.NetworkSession.LocalGamers[0])
+                        continue;
+
+                    if(phase != GamePhases.WaitForPhase2 && phase != GamePhases.Phase2)
                     {
                         anyNotWaiting = true;
                     }
@@ -259,7 +262,9 @@ namespace Sand.GameState
 
                 foreach(var gamer in Storage.NetworkSession.AllGamers)
                 {
-                    if((gamer.Tag as Player).Phase != GamePhases.Done)
+                    var phase = (gamer.Tag as Player).Phase;
+
+                    if(phase != GamePhases.Done && phase != GamePhases.Phase1)
                     {
                         anyNotWaiting = true;
                     }

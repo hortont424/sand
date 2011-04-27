@@ -108,8 +108,6 @@ namespace Sand
             player.PureAcceleration = Storage.PacketReader.ReadVector2();
             player.Phase = (GamePhases)Storage.PacketReader.ReadByte();
 
-            Console.WriteLine("Update {0}: {1}", player.Gamer.Gamertag, player.Phase);
-
             if(player.Stunned)
             {
                 player.StunTimeRemaining = new TimeSpan((long)Storage.PacketReader.ReadUInt64());
