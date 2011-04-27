@@ -269,7 +269,7 @@ namespace Sand
                                                                                (int)(Y - (Height / 2.0)), (int)Width,
                                                                                (int)Height)))
                     {
-                        Velocity.Y = -Velocity.Y * 0.7f;
+                        Velocity.Y = -Velocity.Y * 0.6f;
                         X = newPosition.X;
                     }
                     else if(!_sandGame.GameMap.CollisionTest(Texture, new Rectangle((int)(X - (Width / 2.0)),
@@ -277,13 +277,13 @@ namespace Sand
                                                                                     (newPosition.Y - (Height / 2.0)),
                                                                                     (int)Width, (int)Height)))
                     {
-                        Velocity.X = -Velocity.X * 0.7f;
+                        Velocity.X = -Velocity.X * 0.6f;
                         Y = newPosition.Y;
                     }
                     else
                     {
-                        Velocity.X = -Velocity.X * 0.7f;
-                        Velocity.Y = -Velocity.Y * 0.7f;
+                        Velocity.X = -Velocity.X * 0.6f;
+                        Velocity.Y = -Velocity.Y * 0.6f;
                     }
                 }
             }

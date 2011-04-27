@@ -19,7 +19,7 @@ namespace Sand
                    {
                        { "Desert", new Map(game, "desert") },
                        { "Lab", new Map(game, "lab") },
-                       { "Simple", new Map(game, "02") }
+                       { "Outpost", new Map(game, "outpost") }
                    };
         }
     }
