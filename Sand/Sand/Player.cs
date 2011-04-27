@@ -21,9 +21,9 @@ namespace Sand
         public Vector2 MovementAcceleration;
         public readonly Vector2 DefaultAcceleration = new Vector2(450.0f, 450.0f);
 
-        public TimeSpan StunTimeRemaining;
+        public TimeSpan StunTimeRemaining, ProtectTimeRemaining;
 
-        protected TimeSpan _unstunTime;
+        protected TimeSpan _unstunTime, _unprotectTime;
         private Class _class;
         private Team _team;
         private Texture2D _sprite;
@@ -72,8 +72,8 @@ namespace Sand
         }
 
         public float Invisible { get; set; }
-
         public bool Stunned { get; set; }
+        public bool Protected { get; set; }
 
         public Player(Game game, NetworkGamer gamer) : base(game)
         {
@@ -155,34 +155,38 @@ namespace Sand
                               null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
 
+            if(Protected)
+            {
+                var sprite = Storage.Sprite("WhiteCircle");
+
+                _spriteBatch.Draw(sprite, new Vector2((int)virtualX, (int)virtualY), null,
+                                  Color.DarkSlateBlue, 0.0f,
+                                  new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.5f,
+                                  SpriteEffects.None, 0.0f);
+            }
+
             var localPlayer = this as LocalPlayer;
             if(localPlayer != null)
             {
                 var tool = localPlayer.LastTool;
 
-                if(tool == null)
+                if(tool != null && (tool.Energy != tool.TotalEnergy))
                 {
-                    return;
+                    _spriteBatch.Draw(Storage.Sprite("pixel"),
+                                      new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
+                                                    (int)(virtualY + (_sprite.Height / 2.0f) + 15),
+                                                    _sprite.Width, 7),
+                                      null,
+                                      new Color(0.2f, 0.2f, 0.2f), 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None,
+                                      0.0f);
+
+                    _spriteBatch.Draw(Storage.Sprite("pixel"),
+                                      new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
+                                                    (int)(virtualY + (_sprite.Height / 2.0f) + 15),
+                                                    (int)((tool.Energy / tool.TotalEnergy) * _sprite.Width), 7),
+                                      null,
+                                      originalTeamColor, 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
                 }
-
-                if(tool.Energy == tool.TotalEnergy)
-                {
-                    return;
-                }
-
-                _spriteBatch.Draw(Storage.Sprite("pixel"),
-                                  new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
-                                                (int)(virtualY + (_sprite.Height / 2.0f) + 15),
-                                                _sprite.Width, 7),
-                                  null,
-                                  new Color(0.2f, 0.2f, 0.2f), 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
-
-                _spriteBatch.Draw(Storage.Sprite("pixel"),
-                                  new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
-                                                (int)(virtualY + (_sprite.Height / 2.0f) + 15),
-                                                (int)((tool.Energy / tool.TotalEnergy) * _sprite.Width), 7),
-                                  null,
-                                  originalTeamColor, 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
             }
         }
 

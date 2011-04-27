@@ -33,10 +33,16 @@ namespace Sand
         private void UpdateStun(GameTime gameTime)
         {
             StunTimeRemaining = new TimeSpan(_unstunTime.Ticks - gameTime.TotalGameTime.Ticks);
+            ProtectTimeRemaining = new TimeSpan(_unprotectTime.Ticks - gameTime.TotalGameTime.Ticks);
 
             if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
             {
                 Stunned = false;
+            }
+
+            if(Protected && gameTime.TotalGameTime.Ticks > _unprotectTime.Ticks)
+            {
+                Protected = false;
             }
         }
 
@@ -270,33 +276,44 @@ namespace Sand
 
             if(energy > 0.0f)
             {
-                if (shield != null)
+                if(Protected)
                 {
-                    energy = shield.DeflectShock(energy);
+                    // no stun if we're currently protected!
                 }
                 else
                 {
-                    Stunned = true;
+                    if(shield != null)
+                    {
+                        energy = shield.DeflectShock(energy);
+                    }
+                    else
+                    {
+                        Stunned = true;
+                    }
+
+                    if(Stunned)
+                    {
+                        Protected = true;
+                    }
                 }
             }
             else
             {
                 Stunned = false;
             }
-            
 
-            if(Stunned)
+            if(!wasStunned && Stunned)
             {
-                Storage.Sound("Shock").CreateInstance().Play();
-                Messages.SendPlaySoundMessage(this, "Shock", Gamer.Id, true);
-            }
+                if(Stunned)
+                {
+                    Storage.Sound("Shock").CreateInstance().Play();
+                    Messages.SendPlaySoundMessage(this, "Shock", Gamer.Id, true);
+                }
 
-            var newStunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));
-
-            if(!wasStunned || newStunTimeRemaining > StunTimeRemaining)
-            {
-                StunTimeRemaining = newStunTimeRemaining;
+                StunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));
+                ProtectTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5) + 2);
                 _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
+                _unprotectTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(ProtectTimeRemaining);
             }
         }
     }

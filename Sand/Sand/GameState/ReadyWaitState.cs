@@ -64,8 +64,6 @@ namespace Sand.GameState
             {
                 switch(player.Team)
                 {
-                    case Team.None:
-                        break;
                     case Team.Red:
                         player.X = Storage.Game.GameMap.RedSpawn.X;
                         player.Y = Storage.Game.GameMap.RedSpawn.Y;

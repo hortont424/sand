@@ -53,11 +53,13 @@ namespace Sand
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    if (_mapTexture[(int)(x + (y * Width))] == Color.Red)
+                    var color = _mapTexture[(int)(x + (y * Width))];
+
+                    if (color == Color.Red)
                     {
                         RedSpawn = new Vector2(x, y);
                     }
-                    else if (_mapTexture[(int)(x + (y * Width))] == Color.Green)
+                    else if (color == Color.Lime)
                     {
                         BlueSpawn = new Vector2(x, y);
                     }
