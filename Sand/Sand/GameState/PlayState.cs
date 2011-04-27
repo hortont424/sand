@@ -172,6 +172,8 @@ namespace Sand.GameState
 
                 foreach(var gamer in Storage.NetworkSession.AllGamers)
                 {
+                    Console.WriteLine("{0}: {1}", gamer.Gamertag, (gamer.Tag as Player).Phase);
+
                     if((gamer.Tag as Player).Phase != GamePhases.WaitForPhase2)
                     {
                         anyNotWaiting = true;
@@ -295,9 +297,9 @@ namespace Sand.GameState
             {
                 _fpsSkip++;
 
-                if(_fpsSkip >= 30)
+                if(_fpsSkip >= 15)
                 {
-                    _fpsMeter.Text = string.Format("{0:0.00} fps",
+                    _fpsMeter.Text = string.Format("{0:0.0} fps",
                                                    1.0 / Storage.CurrentTime.ElapsedGameTime.TotalSeconds);
                     _fpsSkip = 0;
                 }
