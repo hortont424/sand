@@ -15,7 +15,7 @@ namespace Sand.Tools.Primaries
 
             Energy = TotalEnergy = 100;
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
-            EnergyConsumptionRate = 25;
+            EnergyConsumptionRate = 50;
             EnergyRechargeRate = 0.2;
         }
 
@@ -57,7 +57,7 @@ namespace Sand.Tools.Primaries
 
             Sounds.Add(Storage.Sound("FlameCharge").CreateInstance()).Play();
 
-            const int flameChargeRadius = 50 * 50;
+            const int flameChargeRadius = 75 * 75;
 
             foreach(var pair in Storage.SandParticles.Particles)
             {
@@ -110,7 +110,7 @@ namespace Sand.Tools.Primaries
                 spriteBatch.Draw(sprite, new Vector2((int)Player.X, (int)Player.Y), null,
                                  new Color(grayLevel, grayLevel, grayLevel), 0.0f,
                                  new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f),
-                                 (((255 - DrawFlameRing) / 255.0f) * 1.041f) + 1.0f,
+                                 (((255 - DrawFlameRing) / 255.0f) * 1.56f) + 1.0f,
                                  SpriteEffects.None, 0.0f);
 
                 DrawFlameRing -= 24;
