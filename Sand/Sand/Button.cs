@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Sand
 {
-    internal class Button : Actor
+    public class Button : Actor
     {
         private bool _hovered;
         private bool _clicked;

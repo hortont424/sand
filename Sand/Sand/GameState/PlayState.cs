@@ -166,50 +166,6 @@ namespace Sand.GameState
                 }
             }
 
-            if(localPlayer.Phase == GamePhases.WaitForPhase2)
-            {
-                var anyNotWaiting = false;
-
-                foreach(var gamer in Storage.NetworkSession.AllGamers)
-                {
-                    var phase = (gamer.Tag as Player).Phase;
-
-                    if (gamer == Storage.NetworkSession.LocalGamers[0])
-                        continue;
-
-                    if(phase != GamePhases.WaitForPhase2 && phase != GamePhases.Phase2)
-                    {
-                        anyNotWaiting = true;
-                    }
-                }
-
-                if(!anyNotWaiting)
-                {
-                    localPlayer.Phase = GamePhases.Phase2;
-
-                    if(_primaryAIcon != null)
-                    {
-                        Game.Components.Remove(_primaryAIcon);
-                    }
-
-                    if(_primaryBIcon != null)
-                    {
-                        Game.Components.Remove(_primaryBIcon);
-                    }
-
-                    Game.Components.Remove(_redSandMeter);
-                    Game.Components.Remove(_blueSandMeter);
-
-                    Cursor.Hide();
-
-                    if(_winDialog != null)
-                    {
-                        Game.Components.Remove(_winDialog);
-                        _winDialog = null;
-                    }
-                }
-            }
-
             if(localPlayer.Phase == GamePhases.Phase2)
             {
                 var anyRedNotStunned = false;
@@ -317,16 +273,25 @@ namespace Sand.GameState
 
             Cursor.Show();
 
-            localPlayer.Phase = GamePhases.WonPhase1;
+            localPlayer.Phase = GamePhases.Phase2;
+            Storage.Game.GameMap.WinPulse(team, null);
 
-            _winDialog = new WinDialog(Game, Teams.NameForTeam(team) + " Wins Round One!",
-                                       (s, ud) =>
-                                       {
-                                           _winDialog.Text = "Waiting for Players";
-                                           localPlayer.Phase = GamePhases.WaitForPhase2;
-                                       }, null);
+            localPlayer.Phase = GamePhases.Phase2;
 
-            Game.Components.Add(_winDialog);
+            if (_primaryAIcon != null)
+            {
+                Game.Components.Remove(_primaryAIcon);
+            }
+
+            if (_primaryBIcon != null)
+            {
+                Game.Components.Remove(_primaryBIcon);
+            }
+
+            Game.Components.Remove(_redSandMeter);
+            Game.Components.Remove(_blueSandMeter);
+
+            Cursor.Hide();
         }
 
         public void WinPhase2(Team team)

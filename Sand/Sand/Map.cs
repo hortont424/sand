@@ -34,6 +34,12 @@ namespace Sand
         public Vector2 RedSpawn;
         public Vector2 BlueSpawn;
 
+        private Team _winPulseTeam;
+        private Animation _winPulseAnimation;
+        private AnimationGroup _winPulseAnimationGroup;
+
+        public float PulseValue { get; set; }
+
         public Map(Game game, string name) : base(game)
         {
             Name = name;
@@ -69,8 +75,38 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            // If we change drawing location, we need to change ray intersection offset
-            _spriteBatch.Draw(MapImage, new Vector2(0.0f, 0.0f), Color.White);
+            if(_winPulseAnimation != null)
+            {
+                var color = Teams.ColorForTeam(_winPulseTeam);
+                var grayLevel = (float)Math.Min((Math.Sin(5.0f * PulseValue) / 5.0f) + 0.8f, 1.0f);
+                color *= grayLevel;
+                // If we change drawing location, we need to change ray intersection offset
+                _spriteBatch.Draw(MapImage, new Vector2(0.0f, 0.0f), color);
+            }
+            else
+            {
+                // If we change drawing location, we need to change ray intersection offset
+                _spriteBatch.Draw(MapImage, new Vector2(0.0f, 0.0f), Color.White);
+            }
+        }
+
+        public void WinPulse(Team team, Button.Action completedAction)
+        {
+            _winPulseTeam = team;
+            _winPulseAnimation = new Animation(this, "PulseValue", 0.0f, 10.0f, Easing.EaseInOut, EasingType.Linear);
+            _winPulseAnimationGroup = new AnimationGroup(_winPulseAnimation, 10000.0f) {Loops = true};
+
+            Storage.AnimationController.AddGroup(_winPulseAnimationGroup);
+        }
+
+        public void EndWinPulse()
+        {
+            if(_winPulseAnimationGroup != null)
+            {
+                Storage.AnimationController.RemoveGroup(_winPulseAnimationGroup);
+                _winPulseAnimationGroup = null;
+                _winPulseAnimation = null;
+            }
         }
 
         private bool IsCollisionColor(Color color)
