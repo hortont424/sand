@@ -6,6 +6,12 @@ using Sand.Tools;
 
 namespace Sand
 {
+    public enum StunType
+    {
+        ToolStun,
+        MotionStun
+    }
+
     public class Player : Actor
     {
         public NetworkGamer Gamer;
@@ -73,6 +79,7 @@ namespace Sand
 
         public float Invisible { get; set; }
         public bool Stunned { get; set; }
+        public StunType StunType { get; set; }
         public bool Protected { get; set; }
 
         public Player(Game game, NetworkGamer gamer) : base(game)

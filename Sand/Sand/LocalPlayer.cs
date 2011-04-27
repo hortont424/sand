@@ -59,6 +59,8 @@ namespace Sand
                 _oldKeyState = newKeyState;
                 _oldMouseState = newMouseState;
 
+                DisableAllTools();
+
                 return;
             }
 
@@ -149,7 +151,7 @@ namespace Sand
 
             AlternatePrimary.Active = false;
 
-            if(!Stunned)
+            if ((!Stunned || StunType != StunType.ToolStun) && (Phase == GamePhases.Phase1 || Phase == GamePhases.Phase2))
             {
                 Tool[] tools = { };
 
@@ -188,34 +190,39 @@ namespace Sand
             }
             else
             {
-                if(Mobility != null)
-                {
-                    Mobility.Active = false;
-                }
-                
-                if(Weapon != null)
-                {
-                    Weapon.Active = false;
-                }
-
-                if(Utility != null)
-                {
-                    Utility.Active = false;
-                }
-
-                if(PrimaryA != null)
-                {
-                    PrimaryA.Active = false;
-                }
-
-                if(PrimaryB != null)
-                {
-                    PrimaryB.Active = false;
-                }
+                DisableAllTools();
             }
 
             _oldKeyState = newKeyState;
             _oldMouseState = newMouseState;
+        }
+
+        private void DisableAllTools()
+        {
+            if (Mobility != null)
+            {
+                Mobility.Active = false;
+            }
+
+            if (Weapon != null)
+            {
+                Weapon.Active = false;
+            }
+
+            if (Utility != null)
+            {
+                Utility.Active = false;
+            }
+
+            if (PrimaryA != null)
+            {
+                PrimaryA.Active = false;
+            }
+
+            if (PrimaryB != null)
+            {
+                PrimaryB.Active = false;
+            }
         }
 
         private void UpdateAngle()
@@ -240,7 +247,7 @@ namespace Sand
             newPosition.X += Velocity.X * timestep;
             newPosition.Y += Velocity.Y * timestep;
 
-            if(!Stunned)
+            if(!Stunned || StunType != StunType.MotionStun)
             {
                 if(!_sandGame.GameMap.CollisionTest(Texture,
                                                     new Rectangle((int)(newPosition.X - (Width / 2.0)),
@@ -300,6 +307,7 @@ namespace Sand
                     else
                     {
                         Stunned = true;
+                        StunType = StunType.ToolStun;
                     }
 
                     if(Stunned)

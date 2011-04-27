@@ -125,6 +125,8 @@ namespace Sand.Tools.Utilities
             else
             {
                 Player.Stunned = true;
+                Player.StunType = StunType.ToolStun;
+
                 return strength;
             }
         }
