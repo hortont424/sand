@@ -188,9 +188,20 @@ namespace Sand
             }
             else
             {
-                Mobility.Active = false;
-                Weapon.Active = false;
-                Utility.Active = false;
+                if(Mobility != null)
+                {
+                    Mobility.Active = false;
+                }
+                
+                if(Weapon != null)
+                {
+                    Weapon.Active = false;
+                }
+
+                if(Utility != null)
+                {
+                    Utility.Active = false;
+                }
 
                 if(PrimaryA != null)
                 {

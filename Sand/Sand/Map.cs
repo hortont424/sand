@@ -7,7 +7,7 @@ namespace Sand
 {
     public class MapManager
     {
-        public Dictionary<string,Map> Maps;
+        public Dictionary<string, Map> Maps;
 
         public Game Game;
 
@@ -49,17 +49,17 @@ namespace Sand
             _mapTexture = new Color[(int)(Width * Height)];
             _map.GetData(_mapTexture);
 
-            for (int x = 0; x < Width; x++)
+            for(int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < Height; y++)
+                for(int y = 0; y < Height; y++)
                 {
                     var color = _mapTexture[(int)(x + (y * Width))];
 
-                    if (color == Color.Red)
+                    if(color == Color.Red)
                     {
                         RedSpawn = new Vector2(x, y);
                     }
-                    else if (color == Color.Lime)
+                    else if(color == Color.Lime)
                     {
                         BlueSpawn = new Vector2(x, y);
                     }
@@ -71,6 +71,11 @@ namespace Sand
         {
             // If we change drawing location, we need to change ray intersection offset
             _spriteBatch.Draw(MapImage, new Vector2(0.0f, 0.0f), Color.White);
+        }
+
+        private bool IsCollisionColor(Color color)
+        {
+            return color != Color.Black && color != Color.Red && color != Color.Lime;
         }
 
         public bool CollisionTest(Vector2 position, int size)
@@ -87,8 +92,8 @@ namespace Sand
             {
                 for(int x = left; x < right; x++)
                 {
-                    if(_mapTexture[(x - rectangleB.Left) +
-                                   (y - rectangleB.Top) * rectangleB.Width] == Color.White)
+                    if(IsCollisionColor(_mapTexture[(x - rectangleB.Left) +
+                                                    (y - rectangleB.Top) * rectangleB.Width]))
                     {
                         return true;
                     }
@@ -119,7 +124,7 @@ namespace Sand
                                                (y - rectangleB.Top) * rectangleB.Width];
 
                     // If both pixels are not completely transparent,
-                    if(colorA.A != 0 && colorB == Color.White)
+                    if(colorA.A != 0 && IsCollisionColor(colorB))
                     {
                         // then an intersection has been found
                         return true;
@@ -138,12 +143,12 @@ namespace Sand
 
             while(point.X < MapImage.Width && point.Y < MapImage.Height && point.X >= 0 && point.Y >= 0)
             {
+                Color color = _mapTexture[(int)((int)Math.Floor(point.X) + (Math.Floor(point.Y) * MapImage.Width))];
+
                 point.X += ray.Direction.X;
                 point.Y += ray.Direction.Y;
 
-                Color color = _mapTexture[(int)((int)Math.Floor(point.X) + (Math.Floor(point.Y) * MapImage.Width))];
-
-                if(color == Color.White)
+                if(IsCollisionColor(color))
                 {
                     return (point - ray.Position).Length();
                 }

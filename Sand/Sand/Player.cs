@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Net;
-using Sand.GameState;
 using Sand.Tools;
 
 namespace Sand
@@ -130,27 +129,27 @@ namespace Sand
                                               Math.Max(value - Invisible, this is LocalPlayer ? 0.2 : 0.0));
             }
 
-            // TODO: hack
             if(Invisible == 1.0f && this is RemotePlayer)
             {
                 return;
             }
 
-            if(this is LocalPlayer)
+            var wallIntersection = (int)(Game as Sand).GameMap.Intersects(ForwardRay());
+            var lineWidth = Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1 ? 1 : 2;
+            var lineColor = teamColor;
+
+            if(this is RemotePlayer)
             {
-                if(Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
-                {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 1, 3000),
-                                      null,
-                                      teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
-                }
-                else
-                {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 2, 3000),
-                                      null,
-                                      teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
-                }
+                double hue, saturation, value;
+                SandColor.ToHSV(lineColor, out hue, out saturation, out value);
+
+                lineColor = SandColor.FromHSV(hue, saturation, 0.2);
             }
+
+            _spriteBatch.Draw(Storage.Sprite("pixel"),
+                              new Rectangle((int)virtualX, (int)virtualY, lineWidth, wallIntersection),
+                              null,
+                              lineColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
 
             _spriteBatch.Draw(_sprite, new Rectangle((int)virtualX, (int)virtualY, (int)Width, (int)Height),
                               null,
