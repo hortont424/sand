@@ -201,7 +201,7 @@ namespace Sand
 
                 if(particle.OnFire)
                 {
-                    particle.Fire = (byte)Math.Max(particle.Fire - 10, 0);
+                    particle.Fire = (byte)Math.Max(particle.Fire - 5, 0);
                     burningVolume +=
                         1.0f / Math.Sqrt(Math.Pow(particle.Position.X - Player.X, 2) +
                                          Math.Pow(particle.Position.Y - Player.Y, 2));
