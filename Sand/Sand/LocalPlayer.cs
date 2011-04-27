@@ -12,6 +12,7 @@ namespace Sand
     {
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
+        private GamePhases _oldPhase;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
@@ -21,6 +22,12 @@ namespace Sand
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            if(_oldPhase != Phase)
+            {
+                ResetPlayerState();
+                _oldPhase = Phase;
+            }
 
             UpdateStun(gameTime);
             UpdateInput(gameTime);
@@ -118,30 +125,7 @@ namespace Sand
             {
                 if(newKeyState.IsKeyDown(Keys.R))
                 {
-                    if(Mobility != null)
-                    {
-                        Mobility.Reset();
-                    }
-
-                    if(Weapon != null)
-                    {
-                        Weapon.Reset();
-                    }
-
-                    if(Utility != null)
-                    {
-                        Utility.Reset();
-                    }
-
-                    if(PrimaryA != null)
-                    {
-                        PrimaryA.Reset();
-                    }
-
-                    if(PrimaryB != null)
-                    {
-                        PrimaryB.Reset();
-                    }
+                    ResetPlayerState();
                 }
 
                 if(newKeyState.IsKeyDown(Keys.P))
@@ -215,6 +199,39 @@ namespace Sand
 
             _oldKeyState = newKeyState;
             _oldMouseState = newMouseState;
+        }
+
+        private void ResetPlayerState()
+        {
+            if (Mobility != null)
+            {
+                Mobility.Reset();
+            }
+
+            if (Weapon != null)
+            {
+                Weapon.Reset();
+            }
+
+            if (Utility != null)
+            {
+                Utility.Reset();
+            }
+
+            if (PrimaryA != null)
+            {
+                PrimaryA.Reset();
+            }
+
+            if (PrimaryB != null)
+            {
+                PrimaryB.Reset();
+            }
+
+            Stunned = false;
+            Protected = false;
+            Invisible = 0;
+            MovementAcceleration = DefaultAcceleration;
         }
 
         private void DisableAllTools()
