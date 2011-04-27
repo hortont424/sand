@@ -40,8 +40,8 @@ namespace Sand
         {
             var pair = _toolPairs[_class];
 
-            DrawString(pair.Item1, "Calibri24Bold", 2.5f);
-            DrawString(pair.Item2, "Calibri24", 3.5f);
+            DrawString(pair.Item1, "Calibri32Bold", 2.7f);
+            DrawString(pair.Item2, "Calibri24Bold", 3.7f);
         }
 
         public void DrawString(string name, string font, float location)
