@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Net;
@@ -209,27 +210,30 @@ namespace Sand
                 drawBoundaryTools = new[] { Mobility, Utility, Weapon };
             }
 
-            var toolAngle = Angle - ((float)Math.PI / 2.0f);
-
-            foreach(var tool in drawBoundaryTools)
+            if(this is LocalPlayer)
             {
-                if(!tool.HasMaxDistance)
+                var toolAngle = Angle - ((float)Math.PI / 2.0f);
+
+                foreach(var tool in drawBoundaryTools.Where(tool => tool != null))
                 {
-                    continue;
+                    if(!tool.HasMaxDistance)
+                    {
+                        continue;
+                    }
+
+                    var actualDistance = wallIntersection < tool.MaxDistance ? wallIntersection : tool.MaxDistance;
+
+                    var sprite = Storage.Sprite("ToolDot");
+
+                    var toolCirclePosition = new Vector2(virtualX, virtualY) +
+                                             (new Vector2((float)Math.Cos(toolAngle), (float)Math.Sin(toolAngle)) *
+                                              new Vector2(actualDistance));
+
+                    _spriteBatch.Draw(sprite, toolCirclePosition, null,
+                                      tool.MaxDistanceColor, 0.0f,
+                                      new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.0f,
+                                      SpriteEffects.None, 0.0f);
                 }
-
-                var actualDistance = wallIntersection < tool.MaxDistance ? wallIntersection : tool.MaxDistance;
-
-                var sprite = Storage.Sprite("ToolDot");
-
-                var toolCirclePosition = new Vector2(virtualX, virtualY) +
-                                    (new Vector2((float)Math.Cos(toolAngle), (float)Math.Sin(toolAngle)) *
-                                     new Vector2(actualDistance));
-
-                _spriteBatch.Draw(sprite, toolCirclePosition, null,
-                                  tool.MaxDistanceColor, 0.0f,
-                                  new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.0f,
-                                  SpriteEffects.None, 0.0f);
             }
         }
 
