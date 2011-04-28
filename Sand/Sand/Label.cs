@@ -52,7 +52,7 @@ namespace Sand
             var textOrigin = new Vector2(Width, Height) * Gravity.Offset(PositionGravity);
 
             _spriteBatch.DrawString(Storage.Font(_fontName), Text,
-                                    new Vector2(Bounds.X, Bounds.Y),
+                                    Position,
                                     Color, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
         }
     }

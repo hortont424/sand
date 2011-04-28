@@ -134,6 +134,7 @@ namespace Sand
             Storage.AddFont("Calibri32Bold", Content.Load<SpriteFont>("Fonts/Calibri32Bold"));
             Storage.AddFont("Calibri48Bold", Content.Load<SpriteFont>("Fonts/Calibri48Bold"));
             Storage.AddFont("Calibri120Bold", Content.Load<SpriteFont>("Fonts/Calibri120Bold"));
+            Storage.AddFont("Calibri400Bold", Content.Load<SpriteFont>("Fonts/Calibri400Bold"));
             Storage.AddFont("Gotham24", Content.Load<SpriteFont>("Fonts/Gotham24"));
 
             Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));

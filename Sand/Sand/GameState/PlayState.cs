@@ -17,6 +17,7 @@ namespace Sand.GameState
         private Label _phase2Timer;
         private Team _teamWonPhase1;
         private ToolIcon _weaponIcon;
+        private Countdown _countdownTimer;
 
         public PlayState(Sand game) : base(game)
         {
@@ -121,6 +122,20 @@ namespace Sand.GameState
                             };
                 Game.Components.Add(_fpsMeter);
             }
+
+            Storage.ReadyToPlay = false;
+
+            _countdownTimer = new Countdown(Game)
+                              {
+                                  X = Game.BaseScreenSize.X / 2,
+                                  Y = Game.GameMap.Width / 2
+                              };
+            Game.Components.Add(_countdownTimer);
+            _countdownTimer.Start(3, 1000, () =>
+                                           {
+                                               Storage.ReadyToPlay = true;
+                                               Game.Components.Remove(_countdownTimer);
+                                           });
         }
 
         public override void Update()

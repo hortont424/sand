@@ -39,14 +39,7 @@ namespace Sand
 
         public Particle(string id = null, byte owner = (byte)0)
         {
-            if(id != null)
-            {
-                Id = id;
-            }
-            else
-            {
-                Id = Guid.NewGuid().ToString("N");
-            }
+            Id = id ?? Guid.NewGuid().ToString("N");
 
             Size = Storage.Random.Next(2, 5);
 

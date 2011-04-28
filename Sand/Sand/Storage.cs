@@ -36,6 +36,7 @@ namespace Sand
         public static Sand Game;
 
         public static bool DebugMode;
+        public static bool ReadyToPlay;
 
         public static void AddSprite(string name, Texture2D texture)
         {
