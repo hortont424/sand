@@ -143,18 +143,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\Maps\02-image.png">
-      <Name>02-image</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Maps\02.png">
-      <Name>02</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Classes\DefenseLarge.png">
       <Name>DefenseLarge</Name>
       <Importer>TextureImporter</Importer>
