@@ -53,8 +53,7 @@ namespace Sand.Tools.Weapons
         {
             DrawEMPRing = 255;
 
-            Sounds.Add(Storage.Sound("EMP").CreateInstance()).Play();
-            Messages.SendPlaySoundMessage(Player, "EMP", Player.Gamer.Id, true);
+            Sound.OneShot("EMP");
 
             var shockPlayers = new List<Player>();
             const int empDistance = 150 * 150;

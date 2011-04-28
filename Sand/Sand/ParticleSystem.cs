@@ -14,6 +14,7 @@ namespace Sand
         public Int64 Lifetime, LifeRemaining;
         public Team Team;
         public bool Alive;
+        public int Size;
 
         private byte _fire;
 
@@ -46,6 +47,8 @@ namespace Sand
             {
                 Id = Guid.NewGuid().ToString("N");
             }
+
+            Size = Storage.Random.Next(2, 5);
 
             Alive = true;
             Owner = owner;
@@ -283,7 +286,7 @@ namespace Sand
                 }
 
                 Color color;
-                var size = IsSand ? (particle.OnFire ? ((255 - particle.Fire) / 30) + 4 : 4) : 2;
+                var size = IsSand ? (particle.OnFire ? ((255 - particle.Fire) / 30) + particle.Size : particle.Size) : 2;
                 var offset = size / 2;
 
                 if(IsSand)

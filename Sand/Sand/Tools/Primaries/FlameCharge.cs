@@ -55,7 +55,7 @@ namespace Sand.Tools.Primaries
 
             var particleQueue = new HashSet<Particle>();
 
-            Sounds.Add(Storage.Sound("FlameCharge").CreateInstance()).Play();
+            Sound.OneShot("FlameCharge");
 
             const int flameChargeRadius = 75 * 75;
 

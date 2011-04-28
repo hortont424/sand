@@ -11,7 +11,6 @@ namespace Sand.GameState
         private Billboard _sandLogo;
         private PlayerClassButton _redSupportButton, _redDefenseButton, _redOffenseButton;
         private PlayerClassButton _blueSupportButton, _blueDefenseButton, _blueOffenseButton;
-        private LobbyList _lobbyList;
         private ClassDescription[] _classDescriptions;
 
         public LobbyState(Sand game) : base(game)
@@ -80,9 +79,7 @@ namespace Sand.GameState
                                                {
                                                    player.Team = Team.Red;
                                                    player.Class = Class.Defense;
-                                                   Sounds.Add(
-                                                       Storage.Sound(AddRandomSuffix("DefenseClass")).CreateInstance()).
-                                                       Play();
+                                                   Sound.OneShot(AddRandomSuffix("DefenseClass"), false);
                                                }, null);
             Game.Components.Add(_redDefenseButton);
             _redOffenseButton = new PlayerClassButton(Game,
@@ -93,9 +90,7 @@ namespace Sand.GameState
                                                {
                                                    player.Team = Team.Red;
                                                    player.Class = Class.Offense;
-                                                   Sounds.Add(
-                                                       Storage.Sound(AddRandomSuffix("OffenseClass")).CreateInstance()).
-                                                       Play();
+                                                   Sound.OneShot(AddRandomSuffix("OffenseClass"), false);
                                                }, null);
             Game.Components.Add(_redOffenseButton);
             _redSupportButton = new PlayerClassButton(Game,
@@ -106,9 +101,7 @@ namespace Sand.GameState
                                                {
                                                    player.Team = Team.Red;
                                                    player.Class = Class.Support;
-                                                   Sounds.Add(
-                                                       Storage.Sound(AddRandomSuffix("SupportClass")).CreateInstance()).
-                                                       Play();
+                                                   Sound.OneShot(AddRandomSuffix("SupportClass"), false);
                                                }, null);
             Game.Components.Add(_redSupportButton);
 
@@ -118,10 +111,7 @@ namespace Sand.GameState
                                                 {
                                                     player.Team = Team.Blue;
                                                     player.Class = Class.Defense;
-                                                    Sounds.Add(
-                                                        Storage.Sound(AddRandomSuffix("DefenseClass")).CreateInstance())
-                                                        .Play
-                                                        ();
+                                                    Sound.OneShot(AddRandomSuffix("DefenseClass"), false);
                                                 }, null);
             Game.Components.Add(_blueDefenseButton);
             _blueOffenseButton = new PlayerClassButton(Game,
@@ -132,10 +122,7 @@ namespace Sand.GameState
                                                 {
                                                     player.Team = Team.Blue;
                                                     player.Class = Class.Offense;
-                                                    Sounds.Add(
-                                                        Storage.Sound(AddRandomSuffix("OffenseClass")).CreateInstance())
-                                                        .Play
-                                                        ();
+                                                    Sound.OneShot(AddRandomSuffix("OffenseClass"), false);
                                                 }, null);
             Game.Components.Add(_blueOffenseButton);
             _blueSupportButton = new PlayerClassButton(Game,
@@ -146,20 +133,9 @@ namespace Sand.GameState
                                                 {
                                                     player.Team = Team.Blue;
                                                     player.Class = Class.Support;
-                                                    Sounds.Add(
-                                                        Storage.Sound(AddRandomSuffix("SupportClass")).CreateInstance())
-                                                        .Play
-                                                        ();
+                                                    Sound.OneShot(AddRandomSuffix("SupportClass"), false);
                                                 }, null);
             Game.Components.Add(_blueSupportButton);
-
-            /*_lobbyList = new LobbyList(Game)
-                         {
-                             X =
-                                 (_blueSupportButton.Button.X + _redSupportButton.Button.X +
-                                  _redSupportButton.Button.Width) / 2,
-                             Y = _redDefenseButton.Button.Y
-                         };*/
 
             _classDescriptions = new ClassDescription[3];
 
@@ -185,7 +161,6 @@ namespace Sand.GameState
 
             Game.Components.Add(_sandLogo);
             Game.Components.Add(_readyButton);
-            //Game.Components.Add(_lobbyList);
             Game.Components.Add(_classDescriptions[0]);
             Game.Components.Add(_classDescriptions[1]);
             Game.Components.Add(_classDescriptions[2]);
@@ -200,7 +175,6 @@ namespace Sand.GameState
         {
             Game.Components.Remove(_sandLogo);
             Game.Components.Remove(_readyButton);
-            //Game.Components.Remove(_lobbyList);
             Game.Components.Remove(_classDescriptions[0]);
             Game.Components.Remove(_classDescriptions[1]);
             Game.Components.Remove(_classDescriptions[2]);

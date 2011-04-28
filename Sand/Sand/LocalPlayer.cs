@@ -26,6 +26,7 @@ namespace Sand
             if(_oldPhase != Phase)
             {
                 ResetPlayerState();
+                DisableAllTools();
                 _oldPhase = Phase;
             }
 
@@ -362,8 +363,7 @@ namespace Sand
             {
                 if(Stunned)
                 {
-                    Sounds.Add(Storage.Sound("Shock").CreateInstance()).Play();
-                    Messages.SendPlaySoundMessage(this, "Shock", Gamer.Id, true);
+                    Sound.OneShot("Shock");
                 }
 
                 StunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));

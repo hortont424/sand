@@ -50,7 +50,7 @@ namespace Sand.Tools.Primaries
         {
             base.Activate();
 
-            Sounds.Add(Storage.Sound("SandCharge").CreateInstance()).Play();
+            Sound.OneShot("SandCharge");
 
             Storage.SandParticles.Emit(50, (p) =>
                                             {
@@ -66,11 +66,6 @@ namespace Sand.Tools.Primaries
                                                                  (float)Math.Cos(angle) * length,
                                                                  (float)Math.Sin(angle) * length);
                                             });
-        }
-
-        protected override void Deactivate()
-        {
-            base.Deactivate();
         }
     }
 }

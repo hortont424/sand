@@ -55,8 +55,7 @@ namespace Sand.Tools.Weapons
 
         protected override void Activate()
         {
-            Sounds.Add(Storage.Sound("Cannon").CreateInstance()).Play();
-            Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
+            Sound.OneShot("Cannon");
 
             var cannonRay = Player.ForwardRay();
             Player closestIntersectionPlayer = null;

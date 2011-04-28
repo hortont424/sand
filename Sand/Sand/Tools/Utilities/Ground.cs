@@ -84,15 +84,13 @@ namespace Sand.Tools.Utilities
                     Messages.SendStunMessage(Player, groundPlayer, -1, Player.Gamer.Id, true);
                 }
 
-                Sounds.Add(Storage.Sound("Ground").CreateInstance()).Play();
-                Messages.SendPlaySoundMessage(Player, "Ground", Player.Gamer.Id, true);
+                Sound.OneShot("Ground");
             }
             else
             {
                 Energy += EnergyConsumptionRate;
 
-                Sounds.Add(Storage.Sound("Fail").CreateInstance()).Play();
-                Messages.SendPlaySoundMessage(Player, "Fail", Player.Gamer.Id, true);
+                Sound.OneShot("Ground", false);
             }
 
             base.Activate();
