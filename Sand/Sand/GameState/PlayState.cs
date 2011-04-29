@@ -123,19 +123,24 @@ namespace Sand.GameState
                 Game.Components.Add(_fpsMeter);
             }
 
+            StartTimer();
+        }
+
+        private void StartTimer()
+        {
             Storage.ReadyToPlay = false;
 
             _countdownTimer = new Countdown(Game)
-                              {
-                                  X = Game.BaseScreenSize.X / 2,
-                                  Y = Game.GameMap.Width / 2
-                              };
+            {
+                X = Game.BaseScreenSize.X / 2,
+                Y = Game.GameMap.Width / 2
+            };
             Game.Components.Add(_countdownTimer);
             _countdownTimer.Start(3, 1000, () =>
-                                           {
-                                               Storage.ReadyToPlay = true;
-                                               Game.Components.Remove(_countdownTimer);
-                                           });
+            {
+                Storage.ReadyToPlay = true;
+                Game.Components.Remove(_countdownTimer);
+            });
         }
 
         public override void Update()
@@ -235,6 +240,8 @@ namespace Sand.GameState
                     Game.Components.Remove(_winDialog);
                     _winDialog = null;
                 }
+
+                StartTimer();
 
                 foreach(var particle in Storage.SandParticles.Particles)
                 {
@@ -413,16 +420,7 @@ namespace Sand.GameState
                 Messages.SendUpdateScoreMessage(localPlayer, localPlayer.Gamer.Id, true);
             }
 
-            localPlayer.Phase = GamePhases.WonPhase2;
-
-            _winDialog = new WinDialog(Game, Teams.NameForTeam(team) + " Wins Round Two!",
-                                       (s, ud) =>
-                                       {
-                                           _winDialog.Text = "Waiting for Players";
-                                           localPlayer.Phase = GamePhases.Done;
-                                       }, null);
-
-            Game.Components.Add(_winDialog);
+            localPlayer.Phase = GamePhases.Done;
         }
 
         public override Dictionary<string, object> Leave()
