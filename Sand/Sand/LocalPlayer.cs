@@ -61,7 +61,16 @@ namespace Sand
 
             Acceleration.X = Acceleration.Y = 0.0f;
 
-            if(!Storage.AcceptInput || !Storage.ReadyToPlay || Phase == GamePhases.WonPhase1 || Phase == GamePhases.WonPhase2)
+            if(CurrentPrimary == null)
+            {
+                CurrentPrimary = PrimaryA;
+                AlternatePrimary = PrimaryB;
+            }
+
+            AlternatePrimary.Active = false;
+
+            if(!Storage.AcceptInput || !Storage.ReadyToPlay || Phase == GamePhases.WonPhase1 ||
+               Phase == GamePhases.WonPhase2)
             {
                 _oldKeyState = newKeyState;
                 _oldMouseState = newMouseState;
@@ -78,19 +87,18 @@ namespace Sand
                                                                                         : Team.Blue);
             if(!(ourSandQuantity != 0 && theirSandQuantity != 0))
             {
-                if (ourSandQuantity != 0)
+                if(ourSandQuantity != 0)
                 {
                     modifiedAcceleration.X *= 1.4f;
                     modifiedAcceleration.Y *= 1.4f;
                 }
 
-                if (theirSandQuantity != 0)
+                if(theirSandQuantity != 0)
                 {
                     modifiedAcceleration.X *= 0.5f;
                     modifiedAcceleration.Y *= 0.5f;
                 }
             }
-            
 
             if(newKeyState.IsKeyDown(Keys.A))
             {
@@ -114,12 +122,6 @@ namespace Sand
             {
                 CurrentPrimary = CurrentPrimary == PrimaryA ? PrimaryB : PrimaryA;
                 AlternatePrimary = CurrentPrimary == PrimaryB ? PrimaryA : PrimaryB;
-            }
-
-            if(CurrentPrimary == null)
-            {
-                CurrentPrimary = PrimaryA;
-                AlternatePrimary = PrimaryB;
             }
 
             if(Storage.DebugMode)
@@ -153,8 +155,6 @@ namespace Sand
                     Stun(25.0f);
                 }
             }
-
-            AlternatePrimary.Active = false;
 
             if((!Stunned || StunType != StunType.ToolStun) && (Phase == GamePhases.Phase1 || Phase == GamePhases.Phase2))
             {
@@ -204,27 +204,27 @@ namespace Sand
 
         private void ResetPlayerState()
         {
-            if (Mobility != null)
+            if(Mobility != null)
             {
                 Mobility.Reset();
             }
 
-            if (Weapon != null)
+            if(Weapon != null)
             {
                 Weapon.Reset();
             }
 
-            if (Utility != null)
+            if(Utility != null)
             {
                 Utility.Reset();
             }
 
-            if (PrimaryA != null)
+            if(PrimaryA != null)
             {
                 PrimaryA.Reset();
             }
 
-            if (PrimaryB != null)
+            if(PrimaryB != null)
             {
                 PrimaryB.Reset();
             }

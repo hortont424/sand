@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand
 {
@@ -15,6 +16,7 @@ namespace Sand
         public Team Team;
         public bool Alive;
         public int Size;
+        public float Angle;
 
         private byte _fire;
 
@@ -42,6 +44,7 @@ namespace Sand
             Id = id ?? Guid.NewGuid().ToString("N");
 
             Size = Storage.Random.Next(2, 5);
+            Angle = (float)(Storage.Random.NextDouble() * 2.0 * Math.PI);
 
             Alive = true;
             Owner = owner;
@@ -301,7 +304,7 @@ namespace Sand
                 var gray = IsSand ? 1.0f : particle.LifeRemaining / (float)particle.Lifetime;
                 _spriteBatch.Draw(Storage.Sprite("pixel"),
                                   new Rectangle((int)(particle.Position.X - offset), (int)(particle.Position.Y - offset),
-                                                size, size), color * gray);
+                                                size, size), null, color * gray, particle.Angle, new Vector2(0.5f, 0.5f), SpriteEffects.None, 0.5f);
             }
         }
 
