@@ -282,7 +282,7 @@ namespace Sand
                 }
 
                 Color color;
-                var size = IsSand ? (particle.OnFire ? ((255 - particle.Fire) / 30) + particle.Size : particle.Size) : 2;
+                var size = (int)(IsSand ? (particle.OnFire ? Storage.Random.Next(1, 7) : particle.Size) : 2);
                 var offset = size / 2;
 
                 if(IsSand)
