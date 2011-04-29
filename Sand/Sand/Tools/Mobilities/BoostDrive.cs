@@ -31,7 +31,7 @@ namespace Sand.Tools.Mobilities
 
             _boostDriveTimer = new Animation { CompletedDelegate = GenerateBoostDriveParticles };
             _boostDriveTimerGroup = new AnimationGroup(_boostDriveTimer, 10) { Loops = true };
-            Storage.AnimationController.AddGroup(_boostDriveTimerGroup);
+            //Storage.AnimationController.AddGroup(_boostDriveTimerGroup);
 
             _particles = new ParticleSystem(Player.Game, Player);
             Player.Game.Components.Add(_particles);

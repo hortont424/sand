@@ -43,6 +43,11 @@ namespace Sand
 
         public void Start(int num, int ms, CountdownComplete completeDelegate)
         {
+            if(Storage.DebugMode)
+            {
+                ms = ms / 10;
+            }
+
             _maxValue = CurrentValue = num;
             _frameTime = ms;
             _completeDelegate = completeDelegate;

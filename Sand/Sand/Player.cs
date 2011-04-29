@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Net;
 using Sand.Tools;
+using Sand.Tools.Mobilities;
 
 namespace Sand
 {
@@ -41,6 +43,9 @@ namespace Sand
         public Tool Utility;
 
         public Tool CurrentPrimary, LastTool, AlternatePrimary;
+
+        protected Queue<Tuple<Vector2, float>> _previousPositions;
+        protected const int MaxPreviousPositions = 50;
 
         public GamePhases Phase { get; set; }
 
@@ -94,6 +99,39 @@ namespace Sand
 
             Texture = new Color[(int)(Width * Height)];
             Class = Class.None;
+
+            _previousPositions = new Queue<Tuple<Vector2, float>>(MaxPreviousPositions);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            // This is the best code ever, thanks Nate!
+
+            if (Mobility is BoostDrive && Mobility.Active)
+            {
+                if (_previousPositions.Count > 0)
+                {
+                    _previousPositions.Enqueue(new Tuple<Vector2, float>((_previousPositions.Last().Item1 + Position) / 2.0f, Angle));
+                }
+
+                _previousPositions.Enqueue(new Tuple<Vector2, float>(Position, Angle));
+            }
+            else if (_previousPositions.Count > 0)
+            {
+                _previousPositions.Dequeue();
+
+                if (_previousPositions.Count > 0)
+                {
+                    _previousPositions.Dequeue();
+                }
+            }
+
+            while (_previousPositions.Count >= MaxPreviousPositions)
+            {
+                _previousPositions.Dequeue();
+            }
         }
 
         public override void Draw(GameTime gameTime)
@@ -160,6 +198,17 @@ namespace Sand
                               new Rectangle((int)virtualX, (int)virtualY, lineWidth, wallIntersection),
                               null,
                               lineColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+
+            var i = 0;
+            foreach(var position in _previousPositions)
+            {
+                var scale = ((float)i) / MaxPreviousPositions;
+
+                _spriteBatch.Draw(_sprite, new Vector2((int)position.Item1.X, (int)position.Item1.Y),
+                              null,
+                              teamColor * ((float)i / MaxPreviousPositions) * 0.3f, position.Item2, new Vector2(Width / 2.0f, Height / 2.0f), scale, SpriteEffects.None, 0.0f);
+                i++;
+            }
 
             _spriteBatch.Draw(_sprite, new Rectangle((int)virtualX, (int)virtualY, (int)Width, (int)Height),
                               null,
