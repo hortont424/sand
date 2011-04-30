@@ -234,11 +234,6 @@ namespace Sand
             {
                 PrimaryB.Reset();
             }
-
-            Stunned = false;
-            Protected = false;
-            Invisible = 0;
-            MovementAcceleration = DefaultAcceleration;
         }
 
         private void DisableAllTools()

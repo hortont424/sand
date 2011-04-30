@@ -136,7 +136,7 @@ namespace Sand.GameState
                 Y = Game.GameMap.Width / 2
             };
             Game.Components.Add(_countdownTimer);
-            _countdownTimer.Start(3, 1000, () =>
+            _countdownTimer.Start(5, 1000, () =>
             {
                 Storage.ReadyToPlay = true;
                 Game.Components.Remove(_countdownTimer);
