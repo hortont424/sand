@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Sand.Tools;
-using Sand.Tools.Mobilities;
 using Sand.Tools.Utilities;
 
 namespace Sand
@@ -101,20 +100,20 @@ namespace Sand
                 }
             }
 
-            if(newKeyState.IsKeyDown(Keys.A))
+            if(newKeyState.IsKeyDown(Keys.A) || newKeyState.IsKeyDown(Keys.Left))
             {
                 Acceleration.X = -modifiedAcceleration.X;
             }
-            else if(newKeyState.IsKeyDown(Keys.D))
+            else if (newKeyState.IsKeyDown(Keys.D) || newKeyState.IsKeyDown(Keys.Right))
             {
                 Acceleration.X = modifiedAcceleration.X;
             }
 
-            if(newKeyState.IsKeyDown(Keys.W))
+            if (newKeyState.IsKeyDown(Keys.W) || newKeyState.IsKeyDown(Keys.Up))
             {
                 Acceleration.Y = -modifiedAcceleration.Y;
             }
-            else if(newKeyState.IsKeyDown(Keys.S))
+            else if (newKeyState.IsKeyDown(Keys.S) || newKeyState.IsKeyDown(Keys.Down))
             {
                 Acceleration.Y = modifiedAcceleration.Y;
             }
@@ -332,14 +331,11 @@ namespace Sand
 
             if(energy > 0.0f)
             {
-                if(!Protected)
+                if(!Protected && !(Utility is Shield && Utility.Active))
                 {
-                    if(!(Utility is Shield && Utility.Active))
-                    {
-                        Stunned = true;
-                        Protected = true;
-                        StunType = StunType.ToolStun;
-                    }
+                    Stunned = true;
+                    Protected = true;
+                    StunType = StunType.ToolStun;
                 }
             }
             else
