@@ -328,30 +328,17 @@ namespace Sand
 
         public override void Stun(float energy)
         {
-            var shield = Utility as Shield;
             var wasStunned = Stunned;
 
             if(energy > 0.0f)
             {
-                if(Protected)
+                if(!Protected)
                 {
-                    // no stun if we're currently protected!
-                }
-                else
-                {
-                    if(shield != null)
-                    {
-                        energy = shield.DeflectShock(energy);
-                    }
-                    else
+                    if(!(Utility is Shield && Utility.Active))
                     {
                         Stunned = true;
-                        StunType = StunType.ToolStun;
-                    }
-
-                    if(Stunned)
-                    {
                         Protected = true;
+                        StunType = StunType.ToolStun;
                     }
                 }
             }
