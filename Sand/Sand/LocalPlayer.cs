@@ -13,6 +13,7 @@ namespace Sand
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
         private GamePhases _oldPhase;
+        public TimeSpan LastShockTime;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
@@ -44,11 +45,6 @@ namespace Sand
             if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
             {
                 Stunned = false;
-            }
-
-            if(Protected && gameTime.TotalGameTime.Ticks > _unprotectTime.Ticks)
-            {
-                Protected = false;
             }
         }
 
@@ -104,16 +100,16 @@ namespace Sand
             {
                 Acceleration.X = -modifiedAcceleration.X;
             }
-            else if (newKeyState.IsKeyDown(Keys.D) || newKeyState.IsKeyDown(Keys.Right))
+            else if(newKeyState.IsKeyDown(Keys.D) || newKeyState.IsKeyDown(Keys.Right))
             {
                 Acceleration.X = modifiedAcceleration.X;
             }
 
-            if (newKeyState.IsKeyDown(Keys.W) || newKeyState.IsKeyDown(Keys.Up))
+            if(newKeyState.IsKeyDown(Keys.W) || newKeyState.IsKeyDown(Keys.Up))
             {
                 Acceleration.Y = -modifiedAcceleration.Y;
             }
-            else if (newKeyState.IsKeyDown(Keys.S) || newKeyState.IsKeyDown(Keys.Down))
+            else if(newKeyState.IsKeyDown(Keys.S) || newKeyState.IsKeyDown(Keys.Down))
             {
                 Acceleration.Y = modifiedAcceleration.Y;
             }
@@ -328,13 +324,13 @@ namespace Sand
         public override void Stun(float energy)
         {
             var wasStunned = Stunned;
+            var doStun = false;
 
             if(energy > 0.0f)
             {
-                if(!Protected && !(Utility is Shield && Utility.Active))
+                if(!(Utility is Shield && Utility.Active))
                 {
-                    Stunned = true;
-                    Protected = true;
+                    doStun = true;
                     StunType = StunType.ToolStun;
                 }
             }
@@ -343,17 +339,19 @@ namespace Sand
                 Stunned = false;
             }
 
-            if(!wasStunned && Stunned)
+            if(doStun)
             {
-                if(Stunned)
+                Stunned = true;
+                Sound.OneShot("Shock");
+
+                if(!wasStunned)
                 {
-                    Sound.OneShot("Shock");
+                    StunTimeRemaining = new TimeSpan(0);
                 }
 
-                StunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));
-                ProtectTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5) + 2);
+                StunTimeRemaining += new TimeSpan(Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - LastShockTime.Ticks) / 2, new TimeSpan(0, 0, 5).Ticks));
                 _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
-                _unprotectTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(ProtectTimeRemaining);
+                LastShockTime = Storage.CurrentTime.TotalGameTime;
             }
         }
     }

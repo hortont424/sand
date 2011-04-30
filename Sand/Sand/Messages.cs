@@ -87,7 +87,6 @@ namespace Sand
             Storage.PacketWriter.Write(player.Y);
             Storage.PacketWriter.Write(player.Angle);
             Storage.PacketWriter.Write(player.Stunned);
-            Storage.PacketWriter.Write(player.Protected);
             Storage.PacketWriter.Write(player.Invisible);
             Storage.PacketWriter.Write(player.PureAcceleration);
             Storage.PacketWriter.Write((byte)player.Phase);
@@ -105,7 +104,6 @@ namespace Sand
             player.Y = Storage.PacketReader.ReadSingle();
             player.Angle = Storage.PacketReader.ReadSingle();
             player.Stunned = Storage.PacketReader.ReadBoolean();
-            player.Protected = Storage.PacketReader.ReadBoolean();
             player.Invisible = Storage.PacketReader.ReadSingle();
             player.PureAcceleration = Storage.PacketReader.ReadVector2();
             player.Phase = (GamePhases)Storage.PacketReader.ReadByte();
@@ -128,7 +126,6 @@ namespace Sand
             Storage.PacketReader.ReadSingle();
             Storage.PacketReader.ReadSingle();
             var stunned = Storage.PacketReader.ReadBoolean();
-            Storage.PacketReader.ReadBoolean();
             Storage.PacketReader.ReadSingle();
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadByte();

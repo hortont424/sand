@@ -88,7 +88,6 @@ namespace Sand
         public float Invisible { get; set; }
         public bool Stunned { get; set; }
         public StunType StunType { get; set; }
-        public bool Protected { get; set; }
 
         public Player(Game game, NetworkGamer gamer) : base(game)
         {
@@ -213,16 +212,6 @@ namespace Sand
             _spriteBatch.Draw(_sprite, new Rectangle((int)virtualX, (int)virtualY, (int)Width, (int)Height),
                               null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
-
-            if(Protected)
-            {
-                var sprite = Storage.Sprite("WhiteCircle");
-
-                _spriteBatch.Draw(sprite, new Vector2((int)virtualX, (int)virtualY), null,
-                                  Color.DarkSlateBlue, 0.0f,
-                                  new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.5f,
-                                  SpriteEffects.None, 0.0f);
-            }
 
             var localPlayer = this as LocalPlayer;
             if(localPlayer != null)
