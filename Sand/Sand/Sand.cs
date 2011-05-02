@@ -158,6 +158,10 @@ namespace Sand
             Storage.AddSprite("OffenseClassLarge", Content.Load<Texture2D>("Textures/Classes/OffenseLarge"));
             Storage.AddSprite("SupportClassLarge", Content.Load<Texture2D>("Textures/Classes/SupportLarge"));
 
+            Storage.AddSprite("DefenseClassFilled", Content.Load<Texture2D>("Textures/Classes/DefenseFilled"));
+            Storage.AddSprite("OffenseClassFilled", Content.Load<Texture2D>("Textures/Classes/OffenseFilled"));
+            Storage.AddSprite("SupportClassFilled", Content.Load<Texture2D>("Textures/Classes/SupportFilled"));
+
             Storage.AddSound("DefenseClass1", Content.Load<SoundEffect>("Sounds/Defense_1"));
             Storage.AddSound("OffenseClass1", Content.Load<SoundEffect>("Sounds/Offense_1"));
             Storage.AddSound("SupportClass1", Content.Load<SoundEffect>("Sounds/Support_1"));

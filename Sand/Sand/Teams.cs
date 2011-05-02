@@ -10,7 +10,7 @@ namespace Sand
         None,
         Red,
         Blue
-    } ;
+    }
 
     public enum Class
     {
@@ -18,7 +18,14 @@ namespace Sand
         Defense,
         Offense,
         Support
-    } ;
+    }
+
+    public enum ClassVariant
+    {
+        Normal,
+        Large,
+        Filled
+    }
 
     public class Teams
     {
@@ -54,16 +61,30 @@ namespace Sand
             return TeamNames[team];
         }
 
-        public static Texture2D SpriteForClass(Class cls, bool large)
+        public static Texture2D SpriteForClass(Class cls, ClassVariant variant)
         {
             string spriteName = ClassSpriteNames[cls];
 
-            return Storage.Sprite(large ? spriteName + "Large" : spriteName);
+            switch(variant)
+            {
+                case ClassVariant.Normal:
+                    break;
+                case ClassVariant.Large:
+                    spriteName += "Large";
+                    break;
+                case ClassVariant.Filled:
+                    spriteName += "Filled";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("variant");
+            }
+
+            return Storage.Sprite(spriteName);
         }
 
         public static Texture2D SpriteForClass(Class cls)
         {
-            return SpriteForClass(cls, false);
+            return SpriteForClass(cls, ClassVariant.Normal);
         }
     }
 }

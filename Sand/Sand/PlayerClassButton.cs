@@ -15,7 +15,7 @@ namespace Sand
             _class = cls;
             _team = team;
 
-            Button = new Button(game, origin, Teams.SpriteForClass(cls, true), Teams.ColorForTeam(team),
+            Button = new Button(game, origin, Teams.SpriteForClass(cls, ClassVariant.Large), Teams.ColorForTeam(team),
                                 Storage.Color("NeutralTeam"));
 
             if(team == Team.Red)

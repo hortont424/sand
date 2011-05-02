@@ -30,12 +30,14 @@ namespace Sand
         public Vector2 MovementAcceleration;
         public readonly Vector2 DefaultAcceleration = new Vector2(750.0f, 750.0f);
 
-        public TimeSpan StunTimeRemaining, ProtectTimeRemaining;
+        public TimeSpan StunTimeRemaining;
 
-        protected TimeSpan _unstunTime, _unprotectTime;
+        public TimeSpan LastShockTime;
+
+        protected TimeSpan _unstunTime;
         private Class _class;
         private Team _team;
-        private Texture2D _sprite;
+        private Texture2D _sprite, _spriteFilled;
 
         public Tool PrimaryA, PrimaryB;
         public Tool Mobility;
@@ -76,6 +78,7 @@ namespace Sand
             {
                 _class = value;
                 _sprite = Teams.SpriteForClass(_class);
+                _spriteFilled = Teams.SpriteForClass(_class, ClassVariant.Filled);
                 _sprite.GetData(Texture);
 
                 if(this is LocalPlayer)
@@ -108,26 +111,27 @@ namespace Sand
 
             // This is the best code ever, thanks Nate!
 
-            if (Mobility is BoostDrive && Mobility.Active)
+            if(Mobility is BoostDrive && Mobility.Active)
             {
-                if (_previousPositions.Count > 0)
+                if(_previousPositions.Count > 0)
                 {
-                    _previousPositions.Enqueue(new Tuple<Vector2, float>((_previousPositions.Last().Item1 + Position) / 2.0f, Angle));
+                    _previousPositions.Enqueue(
+                        new Tuple<Vector2, float>((_previousPositions.Last().Item1 + Position) / 2.0f, Angle));
                 }
 
                 _previousPositions.Enqueue(new Tuple<Vector2, float>(Position, Angle));
             }
-            else if (_previousPositions.Count > 0)
+            else if(_previousPositions.Count > 0)
             {
                 _previousPositions.Dequeue();
 
-                if (_previousPositions.Count > 0)
+                if(_previousPositions.Count > 0)
                 {
                     _previousPositions.Dequeue();
                 }
             }
 
-            while (_previousPositions.Count >= MaxPreviousPositions)
+            while(_previousPositions.Count >= MaxPreviousPositions)
             {
                 _previousPositions.Dequeue();
             }
@@ -204,14 +208,29 @@ namespace Sand
                 var scale = ((float)i) / MaxPreviousPositions;
 
                 _spriteBatch.Draw(_sprite, new Vector2((int)position.Item1.X, (int)position.Item1.Y),
-                              null,
-                              teamColor * ((float)i / MaxPreviousPositions) * 0.3f, position.Item2, new Vector2(Width / 2.0f, Height / 2.0f), scale, SpriteEffects.None, 0.0f);
+                                  null,
+                                  teamColor * ((float)i / MaxPreviousPositions) * 0.3f, position.Item2,
+                                  new Vector2(Width / 2.0f, Height / 2.0f), scale, SpriteEffects.None, 0.0f);
                 i++;
             }
 
             _spriteBatch.Draw(_sprite, new Rectangle((int)virtualX, (int)virtualY, (int)Width, (int)Height),
                               null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
+
+            var protectTicks = ((Storage.CurrentTime.TotalGameTime.Ticks - LastShockTime.Ticks) / 2);
+            var maxProtectTicks = new TimeSpan(0, 0, 0, 5).Ticks;
+
+            if(protectTicks < maxProtectTicks)
+            {
+                var grayLevel = (float)(maxProtectTicks - protectTicks) / maxProtectTicks;
+                grayLevel = 2.0f * grayLevel / 3.0f;
+
+                _spriteBatch.Draw(_spriteFilled, new Rectangle((int)virtualX, (int)virtualY, (int)Width, (int)Height),
+                                  null,
+                                  teamColor * grayLevel, Angle, new Vector2(Width / 2.0f, Height / 2.0f),
+                                  SpriteEffects.None, 0.0f);
+            }
 
             var localPlayer = this as LocalPlayer;
             if(localPlayer != null)
@@ -239,13 +258,14 @@ namespace Sand
 
             Tool[] drawBoundaryTools = { };
 
-            if(Phase == GamePhases.Phase1)
+            switch(Phase)
             {
-                drawBoundaryTools = new[] { Mobility, Utility, Weapon, CurrentPrimary };
-            }
-            else if(Phase == GamePhases.Phase2)
-            {
-                drawBoundaryTools = new[] { Mobility, Utility, Weapon };
+                case GamePhases.Phase1:
+                    drawBoundaryTools = new[] { Mobility, Utility, Weapon, CurrentPrimary };
+                    break;
+                case GamePhases.Phase2:
+                    drawBoundaryTools = new[] { Mobility, Utility, Weapon };
+                    break;
             }
 
             if(this is LocalPlayer)

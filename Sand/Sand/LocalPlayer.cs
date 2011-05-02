@@ -13,7 +13,6 @@ namespace Sand
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
         private GamePhases _oldPhase;
-        public TimeSpan LastShockTime;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
@@ -40,7 +39,6 @@ namespace Sand
         private void UpdateStun(GameTime gameTime)
         {
             StunTimeRemaining = new TimeSpan(_unstunTime.Ticks - gameTime.TotalGameTime.Ticks);
-            ProtectTimeRemaining = new TimeSpan(_unprotectTime.Ticks - gameTime.TotalGameTime.Ticks);
 
             if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
             {

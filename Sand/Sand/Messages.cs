@@ -94,6 +94,7 @@ namespace Sand
             Storage.PacketWriter.Write(player.PureAcceleration);
             Storage.PacketWriter.Write((byte)player.Phase);
             Storage.PacketWriter.Write(Storage.RemainingTime.Ticks);
+            Storage.PacketWriter.Write(player.LastShockTime.Ticks);
 
             if(player.Stunned)
             {
@@ -111,6 +112,7 @@ namespace Sand
             player.PureAcceleration = Storage.PacketReader.ReadVector2();
             player.Phase = (GamePhases)Storage.PacketReader.ReadByte();
             var remainingTime = Storage.PacketReader.ReadInt64();
+            player.LastShockTime = new TimeSpan(Storage.PacketReader.ReadInt64());
 
             if(player.Gamer.IsHost)
             {
@@ -132,6 +134,7 @@ namespace Sand
             Storage.PacketReader.ReadSingle();
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadInt64();
             Storage.PacketReader.ReadInt64();
 
             if(stunned)
