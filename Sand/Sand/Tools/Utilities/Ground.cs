@@ -90,7 +90,7 @@ namespace Sand.Tools.Utilities
             {
                 Energy += EnergyConsumptionRate;
 
-                Sound.OneShot("Ground", false);
+                Sound.OneShot("Fail", false);
             }
 
             base.Activate();
