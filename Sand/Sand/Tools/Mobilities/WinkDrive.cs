@@ -30,7 +30,7 @@ namespace Sand.Tools.Mobilities
 
         public static string _description()
         {
-            return "Disappear!";
+            return "Temporarily become invisible.";
         }
 
         public static Texture2D _icon()

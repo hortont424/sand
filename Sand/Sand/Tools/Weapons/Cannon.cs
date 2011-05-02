@@ -30,7 +30,7 @@ namespace Sand.Tools.Weapons
 
         public static string _description()
         {
-            return "Shoot Stuff!";
+            return "Shock enemies at your crosshair. Long range.";
         }
 
         public static Texture2D _icon()

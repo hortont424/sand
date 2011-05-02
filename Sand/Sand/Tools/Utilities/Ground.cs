@@ -27,7 +27,7 @@ namespace Sand.Tools.Utilities
 
         public static string _description()
         {
-            return "Heal Teammates!";
+            return "End shock effects on nearby teammates.";
         }
 
         public static Texture2D _icon()

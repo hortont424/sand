@@ -26,7 +26,7 @@ namespace Sand.Tools.Primaries
 
         public static string _description()
         {
-            return "Light Lots of Sand on Fire!";
+            return "Destroy a large area of sand all around your tank.";
         }
 
         public static Texture2D _icon()

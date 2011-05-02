@@ -50,7 +50,7 @@ namespace Sand.Tools.Primaries
 
         public static string _description()
         {
-            return "Light Sand on Fire!";
+            return "Precision tool for destroying sand at a distance.";
         }
 
         public static Texture2D _icon()

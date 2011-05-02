@@ -39,7 +39,7 @@ namespace Sand.Tools.Utilities
 
         public static string _description()
         {
-            return "Protect Yourself!";
+            return "Block incoming weapon attacks, preventing shocks.";
         }
 
         public static Texture2D _icon()

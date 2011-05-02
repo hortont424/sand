@@ -69,7 +69,7 @@ namespace Sand.Tools.Mobilities
 
         public static string _description()
         {
-            return "Go Faster!";
+            return "Temporarily boost your speed.";
         }
 
         public static Texture2D _icon()

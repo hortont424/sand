@@ -24,7 +24,7 @@ namespace Sand.Tools.Primaries
 
         public static string _description()
         {
-            return "Push Sand!";
+            return "Blast sand all around your tank. Good for dispersing piles.";
         }
 
         public static Texture2D _icon()

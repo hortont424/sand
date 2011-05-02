@@ -23,7 +23,7 @@ namespace Sand.Tools.Mobilities
 
         public static string _description()
         {
-            return "Teleport!";
+            return "Teleport your tank to your crosshair.";
         }
 
         public static Texture2D _icon()

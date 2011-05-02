@@ -36,7 +36,7 @@ namespace Sand.Tools.Primaries
 
         public static string _description()
         {
-            return "Make Sand!";
+            return "Spray a continuous stream of sand in front of your tank.";
         }
 
         public static Texture2D _icon()

@@ -26,7 +26,7 @@ namespace Sand.Tools.Weapons
 
         public static string _description()
         {
-            return "Shoot Lots of Stuff!";
+            return "Shock enemies in a short radius around your tank.";
         }
 
         public static Texture2D _icon()
