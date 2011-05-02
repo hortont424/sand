@@ -85,14 +85,11 @@ namespace Sand
         public override void Draw(GameTime gameTime)
         {
             var textOrigin = new Vector2(Width, Height) * Gravity.Offset(Gravity.Center);
-
-            
-            _spriteBatch.DrawString(Storage.Font("Calibri400Bold"), _currentString,
-                                    Position + new Vector2(4.0f),
-                                    Color.Black, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
+            var color = new Color(0.2f, 0.2f, 0.2f, 0.0f);
+          
             _spriteBatch.DrawString(Storage.Font("Calibri400Bold"), _currentString,
                                     Position,
-                                    Color.Orange, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
+                                    color, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
         }
     }
 }

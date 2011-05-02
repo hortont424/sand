@@ -132,8 +132,8 @@ namespace Sand.GameState
 
             _countdownTimer = new Countdown(Game)
             {
-                X = Game.BaseScreenSize.X / 2,
-                Y = Game.GameMap.Width / 2
+                X = Game.GameMap.Width / 2,
+                Y = Storage.Game.BaseScreenSize.Y / 2
             };
             Game.Components.Add(_countdownTimer);
             _countdownTimer.Start(5, 1000, () =>

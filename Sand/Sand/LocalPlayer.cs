@@ -65,7 +65,7 @@ namespace Sand
 
             AlternatePrimary.Active = false;
 
-            if(!Storage.AcceptInput || !Storage.ReadyToPlay || Phase == GamePhases.WonPhase1 ||
+            if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 ||
                Phase == GamePhases.WonPhase2)
             {
                 _oldKeyState = newKeyState;
@@ -112,6 +112,16 @@ namespace Sand
             else if(newKeyState.IsKeyDown(Keys.S) || newKeyState.IsKeyDown(Keys.Down))
             {
                 Acceleration.Y = modifiedAcceleration.Y;
+            }
+
+            if(!Storage.ReadyToPlay)
+            {
+                _oldKeyState = newKeyState;
+                _oldMouseState = newMouseState;
+
+                DisableAllTools();
+
+                return;
             }
 
             if(newKeyState.IsKeyDown(Keys.Q) && _oldKeyState.IsKeyUp(Keys.Q))
