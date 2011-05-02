@@ -414,12 +414,6 @@ namespace Sand.GameState
                 Game.Components.Remove(_phase2Timer);
             }
 
-            if(localPlayer.Gamer.IsHost && _teamWonPhase1 == team)
-            {
-                Storage.Scores[team]++;
-                Messages.SendUpdateScoreMessage(localPlayer, localPlayer.Gamer.Id, true);
-            }
-
             localPlayer.Phase = GamePhases.Done;
         }
 
