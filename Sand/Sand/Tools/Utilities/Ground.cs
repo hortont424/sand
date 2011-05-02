@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -7,7 +8,7 @@ namespace Sand.Tools.Utilities
 {
     public class Ground : Tool
     {
-        private float DrawGroundLength;
+        public byte DrawGroundLength { get; set; }
 
         public Ground(Player player) : base(player)
         {
@@ -17,7 +18,6 @@ namespace Sand.Tools.Utilities
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
             EnergyConsumptionRate = 25;
             EnergyRechargeRate = 0.2;
-
         }
 
         public static string _name()
@@ -52,52 +52,45 @@ namespace Sand.Tools.Utilities
 
         protected override void Activate()
         {
-            Storage.Sound("Ground").CreateInstance().Play();
-            Messages.SendPlaySoundMessage(Player, "Ground", Player.Gamer.Id, true);
+            DrawGroundLength = 255;
 
-            var cannonRay = Player.ForwardRay();
-            Player closestIntersectionPlayer = null;
-            float? closestIntersectionDistance = null;
+            var groundPlayers = new List<Player>();
+            const int groundDistance = 150 * 150;
 
-            DrawGroundLength = 3000;
-
-            foreach (var remoteGamer in Storage.NetworkSession.RemoteGamers)
+            foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {
                 var remotePlayer = remoteGamer.Tag as Player;
 
-                if (remotePlayer == null || remotePlayer == Player)
+                if(remotePlayer == null || remotePlayer == Player)
                 {
                     continue;
                 }
 
-                var intersectionPosition = remotePlayer.Intersects(cannonRay);
-
-                if (intersectionPosition != null)
+                if(Math.Pow(remotePlayer.X - Player.X, 2) + Math.Pow(remotePlayer.Y - Player.Y, 2) > groundDistance)
                 {
-                    if (closestIntersectionDistance == null || intersectionPosition < closestIntersectionDistance)
-                    {
-                        closestIntersectionDistance = intersectionPosition;
-                        closestIntersectionPlayer = remotePlayer;
-                    }
+                    continue;
+                }
+
+                if(remotePlayer.Team == Player.Team)
+                {
+                    groundPlayers.Add(remotePlayer);
                 }
             }
 
-            if (closestIntersectionDistance != null)
+            if(groundPlayers.Count > 0)
             {
-                DrawGroundLength = closestIntersectionDistance.Value;
+                foreach(var groundPlayer in groundPlayers)
+                {
+                    Messages.SendStunMessage(Player, groundPlayer, -1, Player.Gamer.Id, true);
+                }
+
+                Sound.OneShot("Ground");
             }
-
-            var wallIntersection = (Player.Game as Sand).GameMap.Intersects(cannonRay);
-
-            if (wallIntersection != null && (wallIntersection < closestIntersectionDistance || closestIntersectionDistance == null))
+            else
             {
-                closestIntersectionDistance = null;
-                DrawGroundLength = wallIntersection.Value;
-            }
+                Energy += EnergyConsumptionRate;
 
-            if (closestIntersectionDistance != null)
-            {
-                Messages.SendStunMessage(Player, closestIntersectionPlayer, -1, Player.Gamer.Id, true);
+                Sound.OneShot("Fail", false);
             }
 
             base.Activate();
@@ -105,28 +98,25 @@ namespace Sand.Tools.Utilities
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (DrawGroundLength != 0)
+            if(DrawGroundLength > 24)
             {
-                if (Player.Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
-                {
-                    spriteBatch.Draw(Storage.Sprite("pixel"),
-                                     new Rectangle((int)Player.X, (int)Player.Y, 6, (int)DrawGroundLength), null,
-                                     Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
-                }
-                else
-                {
-                    spriteBatch.Draw(Storage.Sprite("pixel"),
-                                     new Rectangle((int)Player.X, (int)Player.Y, 7, (int)DrawGroundLength), null,
-                                     Color.White, Player.Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
-                }
+                var sprite = Storage.Sprite("WhiteCircle");
+                var grayLevel = DrawGroundLength / 255.0f;
 
-                DrawGroundLength = 0;
+                spriteBatch.Draw(sprite, new Vector2((int)Player.X, (int)Player.Y), null,
+                                 new Color(grayLevel, grayLevel, grayLevel), 0.0f,
+                                 new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f),
+                                 (((255 - DrawGroundLength) / 255.0f) * 3.125f) + 1.0f,
+                                 SpriteEffects.None, 0.0f);
+
+                DrawGroundLength -= 24;
             }
         }
 
         public override void SendActivationMessage()
         {
-            Messages.SendActivateToolMessage(Player, Slot, Type, Active, "DrawGroundLength", DrawGroundLength, Player.Gamer.Id, true);
+            Messages.SendActivateToolMessage(Player, Slot, Type, Active, "DrawGroundLength", DrawGroundLength,
+                                             Player.Gamer.Id, true);
         }
     }
 }

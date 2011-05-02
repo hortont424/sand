@@ -1,41 +1,117 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Sand
 {
+    public class MapManager
+    {
+        public Dictionary<string, Map> Maps;
+
+        public Game Game;
+
+        public MapManager(Game game)
+        {
+            Game = game;
+
+            Maps = new Dictionary<string, Map>
+                   {
+                       { "Desert", new Map(game, "desert") },
+                       { "Lab", new Map(game, "lab") },
+                       { "Outpost", new Map(game, "outpost") }
+                   };
+        }
+    }
+
     public class Map : Actor
     {
         public string Name { get; set; }
 
         private Texture2D _map;
-        private Texture2D _mapImage;
+        public Texture2D MapImage;
         private Color[] _mapTexture;
+        public Vector2 RedSpawn;
+        public Vector2 BlueSpawn;
+
+        private Team _winPulseTeam;
+        private Animation _winPulseAnimation;
+        private AnimationGroup _winPulseAnimationGroup;
+
+        public float PulseValue { get; set; }
 
         public Map(Game game, string name) : base(game)
         {
             Name = name;
             DrawOrder = 1;
-        }
 
-        protected override void LoadContent()
-        {
-            base.LoadContent();
+            MapImage = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}-image", Name));
 
             _map = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}", Name));
-            _mapImage = _sandGame.Content.Load<Texture2D>(string.Format("Textures/Maps/{0}-image", Name));
 
             Width = _map.Width;
             Height = _map.Height;
 
             _mapTexture = new Color[(int)(Width * Height)];
             _map.GetData(_mapTexture);
+
+            for(int x = 0; x < Width; x++)
+            {
+                for(int y = 0; y < Height; y++)
+                {
+                    var color = _mapTexture[(int)(x + (y * Width))];
+
+                    if(color == Color.Red)
+                    {
+                        RedSpawn = new Vector2(x, y);
+                    }
+                    else if(color == Color.Lime)
+                    {
+                        BlueSpawn = new Vector2(x, y);
+                    }
+                }
+            }
         }
 
         public override void Draw(GameTime gameTime)
         {
-            // If we change drawing location, we need to change ray intersection offset
-            _spriteBatch.Draw(_mapImage, new Vector2(0.0f, 0.0f), Color.White);
+            if(_winPulseAnimation != null)
+            {
+                var color = Teams.ColorForTeam(_winPulseTeam);
+                var grayLevel = (float)Math.Min((Math.Sin(5.0f * PulseValue) / 5.0f) + 0.8f, 1.0f);
+                color *= grayLevel;
+                // If we change drawing location, we need to change ray intersection offset
+                _spriteBatch.Draw(MapImage, new Vector2(0.0f, 0.0f), color);
+            }
+            else
+            {
+                // If we change drawing location, we need to change ray intersection offset
+                _spriteBatch.Draw(MapImage, new Vector2(0.0f, 0.0f), Color.White);
+            }
+        }
+
+        public void WinPulse(Team team, Button.Action completedAction)
+        {
+            _winPulseTeam = team;
+            _winPulseAnimation = new Animation(this, "PulseValue", 0.0f, 10.0f, Easing.EaseInOut, EasingType.Linear);
+            _winPulseAnimationGroup = new AnimationGroup(_winPulseAnimation, 10000.0f) {Loops = true};
+
+            Storage.AnimationController.AddGroup(_winPulseAnimationGroup);
+        }
+
+        public void EndWinPulse()
+        {
+            if(_winPulseAnimationGroup != null)
+            {
+                Storage.AnimationController.RemoveGroup(_winPulseAnimationGroup);
+                _winPulseAnimationGroup = null;
+                _winPulseAnimation = null;
+            }
+        }
+
+        private bool IsCollisionColor(Color color)
+        {
+            return color != Color.Black && color != Color.Red && color != Color.Lime;
         }
 
         public bool CollisionTest(Vector2 position, int size)
@@ -52,8 +128,8 @@ namespace Sand
             {
                 for(int x = left; x < right; x++)
                 {
-                    if(_mapTexture[(x - rectangleB.Left) +
-                                   (y - rectangleB.Top) * rectangleB.Width] == Color.White)
+                    if(IsCollisionColor(_mapTexture[(x - rectangleB.Left) +
+                                                    (y - rectangleB.Top) * rectangleB.Width]))
                     {
                         return true;
                     }
@@ -84,7 +160,7 @@ namespace Sand
                                                (y - rectangleB.Top) * rectangleB.Width];
 
                     // If both pixels are not completely transparent,
-                    if(colorA.A != 0 && colorB == Color.White)
+                    if(colorA.A != 0 && IsCollisionColor(colorB))
                     {
                         // then an intersection has been found
                         return true;
@@ -101,14 +177,14 @@ namespace Sand
 
             var point = ray.Position;
 
-            while(point.X < _mapImage.Width && point.Y < _mapImage.Height && point.X >= 0 && point.Y >= 0)
+            while(point.X < MapImage.Width && point.Y < MapImage.Height && point.X >= 0 && point.Y >= 0)
             {
+                Color color = _mapTexture[(int)((int)Math.Floor(point.X) + (Math.Floor(point.Y) * MapImage.Width))];
+
                 point.X += ray.Direction.X;
                 point.Y += ray.Direction.Y;
 
-                Color color = _mapTexture[(int)((int)Math.Floor(point.X) + (Math.Floor(point.Y) * _mapImage.Width))];
-
-                if(color == Color.White)
+                if(IsCollisionColor(color))
                 {
                     return (point - ray.Position).Length();
                 }

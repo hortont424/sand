@@ -50,8 +50,6 @@ namespace Sand
             }
         }
 
-        public Vector2 Position { get; set; }
-
         public ToolIcon(Game game, Tool tool) : base(game)
         {
             DrawOrder = 100;
@@ -111,7 +109,7 @@ namespace Sand
             if(_drainTexture != null && _tool.Energy > 0.0f)
             {
                 _spriteBatch.Draw(_drainTexture,
-                                  Position,
+                                  Position, 
                                   null, mulColor, 0.0f,
                                   new Vector2(_drainTexture.Width / 2.0f, _drainTexture.Height / 2.0f),
                                   Scale,

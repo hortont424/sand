@@ -30,7 +30,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>65</ApplicationRevision>
+    <ApplicationRevision>86</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -131,7 +131,12 @@
     <Compile Include="Animation.cs" />
     <Compile Include="Billboard.cs" />
     <Compile Include="Button.cs" />
+    <Compile Include="ClassDescription.cs" />
+    <Compile Include="Countdown.cs" />
+    <Compile Include="ScoreMeter.cs" />
+    <Compile Include="MapChooserButton.cs" />
     <Compile Include="Crosshair.cs" />
+    <Compile Include="GameState\ChooseMapState.cs" />
     <Compile Include="GameState\LoadoutState.cs" />
     <Compile Include="Gravity.cs" />
     <Compile Include="Label.cs" />
@@ -144,7 +149,6 @@
     <Compile Include="GameState\LoginState.cs" />
     <Compile Include="GameState\PlayState.cs" />
     <Compile Include="GameState\ReadyWaitState.cs" />
-    <Compile Include="LobbyList.cs" />
     <Compile Include="LocalPlayer.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Messages.cs" />
@@ -157,6 +161,7 @@
     <Compile Include="Sand.cs" />
     <Compile Include="SandColor.cs" />
     <Compile Include="SandMeter.cs" />
+    <Compile Include="Sound.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Teams.cs" />
     <Compile Include="ToolChooserButton.cs" />

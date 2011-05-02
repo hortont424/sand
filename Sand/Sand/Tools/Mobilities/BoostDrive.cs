@@ -19,7 +19,7 @@ namespace Sand.Tools.Mobilities
         {
             Modifier = 0.5;
 
-            Energy = TotalEnergy = 100;
+            Energy = TotalEnergy = 200;
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
             EnergyConsumptionRate = 1;
             EnergyRechargeRate = 0.2;
@@ -31,7 +31,7 @@ namespace Sand.Tools.Mobilities
 
             _boostDriveTimer = new Animation { CompletedDelegate = GenerateBoostDriveParticles };
             _boostDriveTimerGroup = new AnimationGroup(_boostDriveTimer, 10) { Loops = true };
-            Storage.AnimationController.AddGroup(_boostDriveTimerGroup);
+            //Storage.AnimationController.AddGroup(_boostDriveTimerGroup);
 
             _particles = new ParticleSystem(Player.Game, Player);
             Player.Game.Components.Add(_particles);
@@ -96,7 +96,7 @@ namespace Sand.Tools.Mobilities
         {
             base.Activate();
 
-            Player.MovementAcceleration = new Vector2(1200.0f, 1200.0f);
+            Player.MovementAcceleration = new Vector2(1500.0f, 1500.0f);
 
             _startSound.Play();
 

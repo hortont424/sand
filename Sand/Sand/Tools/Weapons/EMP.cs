@@ -15,7 +15,7 @@ namespace Sand.Tools.Weapons
 
             Energy = TotalEnergy = 100;
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
-            EnergyConsumptionRate = 100;
+            EnergyConsumptionRate = 50;
             EnergyRechargeRate = 0.2;
         }
 
@@ -53,8 +53,7 @@ namespace Sand.Tools.Weapons
         {
             DrawEMPRing = 255;
 
-            Storage.Sound("EMP").CreateInstance().Play();
-            Messages.SendPlaySoundMessage(Player, "EMP", Player.Gamer.Id, true);
+            Sound.OneShot("EMP");
 
             var shockPlayers = new List<Player>();
             const int empDistance = 150 * 150;

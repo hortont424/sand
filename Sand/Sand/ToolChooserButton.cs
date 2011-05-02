@@ -74,9 +74,11 @@ namespace Sand
         {
             SelectedTool = userInfo as Type;
 
+            if (SelectedTool == null)
+                return;
+
             foreach(KeyValuePair<Type, Button> pair in _toolButtons)
             {
-                //pair.Value.AcceptsClick = pair.Key != SelectedTool;
                 pair.Value.TeamColor = (pair.Key != SelectedTool)
                                            ? new Color(0.2f, 0.2f, 0.2f)
                                            : Color.White;
@@ -86,7 +88,7 @@ namespace Sand
 
             if(playSound)
             {
-                Tool.SoundForTool(toolType).CreateInstance().Play();
+                Sound.Add(Tool.SoundForTool(toolType).CreateInstance()).Play();
             }
 
             UnhoverTool(null, null);

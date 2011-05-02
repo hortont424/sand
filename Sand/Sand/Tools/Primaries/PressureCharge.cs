@@ -13,7 +13,7 @@ namespace Sand.Tools.Primaries
 
             Energy = TotalEnergy = 100;
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
-            EnergyConsumptionRate = 50;
+            EnergyConsumptionRate = 25;
             EnergyRechargeRate = 0.2;
         }
 
@@ -51,7 +51,7 @@ namespace Sand.Tools.Primaries
         {
             base.Activate();
 
-            Storage.Sound("PressureCharge").CreateInstance().Play();
+            Sound.OneShot("PressureCharge");
 
             var particleQueue = new HashSet<Particle>();
             const int maxDistance = 75 * 75;

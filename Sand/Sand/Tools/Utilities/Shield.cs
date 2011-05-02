@@ -116,19 +116,6 @@ namespace Sand.Tools.Utilities
             }
         }
 
-        public float DeflectShock(float strength)
-        {
-            if(Active)
-            {
-                return 0.0f;
-            }
-            else
-            {
-                Player.Stunned = true;
-                return strength;
-            }
-        }
-
         public override void SendActivationMessage()
         {
             Messages.SendActivateToolMessage(Player, Slot, Type, Active, null, 0.0f, Player.Gamer.Id, true);

@@ -17,6 +17,10 @@ namespace Sand.Tools.Weapons
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
             EnergyConsumptionRate = 25;
             EnergyRechargeRate = 0.2;
+
+            HasMaxDistance = true;
+            MaxDistance = 600;
+            MaxDistanceColor = Color.White;
         }
 
         public static string _name()
@@ -51,16 +55,13 @@ namespace Sand.Tools.Weapons
 
         protected override void Activate()
         {
-            Storage.Sound("Cannon").CreateInstance().Play();
-            Messages.SendPlaySoundMessage(Player, "Cannon", Player.Gamer.Id, true);
-
-            const int maxCannonDistance = 600;
+            Sound.OneShot("Cannon");
 
             var cannonRay = Player.ForwardRay();
             Player closestIntersectionPlayer = null;
             float ? closestIntersectionDistance = null;
 
-            DrawCannonLength = maxCannonDistance;
+            DrawCannonLength = MaxDistance;
 
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {
@@ -75,7 +76,7 @@ namespace Sand.Tools.Weapons
 
                 if(intersectionPosition != null)
                 {
-                    if((closestIntersectionDistance == null || intersectionPosition < closestIntersectionDistance) && intersectionPosition < maxCannonDistance)
+                    if((closestIntersectionDistance == null || intersectionPosition < closestIntersectionDistance) && intersectionPosition < MaxDistance)
                     {
                         closestIntersectionDistance = intersectionPosition;
                         closestIntersectionPlayer = remotePlayer;
@@ -90,7 +91,7 @@ namespace Sand.Tools.Weapons
 
             var wallIntersection = (Player.Game as Sand).GameMap.Intersects(cannonRay);
 
-            if(wallIntersection != null && (wallIntersection < closestIntersectionDistance || closestIntersectionDistance == null) && wallIntersection < maxCannonDistance)
+            if(wallIntersection != null && (wallIntersection < closestIntersectionDistance || closestIntersectionDistance == null) && wallIntersection < MaxDistance)
             {
                 closestIntersectionDistance = null;
                 DrawCannonLength = wallIntersection.Value;

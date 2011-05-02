@@ -13,7 +13,6 @@ namespace Sand
     {
         Phase1,
         WonPhase1,
-        WaitForPhase2,
         Phase2,
         WonPhase2,
         Done
@@ -32,6 +31,7 @@ namespace Sand
         private Matrix _globalTransformMatrix, _invGlobalTransformMatrix;
         public Vector2 MouseLocation;
 
+        public MapManager MapManager;
         public Map GameMap;
 
         // E27 white rice wonton soup ("I'll go with the boned")
@@ -69,6 +69,7 @@ namespace Sand
             _gameStateInstances[States.Loadout] = new LoadoutState(this);
             _gameStateInstances[States.ReadyWait] = new ReadyWaitState(this);
             _gameStateInstances[States.Play] = new PlayState(this);
+            _gameStateInstances[States.ChooseMap] = new ChooseMapState(this);
 
             Components.ComponentAdded += ComponentAdded;
             Components.ComponentRemoved += ComponentRemoved;
@@ -78,6 +79,8 @@ namespace Sand
             Storage.Game = this;
             Storage.AnimationController = new AnimationController(this);
             Components.Add(Storage.AnimationController);
+
+            
         }
 
         private void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -127,7 +130,11 @@ namespace Sand
 
             Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
             Storage.AddFont("Calibri24Bold", Content.Load<SpriteFont>("Fonts/Calibri24Bold"));
+            Storage.AddFont("Calibri32", Content.Load<SpriteFont>("Fonts/Calibri32"));
+            Storage.AddFont("Calibri32Bold", Content.Load<SpriteFont>("Fonts/Calibri32Bold"));
             Storage.AddFont("Calibri48Bold", Content.Load<SpriteFont>("Fonts/Calibri48Bold"));
+            Storage.AddFont("Calibri120Bold", Content.Load<SpriteFont>("Fonts/Calibri120Bold"));
+            Storage.AddFont("Calibri400Bold", Content.Load<SpriteFont>("Fonts/Calibri400Bold"));
             Storage.AddFont("Gotham24", Content.Load<SpriteFont>("Fonts/Gotham24"));
 
             Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));
@@ -182,6 +189,7 @@ namespace Sand
             Storage.AddSprite("Shield", Content.Load<Texture2D>("Textures/Tools/Utilities/Shield"));
             Storage.AddSprite("ShieldCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/ShieldCircle"));
             Storage.AddSprite("WhiteCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/WhiteCircle"));
+            Storage.AddSprite("ToolDot", Content.Load<Texture2D>("Textures/Tools/Utilities/ToolDot"));
             Storage.AddSound("Shield", Content.Load<SoundEffect>("Sounds/Shield"));
 
             Storage.AddSprite("Jet", Content.Load<Texture2D>("Textures/Tools/Primaries/Jet"));
@@ -209,6 +217,8 @@ namespace Sand
             var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
             rectTexture.SetData(new[] { Color.White });
             Storage.AddSprite("pixel", rectTexture);
+
+            MapManager = new MapManager(this);
         }
 
         private void ComputeTransform()
@@ -250,6 +260,11 @@ namespace Sand
             return true;
         }
 
+        public GameState.GameState CurrentState()
+        {
+            return _gameStateInstances[_gameState];
+        }
+
         protected override void Update(GameTime gameTime)
         {
             Storage.CurrentTime = gameTime;
@@ -265,6 +280,8 @@ namespace Sand
             {
                 Storage.NetworkSession.Update();
             }
+
+            Sound.Update();
 
             base.Update(gameTime);
         }

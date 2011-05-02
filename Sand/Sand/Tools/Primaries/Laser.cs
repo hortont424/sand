@@ -24,7 +24,7 @@ namespace Sand.Tools.Primaries
 
             Energy = TotalEnergy = 150;
             EnergyConsumptionMode = EnergyConsumptionMode.Drain;
-            EnergyConsumptionRate = 1;
+            EnergyConsumptionRate = 0.5;
             EnergyRechargeRate = 0.2;
 
             _particleQueue = new HashSet<Particle>();
@@ -37,6 +37,10 @@ namespace Sand.Tools.Primaries
 
             _laserParticles = new ParticleSystem(Player.Game, Player);
             Player.Game.Components.Add(_laserParticles);
+
+            HasMaxDistance = true;
+            MaxDistance = 300;
+            MaxDistanceColor = Color.Orange;
         }
 
         public static string _name()
@@ -79,20 +83,19 @@ namespace Sand.Tools.Primaries
             }
 
             var wallIntersection = (Player.Game as Sand).GameMap.Intersects(Player.ForwardRay());
-            const int maxLaserDistance = 300;
 
             int ? laserDistance = null;
 
             int idealDistance = (int)Math.Sqrt(Math.Pow(sandGame.MouseLocation.X - Player.X, 2) +
                                                Math.Pow(sandGame.MouseLocation.Y - Player.Y, 2));
 
-            if(idealDistance < maxLaserDistance)
+            if(idealDistance < MaxDistance)
             {
                 laserDistance = idealDistance;
             }
             else
             {
-                laserDistance = maxLaserDistance;
+                laserDistance = MaxDistance;
             }
 
             if(wallIntersection != null && wallIntersection < laserDistance)
@@ -127,7 +130,7 @@ namespace Sand.Tools.Primaries
 
                 if(!particle.OnFire)
                 {
-                    particle.Fire = (byte)Math.Min(particle.Fire + (EnergyConsumptionRate * 10), 255);
+                    particle.Fire = (byte)Math.Min(particle.Fire + 100, 255);
                 }
 
                 _particleQueue.Add(particle);

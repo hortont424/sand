@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Net;
+using Sand.GameState;
 using Sand.Tools;
 
 // E28 boneless spare ribs white rice, wonton soup
@@ -18,7 +19,9 @@ namespace Sand
         ActivateTool,
         CreateSand,
         RemoveSand,
-        UpdateSand
+        UpdateSand,
+        ChangeWinState,
+        UpdateScore
     }
 
     internal class ActivationInfo
@@ -90,6 +93,7 @@ namespace Sand
             Storage.PacketWriter.Write(player.Invisible);
             Storage.PacketWriter.Write(player.PureAcceleration);
             Storage.PacketWriter.Write((byte)player.Phase);
+            Storage.PacketWriter.Write(Storage.RemainingTime.Ticks);
 
             if(player.Stunned)
             {
@@ -106,6 +110,12 @@ namespace Sand
             player.Invisible = Storage.PacketReader.ReadSingle();
             player.PureAcceleration = Storage.PacketReader.ReadVector2();
             player.Phase = (GamePhases)Storage.PacketReader.ReadByte();
+            var remainingTime = Storage.PacketReader.ReadInt64();
+
+            if(player.Gamer.IsHost)
+            {
+                Storage.RemainingTime = new TimeSpan(remainingTime);
+            }
 
             if(player.Stunned)
             {
@@ -122,6 +132,7 @@ namespace Sand
             Storage.PacketReader.ReadSingle();
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadInt64();
 
             if(stunned)
             {
@@ -145,6 +156,15 @@ namespace Sand
             Storage.PacketWriter.Write((byte)(player.Weapon != null ? player.Weapon.Type : ToolType.None));
             Storage.PacketWriter.Write((byte)(player.Mobility != null ? player.Mobility.Type : ToolType.None));
             Storage.PacketWriter.Write((byte)(player.Utility != null ? player.Utility.Type : ToolType.None));
+
+            if(Storage.Game.GameMap == null)
+            {
+                Storage.PacketWriter.Write("");
+            }
+            else
+            {
+                Storage.PacketWriter.Write(Storage.Game.GameMap.Name);
+            }
         }
 
         private static void ProcessUpdatePlayerMenuStateMessage(Player player)
@@ -184,6 +204,19 @@ namespace Sand
             {
                 player.Utility = Tool.OfType(utilityType, player);
             }
+
+            var mapName = Storage.PacketReader.ReadString();
+
+            if(player.Gamer.IsHost)
+            {
+                foreach(var pair in Storage.Game.MapManager.Maps)
+                {
+                    if(pair.Value.Name == mapName)
+                    {
+                        Storage.Game.GameMap = pair.Value;
+                    }
+                }
+            }
         }
 
         private static void DiscardUpdatePlayerMenuStateMessage()
@@ -196,6 +229,8 @@ namespace Sand
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadByte();
+
+            Storage.PacketReader.ReadString();
         }
 
         #endregion
@@ -270,7 +305,7 @@ namespace Sand
         {
             var soundName = Storage.PacketReader.ReadString();
 
-            Storage.Sound(soundName).Play();
+            Sound.OneShot(soundName, false);
 
             return soundName;
         }
@@ -361,8 +396,6 @@ namespace Sand
 
             if(player is RemotePlayer)
             {
-                Console.WriteLine("Slot: {0}, Type: {1}, PropertyName: {2}, Value: {3}", slot, type, propertyName,
-                                  propertyValue);
                 var tool = player.ToolInSlot(slot, type);
                 tool.Active = state;
 
@@ -576,6 +609,86 @@ namespace Sand
 
         #endregion
 
+        #region ChangeWinState Message
+
+        public static void SendChangeWinStateMessage(Player player, GamePhases state, Team team, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.ChangeWinState, id);
+
+            Storage.PacketWriter.Write((byte)state);
+            Storage.PacketWriter.Write((byte)team);
+
+            if(immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static void ProcessChangeWinStateMessage(Player player)
+        {
+            var state = (GamePhases)Storage.PacketReader.ReadByte();
+            var team = (Team)Storage.PacketReader.ReadByte();
+
+            var playState = Storage.Game.CurrentState() as PlayState;
+
+            if(playState == null)
+            {
+                return;
+            }
+
+            switch(state)
+            {
+                case GamePhases.WonPhase1:
+                    playState.WinPhase1(team);
+                    break;
+                case GamePhases.WonPhase2:
+                    playState.WinPhase2(team);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private static void DiscardChangeWinStateMessage()
+        {
+            Storage.PacketReader.ReadByte();
+            Storage.PacketReader.ReadByte();
+        }
+
+        #endregion
+
+        #region UpdateScore Message
+
+        public static void SendUpdateScoreMessage(Player player, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.UpdateScore, id);
+
+            Storage.PacketWriter.Write(Storage.Scores[Team.Red]);
+            Storage.PacketWriter.Write(Storage.Scores[Team.Blue]);
+
+            if(immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static void ProcessUpdateScoreMessage(Player player)
+        {
+            if(player.Gamer.IsHost)
+            {
+                Storage.Scores[Team.Red] = Storage.PacketReader.ReadInt32();
+                Storage.Scores[Team.Blue] = Storage.PacketReader.ReadInt32();
+            }
+        }
+
+        private static void DiscardUpdateScoreMessage()
+        {
+            Storage.PacketReader.ReadInt32();
+            Storage.PacketReader.ReadInt32();
+        }
+
+        #endregion
+
         private static bool NextPacketIsValid()
         {
             var goodPacket = true;
@@ -663,6 +776,12 @@ namespace Sand
                             case MessageType.RemoveSand:
                                 DiscardRemoveSandMessage();
                                 break;
+                            case MessageType.ChangeWinState:
+                                DiscardChangeWinStateMessage();
+                                break;
+                            case MessageType.UpdateScore:
+                                DiscardUpdateScoreMessage();
+                                break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -703,6 +822,12 @@ namespace Sand
                             break;
                         case MessageType.RemoveSand:
                             ProcessRemoveSandMessage(player);
+                            break;
+                        case MessageType.ChangeWinState:
+                            ProcessChangeWinStateMessage(player);
+                            break;
+                        case MessageType.UpdateScore:
+                            ProcessUpdateScoreMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -835,6 +960,12 @@ namespace Sand
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
+                            break;
+                        case MessageType.ChangeWinState:
+                            Console.WriteLine("server got a changewinstate message, seems wrong.");
+                            break;
+                        case MessageType.UpdateScore:
+                            Console.WriteLine("server got a updatescore message, seems wrong.");
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

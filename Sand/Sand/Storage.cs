@@ -14,10 +14,19 @@ namespace Sand
         private static readonly Dictionary<string, SpriteFont> _fonts = new Dictionary<string, SpriteFont>();
         private static readonly Dictionary<string, Color> _colors = new Dictionary<string, Color>();
 
+        public static readonly Dictionary<Team, int> Scores = new Dictionary<Team, int>
+                                                              {
+                                                                  { Team.None, 0 },
+                                                                  { Team.Red, 0 },
+                                                                  { Team.Blue, 0 }
+                                                              };
+
         public static AnimationController AnimationController;
         public static NetworkSession NetworkSession;
         public static PacketReader PacketReader = new PacketReader();
         public static PacketWriter PacketWriter = new PacketWriter();
+
+        public static TimeSpan RemainingTime, Phase2EndTime;
 
         public static ParticleSystem SandParticles;
         public static Random Random = new Random();
@@ -26,7 +35,8 @@ namespace Sand
         public static GameTime CurrentTime;
         public static Sand Game;
 
-        public static bool DebugMode = false;
+        public static bool DebugMode;
+        public static bool ReadyToPlay;
 
         public static void AddSprite(string name, Texture2D texture)
         {

@@ -26,8 +26,25 @@ namespace Sand
             }
         }
 
+        public Vector2 Position
+        {
+            get
+            {
+                return new Vector2((int)X, (int)Y);
+            }
+        }
+
+        public Vector2 Size
+        {
+            get
+            {
+                return new Vector2((int)Width, (int)Height);
+            }
+        }
+
         public Actor(Game game) : base(game)
         {
+            _sandGame = Game as Sand;
             Children = new List<Actor>();
             PositionGravity = new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Top,
                                                                               Gravity.Horizontal.Left);
@@ -36,8 +53,6 @@ namespace Sand
         protected override void LoadContent()
         {
             base.LoadContent();
-
-            _sandGame = Game as Sand;
 
             if(_sandGame != null)
             {

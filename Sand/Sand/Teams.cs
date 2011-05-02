@@ -29,6 +29,13 @@ namespace Sand
                   { Team.Blue, "BlueTeam" }
             };
 
+        private static readonly Dictionary<Team, String> TeamNames = new Dictionary<Team, String>()
+            {
+                  { Team.None, "Nobody" },
+                  { Team.Red, "Purple" },
+                  { Team.Blue, "Green" }
+            };
+
         private static readonly Dictionary<Class, String> ClassSpriteNames = new Dictionary<Class, String>()
             {
                   { Class.None, "DefenseClass" },
@@ -40,6 +47,11 @@ namespace Sand
         public static Color ColorForTeam(Team team)
         {
             return Storage.Color(TeamColorNames[team]);
+        }
+
+        public static string NameForTeam(Team team)
+        {
+            return TeamNames[team];
         }
 
         public static Texture2D SpriteForClass(Class cls, bool large)

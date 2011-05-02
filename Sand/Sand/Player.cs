@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Net;
 using Sand.Tools;
+using Sand.Tools.Mobilities;
 
 namespace Sand
 {
+    public enum StunType
+    {
+        ToolStun,
+        MotionStun
+    }
+
     public class Player : Actor
     {
         public NetworkGamer Gamer;
@@ -17,13 +26,13 @@ namespace Sand
         public Vector2 Velocity;
         public Vector2 Acceleration;
         public Vector2 PureAcceleration;
-        public Vector2 Drag = new Vector2(1.5f, 1.5f);
+        public Vector2 Drag = new Vector2(3f, 3f);
         public Vector2 MovementAcceleration;
-        public readonly Vector2 DefaultAcceleration = new Vector2(450.0f, 450.0f);
+        public readonly Vector2 DefaultAcceleration = new Vector2(750.0f, 750.0f);
 
-        public TimeSpan StunTimeRemaining;
+        public TimeSpan StunTimeRemaining, ProtectTimeRemaining;
 
-        protected TimeSpan _unstunTime;
+        protected TimeSpan _unstunTime, _unprotectTime;
         private Class _class;
         private Team _team;
         private Texture2D _sprite;
@@ -32,6 +41,11 @@ namespace Sand
         public Tool Mobility;
         public Tool Weapon;
         public Tool Utility;
+
+        public Tool CurrentPrimary, LastTool, AlternatePrimary;
+
+        protected Queue<Tuple<Vector2, float>> _previousPositions;
+        protected const int MaxPreviousPositions = 50;
 
         public GamePhases Phase { get; set; }
 
@@ -72,8 +86,8 @@ namespace Sand
         }
 
         public float Invisible { get; set; }
-
         public bool Stunned { get; set; }
+        public StunType StunType { get; set; }
 
         public Player(Game game, NetworkGamer gamer) : base(game)
         {
@@ -82,11 +96,41 @@ namespace Sand
             Width = Storage.Sprite("DefenseClass").Width;
             Height = Storage.Sprite("DefenseClass").Height;
 
-            X = 60;
-            Y = 60;
-
             Texture = new Color[(int)(Width * Height)];
             Class = Class.None;
+
+            _previousPositions = new Queue<Tuple<Vector2, float>>(MaxPreviousPositions);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            // This is the best code ever, thanks Nate!
+
+            if (Mobility is BoostDrive && Mobility.Active)
+            {
+                if (_previousPositions.Count > 0)
+                {
+                    _previousPositions.Enqueue(new Tuple<Vector2, float>((_previousPositions.Last().Item1 + Position) / 2.0f, Angle));
+                }
+
+                _previousPositions.Enqueue(new Tuple<Vector2, float>(Position, Angle));
+            }
+            else if (_previousPositions.Count > 0)
+            {
+                _previousPositions.Dequeue();
+
+                if (_previousPositions.Count > 0)
+                {
+                    _previousPositions.Dequeue();
+                }
+            }
+
+            while (_previousPositions.Count >= MaxPreviousPositions)
+            {
+                _previousPositions.Dequeue();
+            }
         }
 
         public override void Draw(GameTime gameTime)
@@ -132,26 +176,37 @@ namespace Sand
                                               Math.Max(value - Invisible, this is LocalPlayer ? 0.2 : 0.0));
             }
 
-            // TODO: hack
             if(Invisible == 1.0f && this is RemotePlayer)
             {
                 return;
             }
 
-            if(this is LocalPlayer)
+            var wallIntersection = (int)(Game as Sand).GameMap.Intersects(ForwardRay());
+            var lineWidth = Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1 ? 1 : 2;
+            var lineColor = teamColor;
+
+            if(this is RemotePlayer)
             {
-                if(Game.GraphicsDevice.PresentationParameters.MultiSampleCount > 1)
-                {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 1, 3000),
-                                      null,
-                                      teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
-                }
-                else
-                {
-                    _spriteBatch.Draw(Storage.Sprite("pixel"), new Rectangle((int)virtualX, (int)virtualY, 2, 3000),
-                                      null,
-                                      teamColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
-                }
+                double hue, saturation, value;
+                SandColor.ToHSV(lineColor, out hue, out saturation, out value);
+
+                lineColor = SandColor.FromHSV(hue, saturation, 0.2);
+            }
+
+            _spriteBatch.Draw(Storage.Sprite("pixel"),
+                              new Rectangle((int)virtualX, (int)virtualY, lineWidth, wallIntersection),
+                              null,
+                              lineColor, Angle, new Vector2(0.5f, 1.0f), SpriteEffects.None, 0.0f);
+
+            var i = 0;
+            foreach(var position in _previousPositions)
+            {
+                var scale = ((float)i) / MaxPreviousPositions;
+
+                _spriteBatch.Draw(_sprite, new Vector2((int)position.Item1.X, (int)position.Item1.Y),
+                              null,
+                              teamColor * ((float)i / MaxPreviousPositions) * 0.3f, position.Item2, new Vector2(Width / 2.0f, Height / 2.0f), scale, SpriteEffects.None, 0.0f);
+                i++;
             }
 
             _spriteBatch.Draw(_sprite, new Rectangle((int)virtualX, (int)virtualY, (int)Width, (int)Height),
@@ -163,29 +218,60 @@ namespace Sand
             {
                 var tool = localPlayer.LastTool;
 
-                if(tool == null)
+                if(tool != null && (tool.Energy != tool.TotalEnergy))
                 {
-                    return;
-                }
+                    _spriteBatch.Draw(Storage.Sprite("pixel"),
+                                      new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
+                                                    (int)(virtualY + (_sprite.Height / 2.0f) + 15),
+                                                    _sprite.Width, 7),
+                                      null,
+                                      new Color(0.2f, 0.2f, 0.2f), 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None,
+                                      0.0f);
 
-                if(tool.Energy == tool.TotalEnergy)
+                    _spriteBatch.Draw(Storage.Sprite("pixel"),
+                                      new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
+                                                    (int)(virtualY + (_sprite.Height / 2.0f) + 15),
+                                                    (int)((tool.Energy / tool.TotalEnergy) * _sprite.Width), 7),
+                                      null,
+                                      originalTeamColor, 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
+                }
+            }
+
+            Tool[] drawBoundaryTools = { };
+
+            if(Phase == GamePhases.Phase1)
+            {
+                drawBoundaryTools = new[] { Mobility, Utility, Weapon, CurrentPrimary };
+            }
+            else if(Phase == GamePhases.Phase2)
+            {
+                drawBoundaryTools = new[] { Mobility, Utility, Weapon };
+            }
+
+            if(this is LocalPlayer)
+            {
+                var toolAngle = Angle - ((float)Math.PI / 2.0f);
+
+                foreach(var tool in drawBoundaryTools.Where(tool => tool != null))
                 {
-                    return;
+                    if(!tool.HasMaxDistance)
+                    {
+                        continue;
+                    }
+
+                    var actualDistance = wallIntersection < tool.MaxDistance ? wallIntersection : tool.MaxDistance;
+
+                    var sprite = Storage.Sprite("ToolDot");
+
+                    var toolCirclePosition = new Vector2(virtualX, virtualY) +
+                                             (new Vector2((float)Math.Cos(toolAngle), (float)Math.Sin(toolAngle)) *
+                                              new Vector2(actualDistance));
+
+                    _spriteBatch.Draw(sprite, toolCirclePosition, null,
+                                      tool.MaxDistanceColor, 0.0f,
+                                      new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.0f,
+                                      SpriteEffects.None, 0.0f);
                 }
-
-                _spriteBatch.Draw(Storage.Sprite("pixel"),
-                                  new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
-                                                (int)(virtualY + (_sprite.Height / 2.0f) + 15),
-                                                _sprite.Width, 7),
-                                  null,
-                                  new Color(0.2f, 0.2f, 0.2f), 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
-
-                _spriteBatch.Draw(Storage.Sprite("pixel"),
-                                  new Rectangle((int)(virtualX - (_sprite.Width / 2.0f)),
-                                                (int)(virtualY + (_sprite.Height / 2.0f) + 15),
-                                                (int)((tool.Energy / tool.TotalEnergy) * _sprite.Width), 7),
-                                  null,
-                                  originalTeamColor, 0.0f, new Vector2(0.0f, 0.5f), SpriteEffects.None, 0.0f);
             }
         }
 

@@ -12,8 +12,8 @@ namespace Sand
     {
         private MouseState _oldMouseState;
         private KeyboardState _oldKeyState;
-
-        public Tool CurrentPrimary, LastTool, AlternatePrimary;
+        private GamePhases _oldPhase;
+        public TimeSpan LastShockTime;
 
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
@@ -24,6 +24,13 @@ namespace Sand
         {
             base.Update(gameTime);
 
+            if(_oldPhase != Phase)
+            {
+                ResetPlayerState();
+                DisableAllTools();
+                _oldPhase = Phase;
+            }
+
             UpdateStun(gameTime);
             UpdateInput(gameTime);
             UpdatePosition(gameTime);
@@ -33,6 +40,7 @@ namespace Sand
         private void UpdateStun(GameTime gameTime)
         {
             StunTimeRemaining = new TimeSpan(_unstunTime.Ticks - gameTime.TotalGameTime.Ticks);
+            ProtectTimeRemaining = new TimeSpan(_unprotectTime.Ticks - gameTime.TotalGameTime.Ticks);
 
             if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
             {
@@ -45,33 +53,75 @@ namespace Sand
             var newKeyState = Keyboard.GetState();
             var newMouseState = Mouse.GetState();
 
+            var modifiedAcceleration = MovementAcceleration;
+
             Acceleration.X = Acceleration.Y = 0.0f;
 
-            if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 || Phase == GamePhases.WonPhase2 ||
-               Phase == GamePhases.WaitForPhase2)
+            if(CurrentPrimary == null)
+            {
+                CurrentPrimary = PrimaryA;
+                AlternatePrimary = PrimaryB;
+            }
+
+            AlternatePrimary.Active = false;
+
+            if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 ||
+               Phase == GamePhases.WonPhase2)
             {
                 _oldKeyState = newKeyState;
                 _oldMouseState = newMouseState;
 
+                DisableAllTools();
+
                 return;
             }
 
-            if(newKeyState.IsKeyDown(Keys.A))
+            var ourSandQuantity = Storage.SandParticles.TeamParticlesWithinRadius(new Vector2(X, Y), 10, Team);
+            var theirSandQuantity = Storage.SandParticles.TeamParticlesWithinRadius(new Vector2(X, Y), 10,
+                                                                                    Team == Team.Blue
+                                                                                        ? Team.Red
+                                                                                        : Team.Blue);
+            if(!(ourSandQuantity != 0 && theirSandQuantity != 0))
             {
-                Acceleration.X = -MovementAcceleration.X;
-            }
-            else if(newKeyState.IsKeyDown(Keys.D))
-            {
-                Acceleration.X = MovementAcceleration.X;
+                if(ourSandQuantity != 0)
+                {
+                    modifiedAcceleration.X *= 1.4f;
+                    modifiedAcceleration.Y *= 1.4f;
+                }
+
+                if(theirSandQuantity != 0)
+                {
+                    modifiedAcceleration.X *= 0.5f;
+                    modifiedAcceleration.Y *= 0.5f;
+                }
             }
 
-            if(newKeyState.IsKeyDown(Keys.W))
+            if(newKeyState.IsKeyDown(Keys.A) || newKeyState.IsKeyDown(Keys.Left))
             {
-                Acceleration.Y = -MovementAcceleration.Y;
+                Acceleration.X = -modifiedAcceleration.X;
             }
-            else if(newKeyState.IsKeyDown(Keys.S))
+            else if(newKeyState.IsKeyDown(Keys.D) || newKeyState.IsKeyDown(Keys.Right))
             {
-                Acceleration.Y = MovementAcceleration.Y;
+                Acceleration.X = modifiedAcceleration.X;
+            }
+
+            if(newKeyState.IsKeyDown(Keys.W) || newKeyState.IsKeyDown(Keys.Up))
+            {
+                Acceleration.Y = -modifiedAcceleration.Y;
+            }
+            else if(newKeyState.IsKeyDown(Keys.S) || newKeyState.IsKeyDown(Keys.Down))
+            {
+                Acceleration.Y = modifiedAcceleration.Y;
+            }
+
+            if(!Storage.ReadyToPlay)
+            {
+                _oldKeyState = newKeyState;
+                _oldMouseState = newMouseState;
+
+                DisableAllTools();
+
+                return;
             }
 
             if(newKeyState.IsKeyDown(Keys.Q) && _oldKeyState.IsKeyUp(Keys.Q))
@@ -80,70 +130,12 @@ namespace Sand
                 AlternatePrimary = CurrentPrimary == PrimaryB ? PrimaryA : PrimaryB;
             }
 
-            if(CurrentPrimary == null)
-            {
-                CurrentPrimary = PrimaryA;
-                AlternatePrimary = PrimaryB;
-            }
-
             if(Storage.DebugMode)
             {
-                if(newKeyState.IsKeyDown(Keys.R))
-                {
-                    if(Mobility != null)
-                    {
-                        Mobility.Reset();
-                    }
-
-                    if(Weapon != null)
-                    {
-                        Weapon.Reset();
-                    }
-
-                    if(Utility != null)
-                    {
-                        Utility.Reset();
-                    }
-
-                    if(PrimaryA != null)
-                    {
-                        PrimaryA.Reset();
-                    }
-
-                    if(PrimaryB != null)
-                    {
-                        PrimaryB.Reset();
-                    }
-                }
-
-                if(newKeyState.IsKeyDown(Keys.P))
-                {
-                    var p = new Particle(null, Gamer.Id);
-
-                    p.LifeRemaining = p.Lifetime = 100;
-
-                    var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
-                    var length = (float)Storage.Random.Next(200, 450);
-
-                    p.Team = Team;
-                    p.Position = new Vector2(X, Y);
-                    p.Velocity = Velocity +
-                                 new Vector2(
-                                     (float)Math.Cos(Angle - (Math.PI / 2.0f) + angle) * length,
-                                     (float)Math.Sin(Angle - (Math.PI / 2.0f) + angle) * length);
-
-                    Storage.SandParticles.Emit(p);
-                }
-
-                if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
-                {
-                    Stun(25.0f);
-                }
+                UpdateDebugModeInput(newKeyState);
             }
 
-            AlternatePrimary.Active = false;
-
-            if(!Stunned)
+            if((!Stunned || StunType != StunType.ToolStun) && (Phase == GamePhases.Phase1 || Phase == GamePhases.Phase2))
             {
                 Tool[] tools = { };
 
@@ -182,23 +174,99 @@ namespace Sand
             }
             else
             {
-                Mobility.Active = false;
-                Weapon.Active = false;
-                Utility.Active = false;
-
-                if(PrimaryA != null)
-                {
-                    PrimaryA.Active = false;
-                }
-
-                if(PrimaryB != null)
-                {
-                    PrimaryB.Active = false;
-                }
+                DisableAllTools();
             }
 
             _oldKeyState = newKeyState;
             _oldMouseState = newMouseState;
+        }
+
+        private void UpdateDebugModeInput(KeyboardState newKeyState)
+        {
+            if(newKeyState.IsKeyDown(Keys.R))
+            {
+                ResetPlayerState();
+            }
+
+            if(newKeyState.IsKeyDown(Keys.P))
+            {
+                var p = new Particle(null, Gamer.Id);
+
+                p.LifeRemaining = p.Lifetime = 100;
+
+                var angle = (float)(Storage.Random.NextDouble() * (Math.PI / 8.0)) - (Math.PI / 16.0f);
+                var length = (float)Storage.Random.Next(200, 450);
+
+                p.Team = Team;
+                p.Position = new Vector2(X, Y);
+                p.Velocity = Velocity +
+                             new Vector2(
+                                 (float)Math.Cos(Angle - (Math.PI / 2.0f) + angle) * length,
+                                 (float)Math.Sin(Angle - (Math.PI / 2.0f) + angle) * length);
+
+                Storage.SandParticles.Emit(p);
+            }
+
+            if(newKeyState.IsKeyDown(Keys.Y) && !_oldKeyState.IsKeyDown(Keys.Y))
+            {
+                Stun(25.0f);
+            }
+        }
+
+        private void ResetPlayerState()
+        {
+            if(Mobility != null)
+            {
+                Mobility.Reset();
+            }
+
+            if(Weapon != null)
+            {
+                Weapon.Reset();
+            }
+
+            if(Utility != null)
+            {
+                Utility.Reset();
+            }
+
+            if(PrimaryA != null)
+            {
+                PrimaryA.Reset();
+            }
+
+            if(PrimaryB != null)
+            {
+                PrimaryB.Reset();
+            }
+        }
+
+        private void DisableAllTools()
+        {
+            if(Mobility != null)
+            {
+                Mobility.Active = false;
+            }
+
+            if(Weapon != null)
+            {
+                Weapon.Active = false;
+            }
+
+            if(Utility != null)
+            {
+                Utility.Active = false;
+            }
+
+            if(PrimaryA != null)
+            {
+                PrimaryA.Active = false;
+            }
+
+            if(PrimaryB != null)
+            {
+                PrimaryB.Active = false;
+            }
         }
 
         private void UpdateAngle()
@@ -223,7 +291,7 @@ namespace Sand
             newPosition.X += Velocity.X * timestep;
             newPosition.Y += Velocity.Y * timestep;
 
-            if(!Stunned)
+            if(!Stunned || StunType != StunType.MotionStun)
             {
                 if(!_sandGame.GameMap.CollisionTest(Texture,
                                                     new Rectangle((int)(newPosition.X - (Width / 2.0)),
@@ -239,7 +307,7 @@ namespace Sand
                                                                                (int)(Y - (Height / 2.0)), (int)Width,
                                                                                (int)Height)))
                     {
-                        Velocity.Y = -Velocity.Y;
+                        Velocity.Y = -Velocity.Y * 0.6f;
                         X = newPosition.X;
                     }
                     else if(!_sandGame.GameMap.CollisionTest(Texture, new Rectangle((int)(X - (Width / 2.0)),
@@ -247,13 +315,13 @@ namespace Sand
                                                                                     (newPosition.Y - (Height / 2.0)),
                                                                                     (int)Width, (int)Height)))
                     {
-                        Velocity.X = -Velocity.X;
+                        Velocity.X = -Velocity.X * 0.6f;
                         Y = newPosition.Y;
                     }
                     else
                     {
-                        Velocity.X = -Velocity.X;
-                        Velocity.Y = -Velocity.Y;
+                        Velocity.X = -Velocity.X * 0.6f;
+                        Velocity.Y = -Velocity.Y * 0.6f;
                     }
                 }
             }
@@ -265,38 +333,35 @@ namespace Sand
 
         public override void Stun(float energy)
         {
-            var shield = Utility as Shield;
             var wasStunned = Stunned;
+            var doStun = false;
 
             if(energy > 0.0f)
             {
-                if (shield != null)
+                if(!(Utility is Shield && Utility.Active))
                 {
-                    energy = shield.DeflectShock(energy);
-                }
-                else
-                {
-                    Stunned = true;
+                    doStun = true;
+                    StunType = StunType.ToolStun;
                 }
             }
             else
             {
                 Stunned = false;
             }
-            
 
-            if(Stunned)
+            if(doStun)
             {
-                Storage.Sound("Shock").CreateInstance().Play();
-                Messages.SendPlaySoundMessage(this, "Shock", Gamer.Id, true);
-            }
+                Stunned = true;
+                Sound.OneShot("Shock");
 
-            var newStunTimeRemaining = new TimeSpan(0, 0, (int)(energy / 5));
+                if(!wasStunned)
+                {
+                    StunTimeRemaining = new TimeSpan(0);
+                }
 
-            if(!wasStunned || newStunTimeRemaining > StunTimeRemaining)
-            {
-                StunTimeRemaining = newStunTimeRemaining;
+                StunTimeRemaining += new TimeSpan(Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - LastShockTime.Ticks) / 2, new TimeSpan(0, 0, 5).Ticks));
                 _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
+                LastShockTime = Storage.CurrentTime.TotalGameTime;
             }
         }
     }

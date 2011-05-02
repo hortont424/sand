@@ -55,9 +55,9 @@ namespace Sand.Tools.Primaries
 
             var particleQueue = new HashSet<Particle>();
 
-            Storage.Sound("FlameCharge").CreateInstance().Play();
+            Sound.OneShot("FlameCharge");
 
-            const int flameChargeRadius = 50 * 50;
+            const int flameChargeRadius = 75 * 75;
 
             foreach(var pair in Storage.SandParticles.Particles)
             {
@@ -110,7 +110,7 @@ namespace Sand.Tools.Primaries
                 spriteBatch.Draw(sprite, new Vector2((int)Player.X, (int)Player.Y), null,
                                  new Color(grayLevel, grayLevel, grayLevel), 0.0f,
                                  new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f),
-                                 (((255 - DrawFlameRing) / 255.0f) * 1.041f) + 1.0f,
+                                 (((255 - DrawFlameRing) / 255.0f) * 1.56f) + 1.0f,
                                  SpriteEffects.None, 0.0f);
 
                 DrawFlameRing -= 24;
