@@ -180,9 +180,9 @@ namespace Sand
             _animationGroups = new List<AnimationGroup>();
         }
 
-        public void Add(Animation animation, double duration)
+        public void Add(Animation animation, double duration, bool loops = false)
         {
-            _animationGroups.Add(new AnimationGroup(animation, duration));
+            _animationGroups.Add(new AnimationGroup(animation, duration){Loops = loops});
         }
 
         public void Remove(Animation animation)

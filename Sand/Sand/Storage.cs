@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Net;
 
 namespace Sand
@@ -37,6 +38,9 @@ namespace Sand
 
         public static bool DebugMode;
         public static bool ReadyToPlay;
+
+        public static SoundEffectInstance IntroMusic, LoopMusic;
+        public static bool InMenuMusic;
 
         public static void AddSprite(string name, Texture2D texture)
         {

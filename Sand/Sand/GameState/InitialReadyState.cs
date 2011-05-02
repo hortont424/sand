@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Input;
 
@@ -22,6 +23,24 @@ namespace Sand.GameState
 
         public override void Enter(Dictionary<string, object> data)
         {
+            if(Storage.NetworkSession.IsHost)
+            {
+                Storage.IntroMusic.Play();
+                Storage.InMenuMusic = true;
+                Storage.AnimationController.Add(new Animation
+                                                {
+                                                    CompletedDelegate = () =>
+                                                                        {
+                                                                            if(Storage.InMenuMusic &&
+                                                                               Storage.IntroMusic.State ==
+                                                                               SoundState.Stopped)
+                                                                            {
+                                                                                Storage.LoopMusic.Play();
+                                                                            }
+                                                                        }
+                                                }, 1, true);
+            }
+
             var logoSprite = Storage.Sprite("SandLogo");
             var sandLogoOrigin = new Vector2(Game.BaseScreenSize.X * 0.5f - (logoSprite.Width * 0.5f), 300);
 

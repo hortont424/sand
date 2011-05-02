@@ -79,8 +79,6 @@ namespace Sand
             Storage.Game = this;
             Storage.AnimationController = new AnimationController(this);
             Components.Add(Storage.AnimationController);
-
-            
         }
 
         private void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -148,6 +146,10 @@ namespace Sand
 
             Storage.AddSound("Drained", Content.Load<SoundEffect>("Sounds/Drained"));
             Storage.AddSound("SandBurning", Content.Load<SoundEffect>("Sounds/sand_burning_loop"));
+
+            Storage.IntroMusic = Content.Load<SoundEffect>("Sounds/theme_intro").CreateInstance();
+            Storage.LoopMusic = Content.Load<SoundEffect>("Sounds/theme_loop").CreateInstance();
+            Storage.LoopMusic.IsLooped = true;
 
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
             Storage.AddSprite("DefenseClass", Content.Load<Texture2D>("Textures/Classes/defense"));
