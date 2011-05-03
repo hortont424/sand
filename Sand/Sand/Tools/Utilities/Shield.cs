@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,6 +13,7 @@ namespace Sand.Tools.Utilities
         private readonly Animation _animation;
         private readonly AnimationGroup _animationGroup;
 
+        private float DrawShieldRing { get; set; }
         public float GrayLevel { get; set; }
 
         public Shield(Player player) : base(player)
@@ -75,6 +77,8 @@ namespace Sand.Tools.Utilities
                                     { CompletedDelegate = FinishStartingSound };
             Storage.AnimationController.Add(_shieldSoundAnimation, 500);
 
+            DrawShieldRing = 255;
+
             base.Activate();
         }
 
@@ -111,14 +115,16 @@ namespace Sand.Tools.Utilities
 
                 spriteBatch.Draw(sprite, new Vector2((int)Player.X, (int)Player.Y), null,
                                  new Color(GrayLevel, GrayLevel, GrayLevel), 0.0f,
-                                 new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.0f,
+                                 new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), ((255 - DrawShieldRing) / 255.0f),
                                  SpriteEffects.None, 0.0f);
+
+                DrawShieldRing = Math.Max(DrawShieldRing - 24, 0);
             }
         }
 
         public override void SendActivationMessage()
         {
-            Messages.SendActivateToolMessage(Player, Slot, Type, Active, null, 0.0f, Player.Gamer.Id, true);
+            Messages.SendActivateToolMessage(Player, Slot, Type, Active, "DrawShieldRing", DrawShieldRing, Player.Gamer.Id, true);
         }
     }
 }
