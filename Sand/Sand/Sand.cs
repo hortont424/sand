@@ -39,6 +39,8 @@ namespace Sand
         public bool DoneAcquiringSession;
         public Effect Effect;
         private RenderTarget2D _renderTarget;
+        public EffectParameter EffectBlurriness;
+        public EffectParameter EffectOffset;
 
         // E27 white rice wonton soup ("I'll go with the boned")
         // E16 chicken fried rice wonton soup
@@ -243,6 +245,8 @@ namespace Sand
 
             Effect = Content.Load<Effect>("Shaders/Blur");
             Effect.CurrentTechnique = Effect.Techniques["None"];
+            EffectBlurriness = Effect.Parameters["BlurDistance"];
+            EffectOffset = Effect.Parameters["BlurOffset"];
 
             Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));
             Storage.AddColor("RedTeam", new Color(0.760f, 0.207f, 1.0f));

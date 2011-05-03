@@ -14,6 +14,20 @@ namespace Sand
         private KeyboardState _oldKeyState;
         private GamePhases _oldPhase;
 
+        private bool _wasStunned;
+
+        public float Blurriness
+        {
+            get
+            {
+                return Storage.Game.EffectBlurriness.GetValueSingle();
+            }
+            set
+            {
+                Storage.Game.EffectBlurriness.SetValue(value);
+            }
+        }
+
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             MovementAcceleration = DefaultAcceleration;
@@ -35,14 +49,22 @@ namespace Sand
             UpdatePosition(gameTime);
             UpdateAngle();
 
-            if(Stunned)
+            if(Stunned && !_wasStunned)
             {
                 Storage.Game.Effect.CurrentTechnique = Storage.Game.Effect.Techniques["Blur"];
+                Storage.AnimationController.Add(new Animation(this, "Blurriness", 0.004f), 1000);
             }
-            else
+            else if(!Stunned && _wasStunned)
             {
-                Storage.Game.Effect.CurrentTechnique = Storage.Game.Effect.Techniques["None"];
+                Storage.AnimationController.Add(
+                    new Animation(this, "Blurriness", 0.000001f)
+                    {
+                        CompletedDelegate =
+                            () => Storage.Game.Effect.CurrentTechnique = Storage.Game.Effect.Techniques["None"]
+                    }, 750);
             }
+
+            _wasStunned = Stunned;
         }
 
         private void UpdateStun(GameTime gameTime)
@@ -367,7 +389,9 @@ namespace Sand
                     StunTimeRemaining = new TimeSpan(0);
                 }
 
-                StunTimeRemaining += new TimeSpan(Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - LastShockTime.Ticks) / 2, new TimeSpan(0, 0, 5).Ticks));
+                StunTimeRemaining +=
+                    new TimeSpan(Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - LastShockTime.Ticks) / 2,
+                                          new TimeSpan(0, 0, 5).Ticks));
                 _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
                 LastShockTime = Storage.CurrentTime.TotalGameTime;
             }

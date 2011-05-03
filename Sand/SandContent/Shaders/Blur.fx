@@ -1,32 +1,39 @@
- float BlurDistance = 0.002f;
- sampler ColorMapSampler : register(s0);
+float BlurDistance = 0.000001f;
+float2 BlurOffset;
+ 
+sampler ColorMapSampler : register(s0);
 
- float4 PixelShaderFunction(float2 Tex: TEXCOORD0) : COLOR
- {
-  float4 Color;
+float4 PixelShaderFunction(float2 Tex: TEXCOORD0) : COLOR
+{
+	float4 Color;
+	float2 pos = Tex.xy + BlurOffset.xy;
+	int num = 9;
 
-  // Get the texel from ColorMapSampler using a modified texture coordinate. This
-  // gets the texels at the neighbour texels and adds it to Color.
-  Color  = tex2D( ColorMapSampler, float2(Tex.x+BlurDistance, Tex.y+BlurDistance)) / 4;
-  Color += tex2D( ColorMapSampler, float2(Tex.x-BlurDistance, Tex.y-BlurDistance)) / 4;
-  Color += tex2D( ColorMapSampler, float2(Tex.x+BlurDistance, Tex.y-BlurDistance)) / 4;
-  Color += tex2D( ColorMapSampler, float2(Tex.x-BlurDistance, Tex.y+BlurDistance)) / 4;
+	Color  = tex2D( ColorMapSampler, float2(pos.x+BlurDistance, pos.y+BlurDistance)) / num;
+	Color += tex2D( ColorMapSampler, float2(pos.x-BlurDistance, pos.y-BlurDistance)) / num;
+	Color += tex2D( ColorMapSampler, float2(pos.x+BlurDistance, pos.y-BlurDistance)) / num;
+	Color += tex2D( ColorMapSampler, float2(pos.x-BlurDistance, pos.y+BlurDistance)) / num;
 
-  // returned the blurred color
-  return Color;
- }
+	Color += tex2D( ColorMapSampler, float2(pos.x, pos.y)) / num;
+	Color += tex2D( ColorMapSampler, float2(pos.x-BlurDistance, pos.y)) / num;
+	Color += tex2D( ColorMapSampler, float2(pos.x+BlurDistance, pos.y)) / num;
+	Color += tex2D( ColorMapSampler, float2(pos.x, pos.y+BlurDistance)) / num;
+	Color += tex2D( ColorMapSampler, float2(pos.x, pos.y-BlurDistance)) / num;
 
- technique Blur
- {
-  pass Pass1
-  {
-   PixelShader = compile ps_2_0 PixelShaderFunction();
-  }
- }
+	return Color;
+}
 
- technique None
- {
-  pass Pass1
-  {
-  }
- }
+technique Blur
+{
+	pass Pass1
+	{
+		PixelShader = compile ps_2_0 PixelShaderFunction();
+	}
+}
+
+technique None
+{
+	pass Pass1
+	{
+	}
+}

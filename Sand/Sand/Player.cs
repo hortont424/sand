@@ -173,6 +173,8 @@ namespace Sand
             var virtualX = Stunned ? X + Storage.Random.Next(-shakeAmplitude, shakeAmplitude) : X;
             var virtualY = Stunned ? Y + Storage.Random.Next(-shakeAmplitude, shakeAmplitude) : Y;
 
+            Storage.Game.EffectOffset.SetValue(new Vector2((virtualX - X) * 0.001f, (virtualY - Y) * 0.001f));
+
             if(Invisible != 0.0f)
             {
                 double hue, saturation, value;
