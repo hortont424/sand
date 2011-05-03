@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
 
 namespace Sand
@@ -15,11 +16,19 @@ namespace Sand
             return soundEffectInstance;
         }
 
-        public static void OneShot(string soundName, bool broadcast = true)
+        public static void OneShot(string soundName, bool broadcast = true, Player remotePlayer = null)
         {
             var player = Storage.NetworkSession.LocalGamers[0].Tag as Player;
+            float distance = 0.0f;
 
-            Add(Storage.Sound(soundName).CreateInstance()).Play();
+            if (remotePlayer != null)
+            {
+                distance = (float)Math.Sqrt(Math.Pow(remotePlayer.X - player.X, 2) + Math.Pow(remotePlayer.Y - player.Y, 2));
+            }
+
+            var sound = Storage.Sound(soundName).CreateInstance();
+            sound.Volume = Math.Max(0.0f, (1700.0f - distance) / 1700.0f);
+            Add(sound).Play();
 
             if (player == null || !broadcast)
                 return;

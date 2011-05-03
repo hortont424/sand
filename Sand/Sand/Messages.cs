@@ -308,7 +308,7 @@ namespace Sand
         {
             var soundName = Storage.PacketReader.ReadString();
 
-            Sound.OneShot(soundName, false);
+            Sound.OneShot(soundName, false, player);
 
             return soundName;
         }
