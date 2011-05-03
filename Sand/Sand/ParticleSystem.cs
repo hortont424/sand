@@ -206,7 +206,7 @@ namespace Sand
                                          Math.Pow(particle.Position.Y - Player.Y, 2));
                 }
 
-                if(IsSand && particle.OnFire && particle.Fire == 0 && particle.Alive)
+                if(IsSand && particle.OnFire && particle.Fire == 0)
                 {
                     particle.Alive = false;
 
@@ -229,37 +229,34 @@ namespace Sand
                 {
                     const int fireSpreadRadius = 10 * 10;
 
-                    if(particle.OnFire)
+                    if(particle.OnFire && particle.Fire == 0)
                     {
-                        if(particle.Fire == 0)
+                        foreach(var pair in Storage.SandParticles.Particles)
                         {
-                            foreach(var pair in Storage.SandParticles.Particles)
+                            var id = pair.Key;
+                            var neighborParticle = pair.Value;
+
+                            if(neighborParticle.OnFire)
                             {
-                                var id = pair.Key;
-                                var neighborParticle = pair.Value;
-
-                                if(neighborParticle.OnFire)
-                                {
-                                    continue;
-                                }
-
-                                var distanceToParticle =
-                                    Math.Pow(neighborParticle.Position.X - particle.Position.X, 2) +
-                                    Math.Pow(neighborParticle.Position.Y - particle.Position.Y, 2);
-
-                                if(distanceToParticle > fireSpreadRadius)
-                                {
-                                    continue;
-                                }
-
-                                neighborParticle.OnFire = true;
-                                neighborParticle.Fire = (byte)Storage.Random.Next(128, 255);
-
-                                _particleQueue.Add(neighborParticle);
+                                continue;
                             }
 
-                            _particleQueue.Add(particle);
+                            var distanceToParticle =
+                                Math.Pow(neighborParticle.Position.X - particle.Position.X, 2) +
+                                Math.Pow(neighborParticle.Position.Y - particle.Position.Y, 2);
+
+                            if(distanceToParticle > fireSpreadRadius)
+                            {
+                                continue;
+                            }
+
+                            neighborParticle.OnFire = true;
+                            neighborParticle.Fire = (byte)Storage.Random.Next(128, 255);
+
+                            _particleQueue.Add(neighborParticle);
                         }
+
+                        _particleQueue.Add(particle);
                     }
                 }
             }
@@ -282,7 +279,7 @@ namespace Sand
                 }
 
                 Color color;
-                var size = (int)(IsSand ? (particle.OnFire ? Storage.Random.Next(1, 7) : particle.Size) : 2);
+                var size = (IsSand ? (particle.OnFire ? Storage.Random.Next(1, 7) : particle.Size) : 2);
                 var offset = size / 2;
 
                 if(IsSand)
@@ -304,7 +301,8 @@ namespace Sand
                 var gray = IsSand ? 1.0f : particle.LifeRemaining / (float)particle.Lifetime;
                 _spriteBatch.Draw(Storage.Sprite("pixel"),
                                   new Rectangle((int)(particle.Position.X - offset), (int)(particle.Position.Y - offset),
-                                                size, size), null, color * gray, particle.Angle, new Vector2(0.5f, 0.5f), SpriteEffects.None, 0.5f);
+                                                size, size), null, color * gray, particle.Angle, new Vector2(0.5f, 0.5f),
+                                  SpriteEffects.None, 0.5f);
             }
         }
 
