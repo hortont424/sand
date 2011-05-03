@@ -9,6 +9,8 @@ namespace Sand.Tools.Utilities
     public class Ground : Tool
     {
         public byte DrawGroundLength { get; set; }
+        public bool DrawGroundDirection { get; set; }
+        public Vector2 DrawGroundLocation;
 
         public Ground(Player player) : base(player)
         {
@@ -53,6 +55,8 @@ namespace Sand.Tools.Utilities
         protected override void Activate()
         {
             DrawGroundLength = 255;
+            DrawGroundDirection = false;
+            DrawGroundLocation = (Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer).Position;
 
             var groundPlayers = new List<Player>();
             const int groundDistance = 150 * 150;
@@ -98,18 +102,39 @@ namespace Sand.Tools.Utilities
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if(DrawGroundLength > 24)
+            if(DrawGroundLength != 0)
             {
-                var sprite = Storage.Sprite("WhiteCircle");
-                var grayLevel = DrawGroundLength / 255.0f;
+                if(DrawGroundLength <= 24)
+                {
+                    DrawGroundDirection = true;
+                }
 
-                spriteBatch.Draw(sprite, new Vector2((int)Player.X, (int)Player.Y), null,
-                                 new Color(grayLevel, grayLevel, grayLevel), 0.0f,
+                var sprite = Storage.Sprite("GroundCircle");
+                float grayLevel;
+                
+                if(DrawGroundLength > 24)
+                {
+                    grayLevel = (255.0f - DrawGroundLength) / 255.0f;
+                }
+                else
+                {
+                    grayLevel = DrawGroundLength / 24.0f;
+                }
+
+                spriteBatch.Draw(sprite, new Vector2((int)DrawGroundLocation.X, (int)DrawGroundLocation.Y), null,
+                                 new Color(grayLevel, grayLevel, grayLevel, 0.0f), 0.0f,
                                  new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f),
-                                 (((255 - DrawGroundLength) / 255.0f) * 3.125f) + 1.0f,
+                                 ((255 - DrawGroundLength) / 255.0f) + 1.0f,
                                  SpriteEffects.None, 0.0f);
 
-                DrawGroundLength -= 24;
+                if(DrawGroundDirection)
+                {
+                    DrawGroundLength = (byte)Math.Max(DrawGroundLength - 1, 0);
+                }
+                else
+                {
+                    DrawGroundLength -= 24;
+                }
             }
         }
 
