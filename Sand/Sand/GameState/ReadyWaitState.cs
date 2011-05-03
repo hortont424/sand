@@ -16,27 +16,6 @@ namespace Sand.GameState
 
         public override void Enter(Dictionary<string, object> data)
         {
-            if(Storage.NetworkSession.IsHost)
-            {
-                Storage.InMenuMusic = false;
-
-                if(Storage.LoopMusic.State == SoundState.Playing)
-                {
-                    Storage.AnimationController.Add(new Animation(Storage.LoopMusic, "Volume", 0.0f)
-                                                    {
-                                                        CompletedDelegate = () =>
-                                                                            {
-                                                                                Storage.LoopMusic.Stop();
-                                                                                Storage.LoopMusic.Volume = 1.0f;
-                                                                            }
-                                                    }, 1500);
-                }
-                else if(Storage.IntroMusic.State == SoundState.Playing)
-                {
-                    Storage.IntroMusic.Stop();
-                }
-            }
-
             Storage.NetworkSession.LocalGamers[0].IsReady = true;
 
             Storage.NetworkSession.GameStarted += GameStarted;
@@ -81,6 +60,34 @@ namespace Sand.GameState
         public override Dictionary<string, object> Leave()
         {
             var player = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+            if (Storage.NetworkSession.IsHost)
+            {
+                Storage.InMenuMusic = false;
+
+                if (Storage.LoopMusic.State == SoundState.Playing)
+                {
+                    Storage.AnimationController.Add(new Animation(Storage.LoopMusic, "Volume", 0.0f)
+                    {
+                        CompletedDelegate = () =>
+                        {
+                            Storage.LoopMusic.Stop();
+                            Storage.LoopMusic.Volume = 1.0f;
+                        }
+                    }, 1500);
+                }
+                else if (Storage.IntroMusic.State == SoundState.Playing)
+                {
+                    Storage.AnimationController.Add(new Animation(Storage.IntroMusic, "Volume", 0.0f)
+                    {
+                        CompletedDelegate = () =>
+                        {
+                            Storage.IntroMusic.Stop();
+                            Storage.IntroMusic.Volume = 1.0f;
+                        }
+                    }, 500);
+                }
+            }
 
             if(player != null)
             {
