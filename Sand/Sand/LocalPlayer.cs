@@ -39,6 +39,7 @@ namespace Sand
         private void UpdateStun(GameTime gameTime)
         {
             StunTimeRemaining = new TimeSpan(_unstunTime.Ticks - gameTime.TotalGameTime.Ticks);
+            ProtectTicks = ((Storage.CurrentTime.TotalGameTime.Ticks - LastShockTime.Ticks) / 2);
 
             if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
             {

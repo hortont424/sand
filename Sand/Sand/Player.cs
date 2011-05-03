@@ -92,6 +92,8 @@ namespace Sand
         public bool Stunned { get; set; }
         public StunType StunType { get; set; }
 
+        public long ProtectTicks;
+
         public Player(Game game, NetworkGamer gamer) : base(game)
         {
             Gamer = gamer;
@@ -218,12 +220,12 @@ namespace Sand
                               null,
                               teamColor, Angle, new Vector2(Width / 2.0f, Height / 2.0f), SpriteEffects.None, 0.0f);
 
-            var protectTicks = ((Storage.CurrentTime.TotalGameTime.Ticks - LastShockTime.Ticks) / 2);
+            
             var maxProtectTicks = new TimeSpan(0, 0, 0, 5).Ticks;
 
-            if(protectTicks < maxProtectTicks)
+            if(ProtectTicks < maxProtectTicks)
             {
-                var grayLevel = (float)(maxProtectTicks - protectTicks) / maxProtectTicks;
+                var grayLevel = (float)(maxProtectTicks - ProtectTicks) / maxProtectTicks;
                 grayLevel = 2.0f * grayLevel / 3.0f;
 
                 _spriteBatch.Draw(_spriteFilled, new Rectangle((int)virtualX, (int)virtualY, (int)Width, (int)Height),
