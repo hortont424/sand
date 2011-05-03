@@ -9,7 +9,6 @@ namespace Sand.Tools.Utilities
     public class Ground : Tool
     {
         public byte DrawGroundLength { get; set; }
-        public bool DrawGroundDirection { get; set; }
         public Vector2 DrawGroundLocation;
 
         public Ground(Player player) : base(player)
@@ -55,8 +54,6 @@ namespace Sand.Tools.Utilities
         protected override void Activate()
         {
             DrawGroundLength = 255;
-            DrawGroundDirection = false;
-            DrawGroundLocation = (Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer).Position;
 
             var groundPlayers = new List<Player>();
             const int groundDistance = 150 * 150;
@@ -75,7 +72,7 @@ namespace Sand.Tools.Utilities
                     continue;
                 }
 
-                if(remotePlayer.Team == Player.Team)
+                if(remotePlayer.Team == Player.Team && remotePlayer.Stunned)
                 {
                     groundPlayers.Add(remotePlayer);
                 }
@@ -104,9 +101,9 @@ namespace Sand.Tools.Utilities
         {
             if(DrawGroundLength != 0)
             {
-                if(DrawGroundLength <= 24)
+                if(DrawGroundLength == 255)
                 {
-                    DrawGroundDirection = true;
+                    DrawGroundLocation = Player.Position;
                 }
 
                 var sprite = Storage.Sprite("GroundCircle");
@@ -127,7 +124,7 @@ namespace Sand.Tools.Utilities
                                  ((255 - DrawGroundLength) / 255.0f) + 1.0f,
                                  SpriteEffects.None, 0.0f);
 
-                if(DrawGroundDirection)
+                if(DrawGroundLength <= 24)
                 {
                     DrawGroundLength = (byte)Math.Max(DrawGroundLength - 1, 0);
                 }
