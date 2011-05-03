@@ -30,7 +30,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>89</ApplicationRevision>
+    <ApplicationRevision>90</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -133,6 +133,7 @@
     <Compile Include="Button.cs" />
     <Compile Include="ClassDescription.cs" />
     <Compile Include="Countdown.cs" />
+    <Compile Include="GameState\LoadingState.cs" />
     <Compile Include="ScoreMeter.cs" />
     <Compile Include="MapChooserButton.cs" />
     <Compile Include="Crosshair.cs" />
@@ -141,12 +142,10 @@
     <Compile Include="Gravity.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="Easing.cs" />
-    <Compile Include="GameState\AcquireSessionState.cs" />
     <Compile Include="GameState\BeginState.cs" />
     <Compile Include="GameState\InitialReadyState.cs" />
     <Compile Include="GameState\GameState.cs" />
     <Compile Include="GameState\LobbyState.cs" />
-    <Compile Include="GameState\LoginState.cs" />
     <Compile Include="GameState\PlayState.cs" />
     <Compile Include="GameState\ReadyWaitState.cs" />
     <Compile Include="LocalPlayer.cs" />

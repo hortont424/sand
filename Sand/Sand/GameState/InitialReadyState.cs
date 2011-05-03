@@ -41,10 +41,8 @@ namespace Sand.GameState
                                                 }, 1, true);
             }
 
-            var logoSprite = Storage.Sprite("SandLogo");
-            var sandLogoOrigin = new Vector2(Game.BaseScreenSize.X * 0.5f - (logoSprite.Width * 0.5f), 300);
+            _sandLogo = data["SandLogo"] as Billboard;
 
-            _sandLogo = new Billboard(Game, sandLogoOrigin, logoSprite);
             _readyLabel = new Label(Game, Game.BaseScreenSize.X * 0.5f, Game.BaseScreenSize.Y * 0.5f,
                                     "Click to Begin", "Calibri48Bold") { PositionGravity = Gravity.Center };
             _serverLabel = new Label(Game, Game.BaseScreenSize.X - 15.0f, 10.0f,

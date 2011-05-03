@@ -5,14 +5,13 @@ namespace Sand.GameState
     public enum States
     {
         Begin = 0,
-        Login,
-        AcquireSession,
         InitialReady,
         Lobby,
         Loadout,
         ReadyWait,
         Play,
-        ChooseMap
+        ChooseMap,
+        Loading
     }
 
     public abstract class GameState

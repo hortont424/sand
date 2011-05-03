@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Net;
 using Sand.GameState;
 
 namespace Sand
@@ -33,6 +35,8 @@ namespace Sand
 
         public MapManager MapManager;
         public Map GameMap;
+        public bool DoneLoading;
+        public bool DoneAcquiringSession;
 
         // E27 white rice wonton soup ("I'll go with the boned")
         // E16 chicken fried rice wonton soup
@@ -62,8 +66,7 @@ namespace Sand
             _gameState = States.Begin;
             _gameStateInstances = new Dictionary<States, GameState.GameState>();
             _gameStateInstances[States.Begin] = new BeginState(this);
-            _gameStateInstances[States.Login] = new LoginState(this);
-            _gameStateInstances[States.AcquireSession] = new AcquireSessionState(this);
+            _gameStateInstances[States.Loading] = new LoadingState(this);
             _gameStateInstances[States.InitialReady] = new InitialReadyState(this);
             _gameStateInstances[States.Lobby] = new LobbyState(this);
             _gameStateInstances[States.Loadout] = new LoadoutState(this);
@@ -126,106 +129,114 @@ namespace Sand
 
             ComputeTransform();
 
-            Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
-            Storage.AddFont("Calibri24Bold", Content.Load<SpriteFont>("Fonts/Calibri24Bold"));
-            Storage.AddFont("Calibri32", Content.Load<SpriteFont>("Fonts/Calibri32"));
-            Storage.AddFont("Calibri32Bold", Content.Load<SpriteFont>("Fonts/Calibri32Bold"));
+            ThreadStart contentThread = delegate
+            {
+                Storage.AddFont("Calibri24", Content.Load<SpriteFont>("Fonts/Calibri24"));
+                Storage.AddFont("Calibri24Bold", Content.Load<SpriteFont>("Fonts/Calibri24Bold"));
+                Storage.AddFont("Calibri32", Content.Load<SpriteFont>("Fonts/Calibri32"));
+                Storage.AddFont("Calibri32Bold", Content.Load<SpriteFont>("Fonts/Calibri32Bold"));
+                Storage.AddFont("Calibri120Bold", Content.Load<SpriteFont>("Fonts/Calibri120Bold"));
+                Storage.AddFont("Calibri400Bold", Content.Load<SpriteFont>("Fonts/Calibri400Bold"));
+
+
+                Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));
+                Storage.AddColor("RedTeam", new Color(0.760f, 0.207f, 1.0f));
+                Storage.AddColor("BlueTeam", new Color(0.207f, 0.741f, 0.215f));
+                Storage.AddColor("NeutralTeam", new Color(0.4f, 0.4f, 0.4f));
+
+                Storage.AddSprite("Crosshair", Content.Load<Texture2D>("Textures/Crosshair"));
+
+                Storage.AddSound("Fail", Content.Load<SoundEffect>("Sounds/fail"));
+
+                Storage.AddSound("Drained", Content.Load<SoundEffect>("Sounds/Drained"));
+                Storage.AddSound("SandBurning", Content.Load<SoundEffect>("Sounds/sand_burning_loop"));
+
+                Storage.IntroMusic = Content.Load<SoundEffect>("Music/theme_intro").CreateInstance();
+                Storage.LoopMusic = Content.Load<SoundEffect>("Music/theme_loop").CreateInstance();
+                Storage.LoopMusic.IsLooped = true;
+
+                Storage.AddSprite("DefenseClass", Content.Load<Texture2D>("Textures/Classes/defense"));
+                Storage.AddSprite("OffenseClass", Content.Load<Texture2D>("Textures/Classes/offense"));
+                Storage.AddSprite("SupportClass", Content.Load<Texture2D>("Textures/Classes/support"));
+
+                Storage.AddSprite("DefenseClassLarge", Content.Load<Texture2D>("Textures/Classes/DefenseLarge"));
+                Storage.AddSprite("OffenseClassLarge", Content.Load<Texture2D>("Textures/Classes/OffenseLarge"));
+                Storage.AddSprite("SupportClassLarge", Content.Load<Texture2D>("Textures/Classes/SupportLarge"));
+
+                Storage.AddSprite("DefenseClassFilled", Content.Load<Texture2D>("Textures/Classes/DefenseFilled"));
+                Storage.AddSprite("OffenseClassFilled", Content.Load<Texture2D>("Textures/Classes/OffenseFilled"));
+                Storage.AddSprite("SupportClassFilled", Content.Load<Texture2D>("Textures/Classes/SupportFilled"));
+
+                Storage.AddSound("DefenseClass1", Content.Load<SoundEffect>("Sounds/Defense_1"));
+                Storage.AddSound("OffenseClass1", Content.Load<SoundEffect>("Sounds/Offense_1"));
+                Storage.AddSound("SupportClass1", Content.Load<SoundEffect>("Sounds/Support_1"));
+
+                Storage.AddSound("DefenseClass2", Content.Load<SoundEffect>("Sounds/Defense_2"));
+                Storage.AddSound("OffenseClass2", Content.Load<SoundEffect>("Sounds/Offense_2"));
+                Storage.AddSound("SupportClass2", Content.Load<SoundEffect>("Sounds/Support_2"));
+
+                Storage.AddSound("DefenseClass3", Content.Load<SoundEffect>("Sounds/Defense_3"));
+                Storage.AddSound("OffenseClass3", Content.Load<SoundEffect>("Sounds/Offense_3"));
+                Storage.AddSound("SupportClass3", Content.Load<SoundEffect>("Sounds/Support_3"));
+
+                Storage.AddSprite("BlinkDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BlinkDrive"));
+                Storage.AddSound("BlinkDrive", Content.Load<SoundEffect>("Sounds/blinkdrive"));
+
+                Storage.AddSprite("BoostDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BoostDrive"));
+                Storage.AddSound("BoostDrive_Start", Content.Load<SoundEffect>("Sounds/BoostDrive_Start"));
+                Storage.AddSound("BoostDrive_Stop", Content.Load<SoundEffect>("Sounds/BoostDrive_Stop"));
+                Storage.AddSound("BoostDrive_Engine", Content.Load<SoundEffect>("Sounds/BoostDrive_Engine"));
+
+                Storage.AddSprite("WinkDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/WinkDrive"));
+                Storage.AddSound("WinkDrive_Start", Content.Load<SoundEffect>("Sounds/WinkDrive_Start"));
+                Storage.AddSound("WinkDrive_Stop", Content.Load<SoundEffect>("Sounds/WinkDrive_Stop"));
+
+                Storage.AddSprite("Cannon", Content.Load<Texture2D>("Textures/Tools/Weapons/Cannon"));
+                Storage.AddSound("Cannon", Content.Load<SoundEffect>("Sounds/Cannon"));
+                Storage.AddSound("Shock", Content.Load<SoundEffect>("Sounds/Shock"));
+
+                Storage.AddSprite("Shield", Content.Load<Texture2D>("Textures/Tools/Utilities/Shield"));
+                Storage.AddSprite("ShieldCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/ShieldCircle"));
+                Storage.AddSprite("WhiteCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/WhiteCircle"));
+                Storage.AddSprite("ToolDot", Content.Load<Texture2D>("Textures/Tools/Utilities/ToolDot"));
+                Storage.AddSound("Shield", Content.Load<SoundEffect>("Sounds/Shield"));
+
+                Storage.AddSprite("Jet", Content.Load<Texture2D>("Textures/Tools/Primaries/Jet"));
+                Storage.AddSound("Jet", Content.Load<SoundEffect>("Sounds/jet_drain"));
+
+                Storage.AddSprite("Plow", Content.Load<Texture2D>("Textures/Tools/Primaries/Plow"));
+                Storage.AddSound("Plow", Content.Load<SoundEffect>("Sounds/Plow"));
+
+                Storage.AddSprite("Laser", Content.Load<Texture2D>("Textures/Tools/Primaries/Laser"));
+                Storage.AddSound("Laser", Content.Load<SoundEffect>("Sounds/Laser"));
+
+                Storage.AddSprite("SandCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/SandCharge"));
+                Storage.AddSound("SandCharge", Content.Load<SoundEffect>("Sounds/sandcharge"));
+                Storage.AddSprite("FlameCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/FlameCharge"));
+                Storage.AddSound("FlameCharge", Content.Load<SoundEffect>("Sounds/FlameCharge"));
+                Storage.AddSprite("PressureCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/PressureCharge"));
+                Storage.AddSound("PressureCharge", Content.Load<SoundEffect>("Sounds/PressureCharge"));
+
+                Storage.AddSprite("EMP", Content.Load<Texture2D>("Textures/Tools/Weapons/EMP"));
+                Storage.AddSound("EMP", Content.Load<SoundEffect>("Sounds/EMP"));
+
+                Storage.AddSprite("Ground", Content.Load<Texture2D>("Textures/Tools/Utilities/Ground"));
+                Storage.AddSprite("GroundCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/GroundCircle"));
+                Storage.AddSound("Ground", Content.Load<SoundEffect>("Sounds/Ground"));
+
+                var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
+                rectTexture.SetData(new[] { Color.White });
+                Storage.AddSprite("pixel", rectTexture);
+
+                MapManager = new MapManager(this);
+
+                DoneLoading = true;
+            };
+
             Storage.AddFont("Calibri48Bold", Content.Load<SpriteFont>("Fonts/Calibri48Bold"));
-            Storage.AddFont("Calibri120Bold", Content.Load<SpriteFont>("Fonts/Calibri120Bold"));
-            Storage.AddFont("Calibri400Bold", Content.Load<SpriteFont>("Fonts/Calibri400Bold"));
-            Storage.AddFont("Gotham24", Content.Load<SpriteFont>("Fonts/Gotham24"));
-
-            Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));
-            Storage.AddColor("RedTeam", new Color(0.760f, 0.207f, 1.0f));
-            Storage.AddColor("BlueTeam", new Color(0.207f, 0.741f, 0.215f));
-            Storage.AddColor("NeutralTeam", new Color(0.4f, 0.4f, 0.4f));
-
-            Storage.AddSprite("Crosshair", Content.Load<Texture2D>("Textures/Crosshair"));
-
-            Storage.AddSound("Fail", Content.Load<SoundEffect>("Sounds/fail"));
-
-            Storage.AddSound("Drained", Content.Load<SoundEffect>("Sounds/Drained"));
-            Storage.AddSound("SandBurning", Content.Load<SoundEffect>("Sounds/sand_burning_loop"));
-
-            Storage.IntroMusic = Content.Load<SoundEffect>("Sounds/theme_intro").CreateInstance();
-            Storage.LoopMusic = Content.Load<SoundEffect>("Sounds/theme_loop").CreateInstance();
-            Storage.LoopMusic.IsLooped = true;
-
             Storage.AddSprite("SandLogo", Content.Load<Texture2D>("Textures/Menu/sand"));
-            Storage.AddSprite("DefenseClass", Content.Load<Texture2D>("Textures/Classes/defense"));
-            Storage.AddSprite("OffenseClass", Content.Load<Texture2D>("Textures/Classes/offense"));
-            Storage.AddSprite("SupportClass", Content.Load<Texture2D>("Textures/Classes/support"));
 
-            Storage.AddSprite("DefenseClassLarge", Content.Load<Texture2D>("Textures/Classes/DefenseLarge"));
-            Storage.AddSprite("OffenseClassLarge", Content.Load<Texture2D>("Textures/Classes/OffenseLarge"));
-            Storage.AddSprite("SupportClassLarge", Content.Load<Texture2D>("Textures/Classes/SupportLarge"));
-
-            Storage.AddSprite("DefenseClassFilled", Content.Load<Texture2D>("Textures/Classes/DefenseFilled"));
-            Storage.AddSprite("OffenseClassFilled", Content.Load<Texture2D>("Textures/Classes/OffenseFilled"));
-            Storage.AddSprite("SupportClassFilled", Content.Load<Texture2D>("Textures/Classes/SupportFilled"));
-
-            Storage.AddSound("DefenseClass1", Content.Load<SoundEffect>("Sounds/Defense_1"));
-            Storage.AddSound("OffenseClass1", Content.Load<SoundEffect>("Sounds/Offense_1"));
-            Storage.AddSound("SupportClass1", Content.Load<SoundEffect>("Sounds/Support_1"));
-
-            Storage.AddSound("DefenseClass2", Content.Load<SoundEffect>("Sounds/Defense_2"));
-            Storage.AddSound("OffenseClass2", Content.Load<SoundEffect>("Sounds/Offense_2"));
-            Storage.AddSound("SupportClass2", Content.Load<SoundEffect>("Sounds/Support_2"));
-
-            Storage.AddSound("DefenseClass3", Content.Load<SoundEffect>("Sounds/Defense_3"));
-            Storage.AddSound("OffenseClass3", Content.Load<SoundEffect>("Sounds/Offense_3"));
-            Storage.AddSound("SupportClass3", Content.Load<SoundEffect>("Sounds/Support_3"));
-
-            Storage.AddSprite("BlinkDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BlinkDrive"));
-            Storage.AddSound("BlinkDrive", Content.Load<SoundEffect>("Sounds/blinkdrive"));
-
-            Storage.AddSprite("BoostDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/BoostDrive"));
-            Storage.AddSound("BoostDrive_Start", Content.Load<SoundEffect>("Sounds/BoostDrive_Start"));
-            Storage.AddSound("BoostDrive_Stop", Content.Load<SoundEffect>("Sounds/BoostDrive_Stop"));
-            Storage.AddSound("BoostDrive_Engine", Content.Load<SoundEffect>("Sounds/BoostDrive_Engine"));
-
-            Storage.AddSprite("WinkDrive", Content.Load<Texture2D>("Textures/Tools/Mobilities/WinkDrive"));
-            Storage.AddSound("WinkDrive_Start", Content.Load<SoundEffect>("Sounds/WinkDrive_Start"));
-            Storage.AddSound("WinkDrive_Stop", Content.Load<SoundEffect>("Sounds/WinkDrive_Stop"));
-
-            Storage.AddSprite("Cannon", Content.Load<Texture2D>("Textures/Tools/Weapons/Cannon"));
-            Storage.AddSound("Cannon", Content.Load<SoundEffect>("Sounds/Cannon"));
-            Storage.AddSound("Shock", Content.Load<SoundEffect>("Sounds/Shock"));
-
-            Storage.AddSprite("Shield", Content.Load<Texture2D>("Textures/Tools/Utilities/Shield"));
-            Storage.AddSprite("ShieldCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/ShieldCircle"));
-            Storage.AddSprite("WhiteCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/WhiteCircle"));
-            Storage.AddSprite("ToolDot", Content.Load<Texture2D>("Textures/Tools/Utilities/ToolDot"));
-            Storage.AddSound("Shield", Content.Load<SoundEffect>("Sounds/Shield"));
-
-            Storage.AddSprite("Jet", Content.Load<Texture2D>("Textures/Tools/Primaries/Jet"));
-            Storage.AddSound("Jet", Content.Load<SoundEffect>("Sounds/jet_drain"));
-
-            Storage.AddSprite("Plow", Content.Load<Texture2D>("Textures/Tools/Primaries/Plow"));
-            Storage.AddSound("Plow", Content.Load<SoundEffect>("Sounds/Plow"));
-
-            Storage.AddSprite("Laser", Content.Load<Texture2D>("Textures/Tools/Primaries/Laser"));
-            Storage.AddSound("Laser", Content.Load<SoundEffect>("Sounds/Laser"));
-
-            Storage.AddSprite("SandCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/SandCharge"));
-            Storage.AddSound("SandCharge", Content.Load<SoundEffect>("Sounds/sandcharge"));
-            Storage.AddSprite("FlameCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/FlameCharge"));
-            Storage.AddSound("FlameCharge", Content.Load<SoundEffect>("Sounds/FlameCharge"));
-            Storage.AddSprite("PressureCharge", Content.Load<Texture2D>("Textures/Tools/Primaries/PressureCharge"));
-            Storage.AddSound("PressureCharge", Content.Load<SoundEffect>("Sounds/PressureCharge"));
-
-            Storage.AddSprite("EMP", Content.Load<Texture2D>("Textures/Tools/Weapons/EMP"));
-            Storage.AddSound("EMP", Content.Load<SoundEffect>("Sounds/EMP"));
-
-            Storage.AddSprite("Ground", Content.Load<Texture2D>("Textures/Tools/Utilities/Ground"));
-            Storage.AddSprite("GroundCircle", Content.Load<Texture2D>("Textures/Tools/Utilities/GroundCircle"));
-            Storage.AddSound("Ground", Content.Load<SoundEffect>("Sounds/Ground"));
-
-            var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
-            rectTexture.SetData(new[] { Color.White });
-            Storage.AddSprite("pixel", rectTexture);
-
-            MapManager = new MapManager(this);
+            new Thread(contentThread).Start();
         }
 
         private void ComputeTransform()
@@ -334,7 +345,7 @@ namespace Sand
         {
             if(_gameState == States.Begin)
             {
-                TransitionState(States.Login);
+                TransitionState(States.Loading);
             }
 
             _gameStateInstances[_gameState].Update();
