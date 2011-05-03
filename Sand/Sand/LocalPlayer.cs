@@ -34,6 +34,15 @@ namespace Sand
             UpdateInput(gameTime);
             UpdatePosition(gameTime);
             UpdateAngle();
+
+            if(Stunned)
+            {
+                Storage.Game.Effect.CurrentTechnique = Storage.Game.Effect.Techniques["Blur"];
+            }
+            else
+            {
+                Storage.Game.Effect.CurrentTechnique = Storage.Game.Effect.Techniques["None"];
+            }
         }
 
         private void UpdateStun(GameTime gameTime)

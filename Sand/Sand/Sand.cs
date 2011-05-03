@@ -37,6 +37,8 @@ namespace Sand
         public Map GameMap;
         public int DoneLoading;
         public bool DoneAcquiringSession;
+        public Effect Effect;
+        private RenderTarget2D _renderTarget;
 
         // E27 white rice wonton soup ("I'll go with the boned")
         // E16 chicken fried rice wonton soup
@@ -239,6 +241,9 @@ namespace Sand
                 DoneLoading++;
             };
 
+            Effect = Content.Load<Effect>("Shaders/Blur");
+            Effect.CurrentTechnique = Effect.Techniques["None"];
+
             Storage.AddColor("WidgetFill", new Color(0.1f, 0.5f, 0.1f));
             Storage.AddColor("RedTeam", new Color(0.760f, 0.207f, 1.0f));
             Storage.AddColor("BlueTeam", new Color(0.207f, 0.741f, 0.215f));
@@ -250,6 +255,8 @@ namespace Sand
             new Thread(fontThread).Start();
             new Thread(soundThread).Start();
             new Thread(spriteThread).Start();
+
+            _renderTarget = new RenderTarget2D(GraphicsDevice, Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight, false, SurfaceFormat.Color, DepthFormat.None, GraphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.DiscardContents);
         }
 
         private void ComputeTransform()
@@ -366,6 +373,7 @@ namespace Sand
 
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(_renderTarget);
             GraphicsDevice.Clear(Color.Black);
 
             SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, _globalTransformMatrix);
@@ -373,6 +381,20 @@ namespace Sand
             if(!Guide.IsVisible)
             {
                 base.Draw(gameTime);
+            }
+
+            SpriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Black);
+
+            SpriteBatch.Begin(SpriteSortMode.Immediate, null);
+            SpriteBatch.Draw(_renderTarget, new Vector2(0, 0), Color.White);
+
+            foreach (var pass in Effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                SpriteBatch.Draw(_renderTarget, new Vector2(0, 0), Color.White);
             }
 
             SpriteBatch.End();
