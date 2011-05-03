@@ -99,7 +99,7 @@ namespace Sand.GameState
 
         public override void Update()
         {
-            if(Storage.Game.DoneLoading && Storage.Game.DoneAcquiringSession)
+            if(Storage.Game.DoneLoading == 3 && Storage.Game.DoneAcquiringSession)
             {
                 Storage.Game.TransitionState(States.InitialReady);
             }
