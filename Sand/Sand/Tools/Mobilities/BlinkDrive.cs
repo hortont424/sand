@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -14,6 +15,10 @@ namespace Sand.Tools.Mobilities
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
             EnergyConsumptionRate = 50;
             EnergyRechargeRate = 0.1;
+
+            HasMaxDistance = true;
+            MaxDistance = 325;
+            MaxDistanceColor = Color.Blue;
         }
 
         public static string _name()
@@ -50,6 +55,25 @@ namespace Sand.Tools.Mobilities
         {
             base.Activate();
 
+            int blinkDistance;
+
+            int idealDistance = (int)Math.Sqrt(Math.Pow(Storage.Game.MouseLocation.X - Player.X, 2) +
+                                               Math.Pow(Storage.Game.MouseLocation.Y - Player.Y, 2));
+
+            if (idealDistance < MaxDistance)
+            {
+                blinkDistance = idealDistance;
+            }
+            else
+            {
+                blinkDistance = MaxDistance;
+            }
+
+            var blinkAngle = Player.Angle - ((float)Math.PI / 2.0f);
+            var blinkPosition = new Vector2(Player.X, Player.Y) +
+                                (new Vector2((float)Math.Cos(blinkAngle), (float)Math.Sin(blinkAngle)) *
+                                 new Vector2((float)blinkDistance));
+
             if(!Storage.Game.GameMap.CollisionTest(Player.Texture,
                                                    new Rectangle(
                                                        (int)(Storage.Game.MouseLocation.X - (Player.Width / 2.0)),
@@ -58,8 +82,8 @@ namespace Sand.Tools.Mobilities
                (Storage.Game.MouseLocation.X > 0.0f && Storage.Game.MouseLocation.X < Storage.Game.GameMap.Width &&
                 Storage.Game.MouseLocation.Y > 0.0f && Storage.Game.MouseLocation.Y < Storage.Game.GameMap.Height))
             {
-                Player.X = Storage.Game.MouseLocation.X;
-                Player.Y = Storage.Game.MouseLocation.Y;
+                Player.X = blinkPosition.X;
+                Player.Y = blinkPosition.Y;
 
                 Sound.OneShot("BlinkDrive");
             }
