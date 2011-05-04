@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Sand.Tools;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace Sand.GameState
 {
@@ -11,13 +12,17 @@ namespace Sand.GameState
         private Crosshair _crosshair;
         private ToolIcon _primaryAIcon, _primaryBIcon;
         private SandMeter _redSandMeter, _blueSandMeter;
-        private Label _fpsMeter;
         private WinDialog _winDialog;
         private int _fpsSkip;
         private Label _phase2Timer;
         private Team _teamWonPhase1;
         private ToolIcon _weaponIcon;
         private Countdown _countdownTimer;
+        private KeyboardState _oldKeyState;
+        private ToolIcon _mobilityIcon;
+        private ToolIcon _utilityIcon;
+        private Label _nameLabel;
+        private ScoreMeter _redScoreMeter, _blueScoreMeter;
 
         public PlayState(Sand game) : base(game)
         {
@@ -61,9 +66,9 @@ namespace Sand.GameState
             {
                 var centerSidebar = (Game.GameMap.Width + Game.BaseScreenSize.X) / 2.0f;
 
-                AddToolIconForTool(localPlayer.Mobility, centerSidebar - 20.0f - 148.0f, 10.0f + 148.0f);
+                _mobilityIcon = AddToolIconForTool(localPlayer.Mobility, centerSidebar - 20.0f - 148.0f, 10.0f + 148.0f);
                 _weaponIcon = AddToolIconForTool(localPlayer.Weapon, centerSidebar, 10.0f + 148.0f);
-                AddToolIconForTool(localPlayer.Utility, centerSidebar + 20.0f + 148.0f, 10.0f + 148.0f);
+                _utilityIcon = AddToolIconForTool(localPlayer.Utility, centerSidebar + 20.0f + 148.0f, 10.0f + 148.0f);
                 _primaryAIcon = AddToolIconForTool(localPlayer.PrimaryA, centerSidebar - 10.0f - 74.0f,
                                                    (10.0f + 148.0f) * 2.0f);
                 _primaryBIcon = AddToolIconForTool(localPlayer.PrimaryB, centerSidebar + 20.0f + 74.0f,
@@ -74,14 +79,14 @@ namespace Sand.GameState
                     _primaryBIcon.Disabled = true;
                 }
 
-                var nameLabel = new Label(Game, centerSidebar, 2.0f,
-                                          localPlayer.Gamer.Gamertag, "Calibri48Bold")
-                                {
-                                    PositionGravity =
-                                        new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Top,
-                                                                                        Gravity.Horizontal.Center)
-                                };
-                Game.Components.Add(nameLabel);
+                _nameLabel = new Label(Game, centerSidebar, 2.0f,
+                                       localPlayer.Gamer.Gamertag, "Calibri48Bold")
+                             {
+                                 PositionGravity =
+                                     new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Top,
+                                                                                     Gravity.Horizontal.Center)
+                             };
+                Game.Components.Add(_nameLabel);
             }
 
             Game.Components.Add(Storage.SandParticles);
@@ -100,28 +105,19 @@ namespace Sand.GameState
             Game.Components.Add(_redSandMeter);
             Game.Components.Add(_blueSandMeter);
 
-            var redScoreMeter = new ScoreMeter(Game, Team.Red)
-                                {
-                                    X = _redSandMeter.X,
-                                    Y = _redSandMeter.Y + (_redSandMeter.Height / 2.0f) + 85
-                                };
-            var blueScoreMeter = new ScoreMeter(Game, Team.Blue)
-                                 {
-                                     X = _blueSandMeter.X,
-                                     Y = _blueSandMeter.Y + (_blueSandMeter.Height / 2.0f) + 85
-                                 };
+            _redScoreMeter = new ScoreMeter(Game, Team.Red)
+                             {
+                                 X = _redSandMeter.X,
+                                 Y = _redSandMeter.Y + (_redSandMeter.Height / 2.0f) + 85
+                             };
+            _blueScoreMeter = new ScoreMeter(Game, Team.Blue)
+                              {
+                                  X = _blueSandMeter.X,
+                                  Y = _blueSandMeter.Y + (_blueSandMeter.Height / 2.0f) + 85
+                              };
 
-            Game.Components.Add(redScoreMeter);
-            Game.Components.Add(blueScoreMeter);
-
-            if(Storage.DebugMode)
-            {
-                _fpsMeter = new Label(Game, 10, 15, "")
-                            {
-                                Color = Color.Red
-                            };
-                Game.Components.Add(_fpsMeter);
-            }
+            Game.Components.Add(_redScoreMeter);
+            Game.Components.Add(_blueScoreMeter);
 
             StartTimer();
         }
@@ -131,16 +127,16 @@ namespace Sand.GameState
             Storage.ReadyToPlay = false;
 
             _countdownTimer = new Countdown(Game)
-            {
-                X = Game.GameMap.Width / 2,
-                Y = Storage.Game.BaseScreenSize.Y / 2
-            };
+                              {
+                                  X = Game.GameMap.Width / 2,
+                                  Y = Storage.Game.BaseScreenSize.Y / 2
+                              };
             Game.Components.Add(_countdownTimer);
             _countdownTimer.Start(5, 1000, () =>
-            {
-                Storage.ReadyToPlay = true;
-                Game.Components.Remove(_countdownTimer);
-            });
+                                           {
+                                               Storage.ReadyToPlay = true;
+                                               Game.Components.Remove(_countdownTimer);
+                                           });
         }
 
         public override void Update()
@@ -185,14 +181,19 @@ namespace Sand.GameState
 
             if(Storage.DebugMode)
             {
-                _fpsSkip++;
+                var keyState = Keyboard.GetState();
 
-                if(_fpsSkip >= 15)
+                if(keyState.IsKeyDown(Keys.D1) && _oldKeyState.IsKeyUp(Keys.D1))
                 {
-                    _fpsMeter.Text = string.Format("{0:0.0} fps",
-                                                   1.0 / Storage.CurrentTime.ElapsedGameTime.TotalSeconds);
-                    _fpsSkip = 0;
+                    WinPhase1(Team.Red);
                 }
+
+                if(keyState.IsKeyDown(Keys.D2) && _oldKeyState.IsKeyUp(Keys.D2))
+                {
+                    WinPhase2(Team.Red);
+                }
+
+                _oldKeyState = keyState;
             }
         }
 
@@ -396,7 +397,7 @@ namespace Sand.GameState
             }
             else if(Storage.RemainingTime.Ticks <= 0)
             {
-                WinPhase2(_teamWonPhase1);
+                WinPhase2(Team.None);
                 Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, _teamWonPhase1,
                                                    localPlayer.Gamer.Id, true);
             }
@@ -412,6 +413,16 @@ namespace Sand.GameState
             if(_phase2Timer != null)
             {
                 Game.Components.Remove(_phase2Timer);
+            }
+
+            if(team != Team.None && _teamWonPhase1 == team)
+            {
+                Storage.Scores[team]++;
+
+                if(Storage.Scores[team] == 3)
+                {
+                    Storage.Game.TransitionState(States.Lobby);
+                }
             }
 
             localPlayer.Phase = GamePhases.Done;
@@ -435,6 +446,17 @@ namespace Sand.GameState
             Game.Components.Remove(_redSandMeter);
             Game.Components.Remove(_blueSandMeter);
 
+            Game.Components.Remove(_redScoreMeter);
+            Game.Components.Remove(_blueScoreMeter);
+
+            Game.Components.Remove(_mobilityIcon);
+            Game.Components.Remove(_utilityIcon);
+            Game.Components.Remove(_weaponIcon);
+            Game.Components.Remove(_primaryAIcon);
+            Game.Components.Remove(_primaryBIcon);
+
+            Game.Components.Remove(_nameLabel);
+
             if(_phase2Timer != null)
             {
                 Game.Components.Remove(_phase2Timer);
@@ -445,10 +467,26 @@ namespace Sand.GameState
                 Game.Components.Remove(_winDialog);
             }
 
-            if(_fpsMeter != null)
+            if(Storage.NetworkSession.IsHost)
             {
-                Game.Components.Remove(_fpsMeter);
+                Storage.NetworkSession.EndGame();
             }
+
+            foreach(var gamer in Storage.NetworkSession.AllGamers)
+            {
+                if(gamer.IsLocal)
+                {
+                    gamer.Tag = new LocalPlayer(Game, gamer);
+                }
+                else
+                {
+                    gamer.Tag = new RemotePlayer(Game, gamer);
+                }
+            }
+
+            Storage.Scores[Team.Red] = Storage.Scores[Team.Blue] = 0;
+            Storage.SandParticles.Particles.Clear();
+            Storage.AnimationController.Clear();
 
             return null;
         }

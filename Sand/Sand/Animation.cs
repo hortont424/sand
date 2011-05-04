@@ -254,5 +254,10 @@ namespace Sand
                 }
             }
         }
+
+        public void Clear()
+        {
+            _animationGroups.Clear();
+        }
     }
 }

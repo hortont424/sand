@@ -339,6 +339,12 @@ namespace Sand
 
         public bool TransitionState(States newState)
         {
+            if(_gameState == newState)
+            {
+                Console.WriteLine("same state!?");
+                return false;
+            }
+
             Console.WriteLine("Moving from {0} to {1}", _gameState, newState);
 
             if(!_gameStateInstances[_gameState].CanLeave())
@@ -356,6 +362,9 @@ namespace Sand
             var data = _gameStateInstances[_gameState].Leave();
 
             _gameState = newState;
+
+            if(data == null)
+                data = new Dictionary<string, object>();
 
             _gameStateInstances[_gameState].Enter(data);
 

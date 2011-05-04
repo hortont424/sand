@@ -31,6 +31,8 @@ namespace Sand
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             MovementAcceleration = DefaultAcceleration;
+
+            Console.WriteLine("Constructing LocalPlayer");
         }
 
         public override void Update(GameTime gameTime)

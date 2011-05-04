@@ -55,7 +55,7 @@ namespace Sand.GameState
             var logoSprite = Storage.Sprite("SandLogo");
             var sandLogoOrigin = new Vector2(Game.BaseScreenSize.X * 0.5f - (logoSprite.Width * 0.5f), 30);
 
-            _sandLogo = data["SandLogo"] as Billboard ?? new Billboard(Game, sandLogoOrigin, logoSprite);
+            _sandLogo = data.ContainsKey("SandLogo") ? data["SandLogo"] as Billboard : new Billboard(Game, sandLogoOrigin, logoSprite);
 
             Storage.AnimationController.Add(new Animation(_sandLogo, "Y", sandLogoOrigin.Y), 750);
 
@@ -173,6 +173,9 @@ namespace Sand.GameState
 
         public override Dictionary<string, object> Leave()
         {
+            Storage.NetworkSession.GamerJoined -= GamerJoined;
+            Storage.NetworkSession.GamerLeft -= GamerLeft;
+
             Game.Components.Remove(_sandLogo);
             Game.Components.Remove(_readyButton);
             Game.Components.Remove(_classDescriptions[0]);

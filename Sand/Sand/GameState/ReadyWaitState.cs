@@ -59,6 +59,9 @@ namespace Sand.GameState
 
         public override Dictionary<string, object> Leave()
         {
+            Storage.NetworkSession.GameStarted -= GameStarted;
+            Storage.NetworkSession.GameEnded -= GameEnded;
+
             var player = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
             if (Storage.NetworkSession.IsHost)
