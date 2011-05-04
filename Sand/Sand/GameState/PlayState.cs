@@ -419,9 +419,9 @@ namespace Sand.GameState
             {
                 Storage.Scores[team]++;
 
-                if(Storage.Scores[team] == 3)
+                if(Storage.Scores[team] == 3 && Storage.NetworkSession.IsHost)
                 {
-                    Storage.Game.TransitionState(States.Lobby);
+                    Storage.NetworkSession.EndGame();
                 }
             }
 
@@ -466,27 +466,6 @@ namespace Sand.GameState
             {
                 Game.Components.Remove(_winDialog);
             }
-
-            if(Storage.NetworkSession.IsHost)
-            {
-                Storage.NetworkSession.EndGame();
-            }
-
-            foreach(var gamer in Storage.NetworkSession.AllGamers)
-            {
-                if(gamer.IsLocal)
-                {
-                    gamer.Tag = new LocalPlayer(Game, gamer);
-                }
-                else
-                {
-                    gamer.Tag = new RemotePlayer(Game, gamer);
-                }
-            }
-
-            Storage.Scores[Team.Red] = Storage.Scores[Team.Blue] = 0;
-            Storage.SandParticles.Particles.Clear();
-            Storage.AnimationController.Clear();
 
             return null;
         }

@@ -9,6 +9,7 @@ namespace Sand.GameState
     public class ReadyWaitState : GameState
     {
         private Label _readyLabel;
+        private bool _initialized;
 
         public ReadyWaitState(Sand game) : base(game)
         {
@@ -18,8 +19,13 @@ namespace Sand.GameState
         {
             Storage.NetworkSession.LocalGamers[0].IsReady = true;
 
-            Storage.NetworkSession.GameStarted += GameStarted;
-            Storage.NetworkSession.GameEnded += GameEnded;
+            if(!_initialized)
+            {
+                Storage.NetworkSession.GameStarted += GameStarted;
+                Storage.NetworkSession.GameEnded += GameEnded;
+
+                _initialized = true;
+            }
 
             _readyLabel = new Label(Game, Game.BaseScreenSize.X / 2.0f, Game.BaseScreenSize.Y / 2.0f,
                                     "Waiting for Players",
@@ -37,6 +43,26 @@ namespace Sand.GameState
         private void GameEnded(object sender, GameEndedEventArgs e)
         {
             Console.WriteLine("done game!");
+
+            foreach(var gamer in Storage.NetworkSession.AllGamers)
+            {
+                Game.Components.Remove(gamer.Tag as Player);
+
+                if(gamer.IsLocal)
+                {
+                    gamer.Tag = new LocalPlayer(Game, gamer);
+                }
+                else
+                {
+                    gamer.Tag = new RemotePlayer(Game, gamer);
+                }
+            }
+
+            Storage.Scores[Team.Red] = Storage.Scores[Team.Blue] = 0;
+            Storage.SandParticles.Particles.Clear();
+            Storage.AnimationController.Clear();
+
+            Storage.Game.TransitionState(States.Lobby);
         }
 
         public override void Update()
@@ -59,36 +85,33 @@ namespace Sand.GameState
 
         public override Dictionary<string, object> Leave()
         {
-            Storage.NetworkSession.GameStarted -= GameStarted;
-            Storage.NetworkSession.GameEnded -= GameEnded;
-
             var player = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
-            if (Storage.NetworkSession.IsHost)
+            if(Storage.NetworkSession.IsHost)
             {
                 Storage.InMenuMusic = false;
 
-                if (Storage.LoopMusic.State == SoundState.Playing)
+                if(Storage.LoopMusic.State == SoundState.Playing)
                 {
                     Storage.AnimationController.Add(new Animation(Storage.LoopMusic, "Volume", 0.0f)
-                    {
-                        CompletedDelegate = () =>
-                        {
-                            Storage.LoopMusic.Stop();
-                            Storage.LoopMusic.Volume = 1.0f;
-                        }
-                    }, 1500);
+                                                    {
+                                                        CompletedDelegate = () =>
+                                                                            {
+                                                                                Storage.LoopMusic.Stop();
+                                                                                Storage.LoopMusic.Volume = 1.0f;
+                                                                            }
+                                                    }, 1500);
                 }
-                else if (Storage.IntroMusic.State == SoundState.Playing)
+                else if(Storage.IntroMusic.State == SoundState.Playing)
                 {
                     Storage.AnimationController.Add(new Animation(Storage.IntroMusic, "Volume", 0.0f)
-                    {
-                        CompletedDelegate = () =>
-                        {
-                            Storage.IntroMusic.Stop();
-                            Storage.IntroMusic.Volume = 1.0f;
-                        }
-                    }, 500);
+                                                    {
+                                                        CompletedDelegate = () =>
+                                                                            {
+                                                                                Storage.IntroMusic.Stop();
+                                                                                Storage.IntroMusic.Volume = 1.0f;
+                                                                            }
+                                                    }, 500);
                 }
             }
 
