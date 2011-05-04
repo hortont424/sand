@@ -17,6 +17,7 @@ namespace Sand
         public bool Alive;
         public int Size;
         public float Angle;
+        public float Opacity;
 
         private byte _fire;
 
@@ -45,6 +46,7 @@ namespace Sand
 
             Size = Storage.Random.Next(2, 5);
             Angle = (float)(Storage.Random.NextDouble() * 2.0 * Math.PI);
+            Opacity = (float)Math.Min(Storage.Random.NextDouble() + 0.2, 1.0);
 
             Alive = true;
             Owner = owner;
@@ -298,10 +300,16 @@ namespace Sand
                     color = Color.Orange;
                 }
 
+                double hue, saturation, value;
+                SandColor.ToHSV(color, out hue, out saturation, out value);
+
+                color = SandColor.FromHSV(hue + (particle.Opacity * 40.0f - 20.0f), saturation + (particle.Opacity * 0.5f - 0.25f), value);
+
+
                 var gray = IsSand ? 1.0f : particle.LifeRemaining / (float)particle.Lifetime;
                 _spriteBatch.Draw(Storage.Sprite("pixel"),
                                   new Rectangle((int)(particle.Position.X - offset), (int)(particle.Position.Y - offset),
-                                                size, size), null, color * gray, particle.Angle, new Vector2(0.5f, 0.5f),
+                                                size, size), null, color * gray * particle.Opacity, particle.Angle, new Vector2(0.5f, 0.5f),
                                   SpriteEffects.None, 0.5f);
             }
         }

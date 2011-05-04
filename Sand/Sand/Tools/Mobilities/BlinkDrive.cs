@@ -14,7 +14,7 @@ namespace Sand.Tools.Mobilities
             Energy = TotalEnergy = 100;
             EnergyConsumptionMode = EnergyConsumptionMode.Instant;
             EnergyConsumptionRate = 50;
-            EnergyRechargeRate = 0.1;
+            EnergyRechargeRate = 0.08;
 
             HasMaxDistance = true;
             MaxDistance = 325;
