@@ -58,8 +58,6 @@ namespace Sand.GameState
         {
             Messages.Update();
 
-            Console.WriteLine("{0} {1}", Storage.Scores[Team.Red], Storage.Scores[Team.Blue]);
-
             _label.Text = (Storage.Scores[Team.Red] == 3 ? "Purple" : "Green") + " Wins!";
         }
 
