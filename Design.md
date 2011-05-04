@@ -1,3 +1,5 @@
+THE MOST RECENT COPY OF THIS IS NOW IN PAGES, NOT HERE. ANY UPDATES SHOULD GO THERE.
+
 Something about Sand Design Document
 ====================================
 
