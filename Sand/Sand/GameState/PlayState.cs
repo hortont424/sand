@@ -420,7 +420,7 @@ namespace Sand.GameState
                 Game.Components.Remove(_phase2Timer);
             }
 
-            if(team != Team.None && _teamWonPhase1 == team)
+            if(team != Team.None && _teamWonPhase1 == team && Storage.NetworkSession.IsHost)
             {
                 Storage.Scores[team]++;
 
@@ -429,7 +429,7 @@ namespace Sand.GameState
                     Messages.SendUpdateScoreMessage(localPlayer, localPlayer.Gamer.Id, true);
                 }
 
-                if(Storage.Scores[team] == 3 && Storage.NetworkSession.IsHost)
+                if(Storage.Scores[team] == 3)
                 {
                     Storage.NetworkSession.EndGame();
                     return;
