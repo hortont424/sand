@@ -17,6 +17,11 @@ namespace Sand.GameState
         private ToolChooserButton _utilitiesToolChooser;
         private ToolChooserButton _mobilitiesToolChooser;
         private ToolChooserButton _primaryAToolChooser, _primaryBToolChooser;
+        private Billboard _primaryButtonA;
+        private Billboard _primaryButtonB;
+        private Billboard _weaponButton;
+        private Billboard _utilityButton;
+        private Billboard _mobilityButton;
 
         public LoadoutState(Sand game) : base(game)
         {
@@ -58,16 +63,30 @@ namespace Sand.GameState
                     throw new ArgumentOutOfRangeException();
             }
 
-            _primaryAToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 220), "Primary 1",
+            _primaryAToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 220), "Primary 1",
                                                           primaries);
-            _primaryBToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 420), "Primary 2",
+            _primaryBToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 420), "Primary 2",
                                                           primaries);
             _primaryBToolChooser.ChooseTool(null, primaries[1], false); // TODO: this is all a hack
-            _weaponsToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 620), "Weapons", weapons);
-            _utilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 820), "Utilities",
+            _weaponsToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 620), "Weapons", weapons);
+            _utilitiesToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 820), "Utilities",
                                                           utilities);
-            _mobilitiesToolChooser = new ToolChooserButton(Game, new Vector2(200, _sandLogo.Y + 1020), "Mobilities",
+            _mobilitiesToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 1020), "Mobilities",
                                                            mobilities);
+
+            var origin = 50;
+            var offset = 17;
+
+            _primaryButtonA = new Billboard(Game, new Vector2(origin + 30, _primaryAToolChooser.Y - offset), Storage.Sprite("lmouse"))
+                              { PositionGravity = Gravity.Center };
+
+            _primaryButtonB = new Billboard(Game, new Vector2(origin + 30, _primaryBToolChooser.Y - offset), Storage.Sprite("lmouse")) { PositionGravity = Gravity.Center };
+
+            _weaponButton = new Billboard(Game, new Vector2(origin + 30, _weaponsToolChooser.Y - offset), Storage.Sprite("rmouse")) { PositionGravity = Gravity.Center };
+
+            _utilityButton = new Billboard(Game, new Vector2(origin, _utilitiesToolChooser.Y - offset), Storage.Sprite("shift")) { PositionGravity = Gravity.Center };
+
+            _mobilityButton = new Billboard(Game, new Vector2(origin, _mobilitiesToolChooser.Y - offset), Storage.Sprite("space")) { PositionGravity = Gravity.Center };
 
 
             Game.Components.Add(_sandLogo);
@@ -77,6 +96,12 @@ namespace Sand.GameState
             Game.Components.Add(_mobilitiesToolChooser);
             Game.Components.Add(_primaryAToolChooser);
             Game.Components.Add(_primaryBToolChooser);
+
+            Game.Components.Add(_primaryButtonA);
+            Game.Components.Add(_primaryButtonB);
+            Game.Components.Add(_weaponButton);
+            Game.Components.Add(_utilityButton);
+            Game.Components.Add(_mobilityButton);
         }
 
         public override void Update()
@@ -126,6 +151,12 @@ namespace Sand.GameState
             Game.Components.Remove(_mobilitiesToolChooser);
             Game.Components.Remove(_primaryAToolChooser);
             Game.Components.Remove(_primaryBToolChooser);
+
+            Game.Components.Remove(_primaryButtonA);
+            Game.Components.Remove(_primaryButtonB);
+            Game.Components.Remove(_weaponButton);
+            Game.Components.Remove(_utilityButton);
+            Game.Components.Remove(_mobilityButton);
 
             Messages.Update();
 

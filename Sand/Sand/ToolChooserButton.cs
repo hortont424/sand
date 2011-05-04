@@ -20,6 +20,8 @@ namespace Sand
             _toolSetName = toolSetName;
             DrawOrder = 100;
             _toolButtons = new Dictionary<Type, Button>();
+            X = origin.X;
+            Y = origin.Y;
 
             var label = new Label(Game, origin.X, origin.Y, _toolSetName, "Calibri24Bold")
                         {

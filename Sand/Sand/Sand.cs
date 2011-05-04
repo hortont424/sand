@@ -220,6 +220,10 @@ namespace Sand
             ThreadStart spriteThread = delegate
                                        {
                                            Storage.AddSprite("Crosshair", Content.Load<Texture2D>("Textures/Crosshair"));
+                                           Storage.AddSprite("shift", Content.Load<Texture2D>("Textures/shift"));
+                                           Storage.AddSprite("space", Content.Load<Texture2D>("Textures/space"));
+                                           Storage.AddSprite("lmouse", Content.Load<Texture2D>("Textures/lmouse"));
+                                           Storage.AddSprite("rmouse", Content.Load<Texture2D>("Textures/rmouse"));
 
                                            Storage.AddSprite("DefenseClass",
                                                              Content.Load<Texture2D>("Textures/Classes/defense"));
