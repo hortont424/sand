@@ -57,7 +57,7 @@ namespace Sand.Tools.Primaries
 
             Sound.OneShot("FlameCharge");
 
-            const int flameChargeRadius = 75 * 75;
+            const int flameChargeRadius = 75;
 
             foreach(var pair in Storage.SandParticles.Particles)
             {
@@ -65,24 +65,32 @@ namespace Sand.Tools.Primaries
                 var particle = pair.Value;
 
                 var distanceToParticle =
-                    Math.Pow(Player.X - particle.Position.X, 2) +
-                    Math.Pow(Player.Y - particle.Position.Y, 2);
+                    Math.Sqrt(Math.Pow(Player.X - particle.Position.X, 2) +
+                    Math.Pow(Player.Y - particle.Position.Y, 2));
 
                 if(distanceToParticle > flameChargeRadius)
                 {
                     continue;
                 }
 
+                var direction = new Vector3(particle.Position - Player.Position, 0.0f);
+                direction.Normalize();
+                var rayBetween = new Ray(new Vector3(Player.Position, 0.0f),
+                                         direction);
+
+                if(Storage.Game.GameMap.Intersects(rayBetween) > distanceToParticle)
+                {
+                    particleQueue.Add(particle);
+                }
+            }
+
+            foreach(var particle in particleQueue)
+            {
                 if(!particle.OnFire)
                 {
                     particle.Fire = 255;
                 }
 
-                particleQueue.Add(particle);
-            }
-
-            foreach(var particle in particleQueue)
-            {
                 Messages.SendUpdateSandMessage(Player, particle, Player.Gamer.Id, false);
             }
 
