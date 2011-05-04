@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Sand.GameState
@@ -25,10 +26,7 @@ namespace Sand.GameState
 
             Game.Components.Add(_readyButton);
             Game.Components.Add(_label);
-        }
 
-        private void Continue()
-        {
             foreach (var gamer in Storage.NetworkSession.AllGamers)
             {
                 Game.Components.Remove(gamer.Tag as Player);
@@ -43,9 +41,15 @@ namespace Sand.GameState
                 }
             }
 
-            Storage.Scores[Team.Red] = Storage.Scores[Team.Blue] = 0;
             Storage.SandParticles.Particles.Clear();
             Storage.AnimationController.Clear();
+
+            Storage.Game.Effect.CurrentTechnique = Storage.Game.Effect.Techniques["None"];
+        }
+
+        private void Continue()
+        {
+            Storage.Scores[Team.Red] = Storage.Scores[Team.Blue] = 0;
 
             Game.TransitionState(States.Lobby);
         }
@@ -53,6 +57,8 @@ namespace Sand.GameState
         public override void Update()
         {
             Messages.Update();
+
+            Console.WriteLine("{0} {1}", Storage.Scores[Team.Red], Storage.Scores[Team.Blue]);
 
             _label.Text = (Storage.Scores[Team.Red] == 3 ? "Purple" : "Green") + " Wins!";
         }
