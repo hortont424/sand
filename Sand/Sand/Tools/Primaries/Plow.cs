@@ -70,7 +70,7 @@ namespace Sand.Tools.Primaries
 
         private void PlowBlow()
         {
-            const int maxDistance = 100 * 100;
+            const int maxDistance = 100;
 
             foreach(var pair in Storage.SandParticles.Particles)
             {
@@ -80,7 +80,7 @@ namespace Sand.Tools.Primaries
                 var angleToParticle = (float)Math.Atan2(particle.Position.Y - Player.Y, particle.Position.X - Player.X);
                 var playerAngle = Player.Angle - ((float)Math.PI / 2.0f);
                 var distanceToParticle =
-                    Math.Pow(Player.X - particle.Position.X, 2) + Math.Pow(Player.Y - particle.Position.Y, 2);
+                    Math.Sqrt(Math.Pow(Player.X - particle.Position.X, 2) + Math.Pow(Player.Y - particle.Position.Y, 2));
 
                 if(Math.Abs(angleToParticle - playerAngle) > (Math.PI / 6))
                 {
@@ -92,11 +92,19 @@ namespace Sand.Tools.Primaries
                     continue;
                 }
 
-                particle.Velocity +=
-                    new Vector2((float)(100.0f * Math.Cos(playerAngle)), (float)(100.0f * Math.Sin(playerAngle))) *
-                    new Vector2((float)((maxDistance - distanceToParticle) / maxDistance));
+                var direction = new Vector3(particle.Position - Player.Position, 0.0f);
+                direction.Normalize();
+                var rayBetween = new Ray(new Vector3(Player.Position, 0.0f),
+                                         direction);
 
-                _particleQueue.Add(particle);
+                if(Storage.Game.GameMap.Intersects(rayBetween) > distanceToParticle)
+                {
+                    particle.Velocity +=
+                        new Vector2((float)(100.0f * Math.Cos(playerAngle)), (float)(100.0f * Math.Sin(playerAngle))) *
+                        new Vector2((float)((maxDistance - distanceToParticle) / maxDistance));
+
+                    _particleQueue.Add(particle);
+                }
             }
         }
 
@@ -121,7 +129,7 @@ namespace Sand.Tools.Primaries
 
             _plowSound.Play();
 
-            if (_plowSoundAnimation != null)
+            if(_plowSoundAnimation != null)
             {
                 Storage.AnimationController.Remove(_plowSoundAnimation);
             }
@@ -136,7 +144,7 @@ namespace Sand.Tools.Primaries
         {
             Storage.AnimationController.RemoveGroup(_plowTimerGroup);
 
-            if (_plowSoundAnimation != null)
+            if(_plowSoundAnimation != null)
             {
                 Storage.AnimationController.Remove(_plowSoundAnimation);
             }

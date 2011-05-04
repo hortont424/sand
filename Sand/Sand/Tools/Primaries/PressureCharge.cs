@@ -54,7 +54,7 @@ namespace Sand.Tools.Primaries
             Sound.OneShot("PressureCharge");
 
             var particleQueue = new HashSet<Particle>();
-            const int maxDistance = 75 * 75;
+            const int maxDistance = 75;
 
             foreach(var pair in Storage.SandParticles.Particles)
             {
@@ -63,7 +63,7 @@ namespace Sand.Tools.Primaries
 
                 var angleToParticle = (float)Math.Atan2(particle.Position.Y - Player.Y, particle.Position.X - Player.X);
                 var distanceToParticle =
-                    Math.Pow(Player.X - particle.Position.X, 2) + Math.Pow(Player.Y - particle.Position.Y, 2);
+                    Math.Sqrt(Math.Pow(Player.X - particle.Position.X, 2) + Math.Pow(Player.Y - particle.Position.Y, 2));
                 var velocity = Storage.Random.Next(0, 450);
 
                 if(distanceToParticle > maxDistance)
@@ -71,11 +71,20 @@ namespace Sand.Tools.Primaries
                     continue;
                 }
 
-                particle.Velocity +=
-                    new Vector2((float)(velocity * Math.Cos(angleToParticle)), (float)(velocity * Math.Sin(angleToParticle))) *
-                    new Vector2((float)((maxDistance - distanceToParticle) / maxDistance));
+                var direction = new Vector3(particle.Position - Player.Position, 0.0f);
+                direction.Normalize();
+                var rayBetween = new Ray(new Vector3(Player.Position, 0.0f),
+                                         direction);
 
-                particleQueue.Add(particle);
+                if(Storage.Game.GameMap.Intersects(rayBetween) > distanceToParticle)
+                {
+                    particle.Velocity +=
+                        new Vector2((float)(velocity * Math.Cos(angleToParticle)),
+                                    (float)(velocity * Math.Sin(angleToParticle))) *
+                        new Vector2((float)((maxDistance - distanceToParticle) / maxDistance));
+
+                    particleQueue.Add(particle);
+                }
             }
 
             foreach(var particle in particleQueue)
