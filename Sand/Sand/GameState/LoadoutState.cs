@@ -68,10 +68,10 @@ namespace Sand.GameState
             _primaryBToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 420), "Primary 2",
                                                           primaries);
             _primaryBToolChooser.ChooseTool(null, primaries[1], false); // TODO: this is all a hack
-            _weaponsToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 620), "Weapons", weapons);
-            _utilitiesToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 820), "Utilities",
+            _weaponsToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 620), "Weapon", weapons);
+            _utilitiesToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 820), "Utility",
                                                           utilities);
-            _mobilitiesToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 1020), "Mobilities",
+            _mobilitiesToolChooser = new ToolChooserButton(Game, new Vector2(300, _sandLogo.Y + 1020), "Mobility",
                                                            mobilities);
 
             var origin = 50;
