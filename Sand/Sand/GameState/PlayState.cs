@@ -13,7 +13,6 @@ namespace Sand.GameState
         private ToolIcon _primaryAIcon, _primaryBIcon;
         private SandMeter _redSandMeter, _blueSandMeter;
         private WinDialog _winDialog;
-        private int _fpsSkip;
         private Label _phase2Timer;
         private Team _teamWonPhase1;
         private ToolIcon _weaponIcon;
@@ -126,6 +125,11 @@ namespace Sand.GameState
         {
             Storage.ReadyToPlay = false;
 
+            if(_countdownTimer != null)
+            {
+                Game.Components.Remove(_countdownTimer);
+            }
+
             _countdownTimer = new Countdown(Game)
                               {
                                   X = Game.GameMap.Width / 2,
@@ -136,6 +140,7 @@ namespace Sand.GameState
                                            {
                                                Storage.ReadyToPlay = true;
                                                Game.Components.Remove(_countdownTimer);
+                                               _countdownTimer = null;
                                            });
         }
 
