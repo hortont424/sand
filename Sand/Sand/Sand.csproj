@@ -133,6 +133,7 @@
     <Compile Include="Button.cs" />
     <Compile Include="ClassDescription.cs" />
     <Compile Include="Countdown.cs" />
+    <Compile Include="GameState\WinState.cs" />
     <Compile Include="GameState\LoadingState.cs" />
     <Compile Include="ScoreMeter.cs" />
     <Compile Include="MapChooserButton.cs" />

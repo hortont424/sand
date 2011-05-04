@@ -11,7 +11,8 @@ namespace Sand.GameState
         ReadyWait,
         Play,
         ChooseMap,
-        Loading
+        Loading,
+        Win
     }
 
     public abstract class GameState

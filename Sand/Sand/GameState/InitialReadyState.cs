@@ -13,7 +13,6 @@ namespace Sand.GameState
         private Billboard _sandLogo;
         private Label _readyLabel;
         private Label _serverLabel;
-        private Label _versionLabel;
         private Label _debugLabel;
         private KeyboardState _oldKeyState;
 
@@ -52,13 +51,6 @@ namespace Sand.GameState
                                    new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Top,
                                                                                    Gravity.Horizontal.Right)
                            };
-            _versionLabel = new Label(Game, Game.BaseScreenSize.X - 15.0f, Game.BaseScreenSize.Y - 10.0f,
-                                      Assembly.GetExecutingAssembly().GetName().Version.ToString(), "Calibri24Bold")
-                            {
-                                PositionGravity =
-                                    new Tuple<Gravity.Vertical, Gravity.Horizontal>(Gravity.Vertical.Bottom,
-                                                                                    Gravity.Horizontal.Right)
-                            };
             _debugLabel = new Label(Game, 15.0f, Game.BaseScreenSize.Y - 10.0f,
                                     "", "Calibri24Bold")
                           {
@@ -70,7 +62,6 @@ namespace Sand.GameState
 
             Game.Components.Add(_sandLogo);
             Game.Components.Add(_serverLabel);
-            Game.Components.Add(_versionLabel);
             Game.Components.Add(_debugLabel);
             Game.Components.Add(_readyLabel);
         }
@@ -106,7 +97,6 @@ namespace Sand.GameState
         {
             Game.Components.Remove(_sandLogo);
             Game.Components.Remove(_serverLabel);
-            Game.Components.Remove(_versionLabel);
             Game.Components.Remove(_readyLabel);
 
             return new Dictionary<string, object> { { "SandLogo", _sandLogo } };

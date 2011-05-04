@@ -424,9 +424,15 @@ namespace Sand.GameState
             {
                 Storage.Scores[team]++;
 
+                if(localPlayer != null)
+                {
+                    Messages.SendUpdateScoreMessage(localPlayer, localPlayer.Gamer.Id, true);
+                }
+
                 if(Storage.Scores[team] == 3 && Storage.NetworkSession.IsHost)
                 {
                     Storage.NetworkSession.EndGame();
+                    return;
                 }
             }
 

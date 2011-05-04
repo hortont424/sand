@@ -44,25 +44,7 @@ namespace Sand.GameState
         {
             Console.WriteLine("done game!");
 
-            foreach(var gamer in Storage.NetworkSession.AllGamers)
-            {
-                Game.Components.Remove(gamer.Tag as Player);
-
-                if(gamer.IsLocal)
-                {
-                    gamer.Tag = new LocalPlayer(Game, gamer);
-                }
-                else
-                {
-                    gamer.Tag = new RemotePlayer(Game, gamer);
-                }
-            }
-
-            Storage.Scores[Team.Red] = Storage.Scores[Team.Blue] = 0;
-            Storage.SandParticles.Particles.Clear();
-            Storage.AnimationController.Clear();
-
-            Storage.Game.TransitionState(States.Lobby);
+            Storage.Game.TransitionState(States.Win);
         }
 
         public override void Update()

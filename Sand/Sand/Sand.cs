@@ -76,6 +76,7 @@ namespace Sand
             _gameStateInstances[States.ReadyWait] = new ReadyWaitState(this);
             _gameStateInstances[States.Play] = new PlayState(this);
             _gameStateInstances[States.ChooseMap] = new ChooseMapState(this);
+            _gameStateInstances[States.Win] = new WinState(this);
 
             Components.ComponentAdded += ComponentAdded;
             Components.ComponentRemoved += ComponentRemoved;
