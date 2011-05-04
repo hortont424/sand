@@ -89,7 +89,6 @@ namespace Sand.Tools.Mobilities
             }
             else
             {
-                // TODO: make a noise
                 Energy += EnergyConsumptionRate;
 
                 Sound.OneShot("Fail", false);

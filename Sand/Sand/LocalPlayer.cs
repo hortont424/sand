@@ -72,7 +72,7 @@ namespace Sand
         private void UpdateStun(GameTime gameTime)
         {
             StunTimeRemaining = new TimeSpan(_unstunTime.Ticks - gameTime.TotalGameTime.Ticks);
-            ProtectTicks = ((Storage.CurrentTime.TotalGameTime.Ticks - LastShockTime.Ticks) / 2);
+            ProtectTicks = Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - _unstunTime.Ticks) / 2, new TimeSpan(0,0,0,5).Ticks);
 
             if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
             {
@@ -389,11 +389,13 @@ namespace Sand
                 if(!wasStunned)
                 {
                     StunTimeRemaining = new TimeSpan(0);
+
+                    StunTimeRemaining +=
+                    new TimeSpan(Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - _unstunTime.Ticks) / 2,
+                                          new TimeSpan(0, 0, 5).Ticks));
                 }
 
-                StunTimeRemaining +=
-                    new TimeSpan(Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - LastShockTime.Ticks) / 2,
-                                          new TimeSpan(0, 0, 5).Ticks));
+                
                 _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
                 LastShockTime = Storage.CurrentTime.TotalGameTime;
             }
