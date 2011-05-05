@@ -7,7 +7,7 @@ namespace Sand
 {
     public class Button : Actor
     {
-        private bool _hovered;
+        public bool Hovered;
         private bool _clicked;
         private object _actionUserInfo;
         private Action _action;
@@ -137,26 +137,26 @@ namespace Sand
                 return;
             }
 
-            var oldHovered = _hovered;
+            var oldHovered = Hovered;
 
-            _hovered = false;
+            Hovered = false;
 
             if(_action != null)
             {
                 if(Bounds.Intersects(new Rectangle((int)_sandGame.MouseLocation.X, (int)_sandGame.MouseLocation.Y, 1, 1)))
                 {
-                    _hovered = true;
+                    Hovered = true;
 
-                    if((_hoverAction != null) && _hovered && !oldHovered)
+                    if((_hoverAction != null) && Hovered && !oldHovered)
                     {
                         _hoverAction(this, _hoverActionUserInfo);
                     }
                 }
                 else
                 {
-                    _hovered = false;
+                    Hovered = false;
 
-                    if((_unhoverAction != null) && !_hovered && oldHovered)
+                    if((_unhoverAction != null) && !Hovered && oldHovered)
                     {
                         _unhoverAction(this, _unhoverActionUserInfo);
                     }
@@ -165,7 +165,7 @@ namespace Sand
                 if(AcceptsClick)
                 {
                     var oldClicked = _clicked;
-                    _clicked = _hovered && (mouse.LeftButton == ButtonState.Pressed);
+                    _clicked = Hovered && (mouse.LeftButton == ButtonState.Pressed);
 
                     if(!oldClicked && _clicked)
                     {
@@ -175,7 +175,7 @@ namespace Sand
                         }
                         else
                         {
-                            _hovered = false;
+                            Hovered = false;
                         }
                     }
                 }
@@ -190,7 +190,7 @@ namespace Sand
 
         public override void Draw(GameTime gameTime)
         {
-            Color fillColor = _clicked ? _clickColor : (_hovered ? _highlightColor : BaseColor);
+            Color fillColor = _clicked ? _clickColor : (Hovered ? _highlightColor : BaseColor);
             Color borderColor = _borderColor;
             const int borderRadius = 5;
 

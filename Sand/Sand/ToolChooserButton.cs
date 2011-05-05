@@ -41,8 +41,6 @@ namespace Sand
                                             Color.White, Color.Black) { Padding = 6 };
                 toolButton.Y -= toolButton.Height / 2;
                 toolButton.SetAction((a, b) => ChooseTool(a, b), toolClass);
-                toolButton.SetHoverAction(HoverTool, toolClass);
-                toolButton.SetUnhoverAction(UnhoverTool, toolClass);
 
                 offsetX += toolButton.Width + 24;
 
@@ -92,29 +90,27 @@ namespace Sand
             {
                 Sound.Add(Tool.SoundForTool(toolType).CreateInstance()).Play();
             }
-
-            UnhoverTool(null, null);
         }
 
-        public void HoverTool(object sender, object userInfo)
+        public override void Update(GameTime gameTime)
         {
-            var toolclass = userInfo as Type;
+            Type toolclass = null;
+
+            foreach(var toolButton in _toolButtons)
+            {
+                if (toolButton.Value.Hovered)
+                    toolclass = toolButton.Key;
+            }
 
             if(toolclass != null)
             {
                 _nameLabel.Text = toolclass.GetMethod("_name").Invoke(null, null) as string;
                 _descriptionLabel.Text = toolclass.GetMethod("_description").Invoke(null, null) as string;
             }
-        }
-
-        public void UnhoverTool(object sender, object userInfo)
-        {
-            var toolclass = SelectedTool;
-
-            if(toolclass != null)
+            else
             {
-                _nameLabel.Text = toolclass.GetMethod("_name").Invoke(null, null) as string;
-                _descriptionLabel.Text = toolclass.GetMethod("_description").Invoke(null, null) as string;
+                _nameLabel.Text = SelectedTool.GetMethod("_name").Invoke(null, null) as string;
+                _descriptionLabel.Text = SelectedTool.GetMethod("_description").Invoke(null, null) as string;
             }
         }
     }
