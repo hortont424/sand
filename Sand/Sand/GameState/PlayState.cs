@@ -186,19 +186,7 @@ namespace Sand.GameState
 
             if(Storage.DebugMode)
             {
-                var keyState = Keyboard.GetState();
-
-                if(keyState.IsKeyDown(Keys.D1) && _oldKeyState.IsKeyUp(Keys.D1))
-                {
-                    WinPhase1(Team.Red);
-                }
-
-                if(keyState.IsKeyDown(Keys.D2) && _oldKeyState.IsKeyUp(Keys.D2))
-                {
-                    WinPhase2(Team.Red);
-                }
-
-                _oldKeyState = keyState;
+                _oldKeyState = Keyboard.GetState();
             }
         }
 
@@ -298,19 +286,20 @@ namespace Sand.GameState
         public void CheckWinPhase1()
         {
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+            var keyState = Keyboard.GetState();
 
             if(localPlayer == null)
             {
                 return;
             }
 
-            if(_redSandMeter.Progress == 1.0f)
+            if (_redSandMeter.Progress == 1.0f || (Storage.DebugMode && keyState.IsKeyDown(Keys.D1) && _oldKeyState.IsKeyUp(Keys.D1)))
             {
                 WinPhase1(Team.Red);
                 Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Red,
                                                    localPlayer.Gamer.Id, true);
             }
-            else if(_blueSandMeter.Progress == 1.0f)
+            else if (_blueSandMeter.Progress == 1.0f || (Storage.DebugMode && keyState.IsKeyDown(Keys.D2) && _oldKeyState.IsKeyUp(Keys.D2)))
             {
                 WinPhase1(Team.Blue);
                 Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase1, Team.Blue,
@@ -360,6 +349,7 @@ namespace Sand.GameState
         public void CheckWinPhase2()
         {
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+            var keyState = Keyboard.GetState();
 
             var anyRedNotStunned = false;
             var anyBlueNotStunned = false;
@@ -388,13 +378,13 @@ namespace Sand.GameState
                 }
             }
 
-            if(!anyRedNotStunned && foundRed)
+            if (!anyRedNotStunned && foundRed || (Storage.DebugMode && keyState.IsKeyDown(Keys.D2) && _oldKeyState.IsKeyUp(Keys.D2)))
             {
                 WinPhase2(Team.Blue);
                 Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Blue,
                                                    localPlayer.Gamer.Id, true);
             }
-            else if(!anyBlueNotStunned && foundBlue)
+            else if (!anyBlueNotStunned && foundBlue || (Storage.DebugMode && keyState.IsKeyDown(Keys.D1) && _oldKeyState.IsKeyUp(Keys.D1)))
             {
                 WinPhase2(Team.Red);
                 Messages.SendChangeWinStateMessage(localPlayer, GamePhases.WonPhase2, Team.Red,

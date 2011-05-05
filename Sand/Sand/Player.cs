@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Sand.Tools;
 using Sand.Tools.Mobilities;
@@ -296,6 +297,14 @@ namespace Sand
                                       new Vector2(sprite.Width / 2.0f, sprite.Height / 2.0f), 1.0f,
                                       SpriteEffects.None, 0.0f);
                 }
+            }
+
+            if(Storage.DebugMode)
+            {
+                var statsStr = string.Format("{0} particles, {1} alive", Storage.SandParticles.Particles.Count, Storage.SandParticles.Particles.Where(p => p.Value.Alive == true).Count());
+                var netStr = string.Format("{0} KB/s in, {1} KB/s out", Storage.NetworkSession.BytesPerSecondReceived / 1024, Storage.NetworkSession.BytesPerSecondSent / 1024);
+                _spriteBatch.DrawString(Storage.Font("Calibri24Bold"), statsStr, new Vector2(20, 60), Color.Blue);
+                _spriteBatch.DrawString(Storage.Font("Calibri24Bold"), netStr, new Vector2(20, 90), Color.Blue);
             }
         }
 

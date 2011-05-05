@@ -567,51 +567,6 @@ namespace Sand
 
         #endregion
 
-        #region RemoveSand Message
-
-        public static void SendRemoveSandMessage(Player player, Particle p, byte id, bool immediate)
-        {
-            SendMessageHeader(MessageType.RemoveSand, id);
-
-            Storage.PacketWriter.Write(p.Id);
-
-            if(immediate)
-            {
-                SendOneOffMessage(player);
-            }
-        }
-
-        public static void SendRemoveSandMessage(Player player, string particleId, byte id, bool immediate)
-        {
-            SendMessageHeader(MessageType.RemoveSand, id);
-
-            Storage.PacketWriter.Write(particleId);
-
-            if(immediate)
-            {
-                SendOneOffMessage(player);
-            }
-        }
-
-        private static string ProcessRemoveSandMessage(Player player)
-        {
-            var id = Storage.PacketReader.ReadString();
-
-            if(Storage.SandParticles.Particles.ContainsKey(id))
-            {
-                Storage.SandParticles.Particles.Remove(id);
-            }
-
-            return id;
-        }
-
-        private static void DiscardRemoveSandMessage()
-        {
-            Storage.PacketReader.ReadString();
-        }
-
-        #endregion
-
         #region ChangeWinState Message
 
         public static void SendChangeWinStateMessage(Player player, GamePhases state, Team team, byte id, bool immediate)
@@ -776,9 +731,6 @@ namespace Sand
                             case MessageType.UpdateSand:
                                 DiscardUpdateSandMessage();
                                 break;
-                            case MessageType.RemoveSand:
-                                DiscardRemoveSandMessage();
-                                break;
                             case MessageType.ChangeWinState:
                                 DiscardChangeWinStateMessage();
                                 break;
@@ -822,9 +774,6 @@ namespace Sand
                             break;
                         case MessageType.UpdateSand:
                             ProcessUpdateSandMessage(player);
-                            break;
-                        case MessageType.RemoveSand:
-                            ProcessRemoveSandMessage(player);
                             break;
                         case MessageType.ChangeWinState:
                             ProcessChangeWinStateMessage(player);
@@ -953,15 +902,6 @@ namespace Sand
 
                             server = (LocalNetworkGamer)Storage.NetworkSession.Host;
                             server.SendData(Storage.PacketWriter, SendDataOptions.None);
-
-                            break;
-                        case MessageType.RemoveSand:
-                            var id = ProcessRemoveSandMessage(player);
-
-                            SendRemoveSandMessage(gamer.Tag as Player, id, gamerId, false);
-
-                            server = (LocalNetworkGamer)Storage.NetworkSession.Host;
-                            server.SendData(Storage.PacketWriter, SendDataOptions.Reliable);
 
                             break;
                         case MessageType.ChangeWinState:
