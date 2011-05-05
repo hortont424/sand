@@ -525,7 +525,7 @@ namespace Sand
 
             if(immediate)
             {
-                SendOneOffMessage(player);
+                SendOneOffMessage(player, false);
             }
         }
 

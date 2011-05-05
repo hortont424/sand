@@ -109,11 +109,6 @@ namespace Sand
             }
         }
 
-        private bool IsCollisionColor(Color color)
-        {
-            return color != Color.Black && color != Color.Red && color != Color.Lime;
-        }
-
         public bool CollisionTest(Vector2 position, int size)
         {
             var rectangleA = new Rectangle((int)position.X - (size / 2), (int)position.Y - (size / 2), size, size);
@@ -128,11 +123,10 @@ namespace Sand
             {
                 for(int x = left; x < right; x++)
                 {
-                    if(IsCollisionColor(_mapTexture[(x - rectangleB.Left) +
-                                                    (y - rectangleB.Top) * rectangleB.Width]))
-                    {
+                    var color = _mapTexture[(x - rectangleB.Left) +
+                                            (y - rectangleB.Top) * rectangleB.Width];
+                    if (color != Color.Black && color != Color.Red && color != Color.Lime)
                         return true;
-                    }
                 }
             }
 
@@ -160,11 +154,8 @@ namespace Sand
                                                (y - rectangleB.Top) * rectangleB.Width];
 
                     // If both pixels are not completely transparent,
-                    if(colorA.A != 0 && IsCollisionColor(colorB))
-                    {
-                        // then an intersection has been found
+                    if (colorA.A != 0 && (colorB != Color.Black && colorB != Color.Red && colorB != Color.Lime))
                         return true;
-                    }
                 }
             }
 
@@ -184,7 +175,7 @@ namespace Sand
                 point.X += ray.Direction.X;
                 point.Y += ray.Direction.Y;
 
-                if(IsCollisionColor(color))
+                if ((color != Color.Black && color != Color.Red && color != Color.Lime))
                 {
                     return (point - ray.Position).Length();
                 }
