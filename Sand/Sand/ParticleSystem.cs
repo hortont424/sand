@@ -326,31 +326,16 @@ namespace Sand
 
         public void Emit(int number, EmitParticleDelegate emitDelegate)
         {
-            foreach(var particle in Particles.Values.Where(particle => particle.Alive == false))
+            var removeParticles = new List<string>();
+
+            foreach(KeyValuePair<string, Particle> pair in Particles.Where(pair => !pair.Value.Alive))
             {
-                if(!IsSand && particle.LifeRemaining > 0)
-                {
-                    continue;
-                }
+                removeParticles.Add(pair.Key);
+            }
 
-                number--;
-
-                particle.OnFire = false;
-                particle.Fire = 0;
-                particle.Alive = true;
-                particle.Id = Guid.NewGuid().ToString("N");
-
-                emitDelegate(particle);
-
-                if(IsSand)
-                {
-                    _createParticleQueue.Add(particle);
-                }
-
-                if(number == 0)
-                {
-                    break;
-                }
+            foreach(string removeParticle in removeParticles)
+            {
+                Particles.Remove(removeParticle);
             }
 
             for(int i = 0; i < number; i++)
