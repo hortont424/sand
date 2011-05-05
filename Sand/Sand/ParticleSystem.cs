@@ -19,26 +19,10 @@ namespace Sand
         public float Angle;
         public float Opacity;
 
-        private byte _fire;
-
-        public byte Fire
-        {
-            get
-            {
-                return _fire;
-            }
-            set
-            {
-                _fire = value;
-
-                if(_fire == 255)
-                {
-                    OnFire = true;
-                }
-            }
-        }
-
+        public byte Fire;
         public bool OnFire;
+
+        public bool SentFire, WasOnFire;
 
         public Particle(string id = null, byte owner = (byte)0)
         {
@@ -47,6 +31,8 @@ namespace Sand
             Size = Storage.Random.Next(2, 5);
             Angle = (float)(Storage.Random.NextDouble() * 2.0 * Math.PI);
             Opacity = (float)Math.Min(Storage.Random.NextDouble() + 0.2, 1.0);
+
+            Fire = 255;
 
             Alive = true;
             Owner = owner;
@@ -156,7 +142,9 @@ namespace Sand
 
             var drag = new Vector2(3.0f, 3.0f);
 
-            foreach(var particle in Particles.Values.Where(particle => particle.Alive))
+            Particles = Particles.Where(pair => pair.Value.Alive).ToDictionary(p => p.Key, p => p.Value);
+
+            foreach(var particle in Particles.Values)
             {
                 if(!IsSand && particle.LifeRemaining <= 0)
                 {
@@ -253,13 +241,14 @@ namespace Sand
                             }
 
                             neighborParticle.OnFire = true;
-                            neighborParticle.Fire = (byte)Storage.Random.Next(128, 255);
 
                             _particleQueue.Add(neighborParticle);
                         }
 
                         _particleQueue.Add(particle);
                     }
+
+                    particle.WasOnFire = particle.OnFire;
                 }
             }
 
@@ -326,18 +315,6 @@ namespace Sand
 
         public void Emit(int number, EmitParticleDelegate emitDelegate)
         {
-            var removeParticles = new List<string>();
-
-            foreach(KeyValuePair<string, Particle> pair in Particles.Where(pair => !pair.Value.Alive))
-            {
-                removeParticles.Add(pair.Key);
-            }
-
-            foreach(string removeParticle in removeParticles)
-            {
-                Particles.Remove(removeParticle);
-            }
-
             for(int i = 0; i < number; i++)
             {
                 var particle = new Particle(null, Player.Gamer.Id);

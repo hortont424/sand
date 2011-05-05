@@ -130,7 +130,7 @@ namespace Sand.Tools.Primaries
 
                 if(!particle.OnFire)
                 {
-                    particle.Fire = (byte)Math.Min(particle.Fire + 100, 255);
+                    particle.OnFire = true;
                 }
 
                 _particleQueue.Add(particle);

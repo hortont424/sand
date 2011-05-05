@@ -52,7 +52,7 @@ namespace Sand.Tools.Primaries
 
             Sound.OneShot("SandCharge");
 
-            Storage.SandParticles.Emit(50, (p) =>
+            Storage.SandParticles.Emit(Storage.Random.Next(40, 80), (p) =>
                                             {
                                                 p.LifeRemaining = p.Lifetime = 100;
 

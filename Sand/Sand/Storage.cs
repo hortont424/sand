@@ -41,6 +41,7 @@ namespace Sand
 
         public static SoundEffectInstance IntroMusic, LoopMusic;
         public static bool InMenuMusic;
+        public static bool InBlinkStun;
 
         public static void AddSprite(string name, Texture2D texture)
         {

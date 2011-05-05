@@ -324,7 +324,7 @@ namespace Sand
             return new Ray(new Vector3(X, Y, 0.0f), cannonDirection);
         }
 
-        public virtual void Stun(float energy)
+        public virtual void Stun(float energy, bool miniature = false)
         {
             throw new NotImplementedException();
         }

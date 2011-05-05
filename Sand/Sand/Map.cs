@@ -134,7 +134,7 @@ namespace Sand
         }
 
         // (C) Microsoft, Corp (see License.md)
-        public bool CollisionTest(Color[] pTexture, Rectangle rectangleA)
+        public bool CollisionTest(Color[] pTexture, Rectangle rectangleA, bool ignore = false)
         {
             var rectangleB = new Rectangle(0, 0, (int)Width, (int)Height);
 
@@ -154,7 +154,7 @@ namespace Sand
                                                (y - rectangleB.Top) * rectangleB.Width];
 
                     // If both pixels are not completely transparent,
-                    if (colorA.A != 0 && (colorB != Color.Black && colorB != Color.Red && colorB != Color.Lime))
+                    if ((ignore || colorA.A != 0) && (colorB != Color.Black && colorB != Color.Red && colorB != Color.Lime))
                         return true;
                 }
             }

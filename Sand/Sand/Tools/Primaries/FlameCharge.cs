@@ -88,7 +88,7 @@ namespace Sand.Tools.Primaries
             {
                 if(!particle.OnFire)
                 {
-                    particle.Fire = 255;
+                    particle.OnFire = true;
                 }
 
                 Messages.SendUpdateSandMessage(Player, particle, Player.Gamer.Id, false);

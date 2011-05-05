@@ -54,7 +54,7 @@ namespace Sand
             if(Stunned && !_wasStunned)
             {
                 Storage.Game.Effect.CurrentTechnique = Storage.Game.Effect.Techniques["Blur"];
-                Storage.AnimationController.Add(new Animation(this, "Blurriness", 0.004f), 1000);
+                Storage.AnimationController.Add(new Animation(this, "Blurriness", 0.004f), StunTimeRemaining.TotalMilliseconds / 2.0f);
             }
             else if(!Stunned && _wasStunned)
             {
@@ -72,7 +72,8 @@ namespace Sand
         private void UpdateStun(GameTime gameTime)
         {
             StunTimeRemaining = new TimeSpan(_unstunTime.Ticks - gameTime.TotalGameTime.Ticks);
-            ProtectTicks = Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - _unstunTime.Ticks) / 2, new TimeSpan(0,0,0,5).Ticks);
+            ProtectTicks = Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - _unstunTime.Ticks) / 2,
+                                    new TimeSpan(0, 0, 0, 5).Ticks);
 
             if(Stunned && gameTime.TotalGameTime.Ticks > _unstunTime.Ticks)
             {
@@ -146,7 +147,7 @@ namespace Sand
                 Acceleration.Y = modifiedAcceleration.Y;
             }
 
-            if(!Storage.ReadyToPlay)
+            if(!Storage.ReadyToPlay || Storage.InBlinkStun)
             {
                 _oldKeyState = newKeyState;
                 _oldMouseState = newMouseState;
@@ -363,7 +364,7 @@ namespace Sand
             }
         }
 
-        public override void Stun(float energy)
+        public override void Stun(float energy, bool miniature = false)
         {
             var wasStunned = Stunned;
             var doStun = false;
@@ -384,18 +385,28 @@ namespace Sand
             if(doStun)
             {
                 Stunned = true;
-                Sound.OneShot("Shock");
+
+                if(!miniature)
+                {
+                    Sound.OneShot("Shock");
+                }
 
                 if(!wasStunned)
                 {
                     StunTimeRemaining = new TimeSpan(0);
 
-                    StunTimeRemaining +=
-                    new TimeSpan(Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - _unstunTime.Ticks) / 2,
-                                          new TimeSpan(0, 0, 5).Ticks));
+                    if(!miniature)
+                    {
+                        StunTimeRemaining +=
+                            new TimeSpan(Math.Min((Storage.CurrentTime.TotalGameTime.Ticks - _unstunTime.Ticks) / 2,
+                                                  new TimeSpan(0, 0, 5).Ticks));
+                    }
+                    else
+                    {
+                        StunTimeRemaining = new TimeSpan(0, 0, 0, 0, 100);
+                    }
                 }
 
-                
                 _unstunTime = new TimeSpan(Storage.CurrentTime.TotalGameTime.Ticks).Add(StunTimeRemaining);
                 LastShockTime = Storage.CurrentTime.TotalGameTime;
             }

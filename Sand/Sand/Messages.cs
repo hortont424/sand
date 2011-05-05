@@ -445,12 +445,6 @@ namespace Sand
             Storage.PacketWriter.Write((byte)p.Team);
 
             Storage.PacketWriter.Write(p.Alive);
-            Storage.PacketWriter.Write(p.OnFire);
-
-            if(p.OnFire)
-            {
-                Storage.PacketWriter.Write(p.Fire);
-            }
 
             if(immediate)
             {
@@ -472,12 +466,6 @@ namespace Sand
             p.Velocity = Storage.PacketReader.ReadVector2();
             p.Team = (Team)Storage.PacketReader.ReadByte();
             p.Alive = Storage.PacketReader.ReadBoolean();
-            p.OnFire = Storage.PacketReader.ReadBoolean();
-
-            if(p.OnFire)
-            {
-                p.Fire = Storage.PacketReader.ReadByte();
-            }
 
             if(!exists)
             {
@@ -495,12 +483,6 @@ namespace Sand
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadByte();
             Storage.PacketReader.ReadBoolean();
-            var onFire = Storage.PacketReader.ReadBoolean();
-
-            if(onFire)
-            {
-                Storage.PacketReader.ReadByte();
-            }
         }
 
         #endregion
@@ -517,11 +499,6 @@ namespace Sand
 
             Storage.PacketWriter.Write(p.Alive);
             Storage.PacketWriter.Write(p.OnFire);
-
-            if(p.OnFire)
-            {
-                Storage.PacketWriter.Write(p.Fire);
-            }
 
             if(immediate)
             {
@@ -543,11 +520,6 @@ namespace Sand
             p.Alive = Storage.PacketReader.ReadBoolean();
             p.OnFire = Storage.PacketReader.ReadBoolean();
 
-            if(p.OnFire)
-            {
-                p.Fire = Storage.PacketReader.ReadByte();
-            }
-
             return p;
         }
 
@@ -557,12 +529,7 @@ namespace Sand
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadVector2();
             Storage.PacketReader.ReadBoolean();
-            var onFire = Storage.PacketReader.ReadBoolean();
-
-            if(onFire)
-            {
-                Storage.PacketReader.ReadByte();
-            }
+            Storage.PacketReader.ReadBoolean();
         }
 
         #endregion

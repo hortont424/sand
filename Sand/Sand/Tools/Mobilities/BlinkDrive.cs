@@ -76,16 +76,19 @@ namespace Sand.Tools.Mobilities
 
             if(!Storage.Game.GameMap.CollisionTest(Player.Texture,
                                                    new Rectangle(
-                                                       (int)(Storage.Game.MouseLocation.X - (Player.Width / 2.0)),
-                                                       (int)(Storage.Game.MouseLocation.Y - (Player.Height / 2.0)),
-                                                       (int)Player.Width, (int)Player.Height)) &&
-               (Storage.Game.MouseLocation.X > 0.0f && Storage.Game.MouseLocation.X < Storage.Game.GameMap.Width &&
-                Storage.Game.MouseLocation.Y > 0.0f && Storage.Game.MouseLocation.Y < Storage.Game.GameMap.Height))
+                                                       (int)(blinkPosition.X - (Player.Width / 2.0)),
+                                                       (int)(blinkPosition.Y - (Player.Height / 2.0)),
+                                                       (int)Player.Width, (int)Player.Height), true) &&
+               (Storage.Game.MouseLocation.X > 0.0f && blinkPosition.X < Storage.Game.GameMap.Width &&
+                Storage.Game.MouseLocation.Y > 0.0f && blinkPosition.Y < Storage.Game.GameMap.Height))
             {
                 Player.X = blinkPosition.X;
                 Player.Y = blinkPosition.Y;
 
                 Sound.OneShot("BlinkDrive");
+
+                Storage.InBlinkStun = true;
+                Storage.AnimationController.Add(new Animation(){CompletedDelegate = () => Storage.InBlinkStun = false}, 500);
             }
             else
             {
