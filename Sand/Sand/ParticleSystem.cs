@@ -196,7 +196,7 @@ namespace Sand
                                          Math.Pow(particle.Position.Y - Player.Y, 2));
                 }
 
-                if(IsSand && particle.OnFire && particle.Fire == 0)
+                if(IsSand && particle.OnFire && particle.Fire <= 0)
                 {
                     particle.Alive = false;
 
