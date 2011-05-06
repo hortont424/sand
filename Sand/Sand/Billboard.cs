@@ -6,7 +6,21 @@ namespace Sand
 {
     internal class Billboard : Actor
     {
-        private readonly Texture2D _texture;
+        private Texture2D _texture;
+        public Texture2D Texture
+        {
+            get
+            {
+                return _texture;
+            }
+            set
+            {
+                _texture = value;
+                Width = _texture.Width;
+                Height = _texture.Height;
+            }
+        }
+
         public Color Color { get; set; }
 
         public delegate void Action(object sender, object userInfo);
@@ -26,14 +40,14 @@ namespace Sand
             Width = w;
             Height = h;
 
-            _texture = texture;
+            Texture = texture;
 
             Color = Color.White;
         }
 
         public override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Draw(_texture, Bounds, null, Color, 0.0f, Gravity.Offset(PositionGravity), SpriteEffects.None, 1.0f);
+            _spriteBatch.Draw(Texture, Bounds, null, Color, 0.0f, Gravity.Offset(PositionGravity), SpriteEffects.None, 1.0f);
         }
     }
 }

@@ -227,6 +227,8 @@ namespace Sand
                                            Storage.AddSprite("space", Content.Load<Texture2D>("Textures/space"));
                                            Storage.AddSprite("lmouse", Content.Load<Texture2D>("Textures/lmouse"));
                                            Storage.AddSprite("rmouse", Content.Load<Texture2D>("Textures/rmouse"));
+                                           Storage.AddSprite("wasd", Content.Load<Texture2D>("Textures/wasd"));
+                                           Storage.AddSprite("shiftright", Content.Load<Texture2D>("Textures/shiftright"));
 
                                            Storage.AddSprite("DefenseClass",
                                                              Content.Load<Texture2D>("Textures/Classes/defense"));
@@ -302,6 +304,10 @@ namespace Sand
                                            var rectTexture = new Texture2D(GraphicsDevice, 1, 1);
                                            rectTexture.SetData(new[] { Color.White });
                                            Storage.AddSprite("pixel", rectTexture);
+
+                                           rectTexture = new Texture2D(GraphicsDevice, 1, 1);
+                                           rectTexture.SetData(new[] { Color.Black });
+                                           Storage.AddSprite("blank", rectTexture);
 
                                            MapManager = new MapManager(this);
 
