@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Sand.Tools.Primaries;
 
 namespace Sand
 {
@@ -10,10 +11,13 @@ namespace Sand
         public Dictionary<string, Map> Maps;
 
         public Game Game;
+        public Map TutorialMap;
 
         public MapManager(Game game)
         {
             Game = game;
+
+            TutorialMap = new Map(game, "tutorial");
 
             Maps = new Dictionary<string, Map>
                    {
