@@ -31,8 +31,6 @@ namespace Sand
         public LocalPlayer(Game game, NetworkGamer gamer) : base(game, gamer)
         {
             MovementAcceleration = DefaultAcceleration;
-
-            Console.WriteLine("Constructing LocalPlayer");
         }
 
         public override void Update(GameTime gameTime)
@@ -54,7 +52,8 @@ namespace Sand
             if(Stunned && !_wasStunned)
             {
                 Storage.Game.Effect.CurrentTechnique = Storage.Game.Effect.Techniques["Blur"];
-                Storage.AnimationController.Add(new Animation(this, "Blurriness", 0.004f), StunTimeRemaining.TotalMilliseconds / 2.0f);
+                Storage.AnimationController.Add(new Animation(this, "Blurriness", 0.004f),
+                                                StunTimeRemaining.TotalMilliseconds / 2.0f);
             }
             else if(!Stunned && _wasStunned)
             {
@@ -99,7 +98,7 @@ namespace Sand
             AlternatePrimary.Active = false;
 
             if(!Storage.AcceptInput || Phase == GamePhases.WonPhase1 ||
-               Phase == GamePhases.WonPhase2)
+               Phase == GamePhases.WonPhase2 || (Storage.InTutorial && Storage.TutorialLevel < 2))
             {
                 _oldKeyState = newKeyState;
                 _oldMouseState = newMouseState;
@@ -304,6 +303,9 @@ namespace Sand
 
         private void UpdateAngle()
         {
+            if (Storage.InTutorial && Storage.TutorialLevel < 1)
+                return;
+
             Angle = (float)Math.Atan2(_sandGame.MouseLocation.Y - Y, _sandGame.MouseLocation.X - X) +
                     ((float)Math.PI / 2.0f);
         }

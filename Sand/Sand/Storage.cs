@@ -43,6 +43,9 @@ namespace Sand
         public static bool InMenuMusic;
         public static bool InBlinkStun;
 
+        public static bool InTutorial;
+        public static int TutorialLevel;
+
         public static void AddSprite(string name, Texture2D texture)
         {
             _sprites.Add(name, texture);

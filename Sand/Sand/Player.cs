@@ -202,6 +202,7 @@ namespace Sand
                 lineColor = SandColor.FromHSV(hue, saturation, 0.2);
             }
 
+            if(!Storage.InTutorial || Storage.TutorialLevel >= 1)
             _spriteBatch.Draw(Storage.Sprite("pixel"),
                               new Rectangle((int)virtualX, (int)virtualY, lineWidth, wallIntersection),
                               null,
@@ -273,7 +274,7 @@ namespace Sand
                     break;
             }
 
-            if(this is LocalPlayer)
+            if (this is LocalPlayer && (!Storage.InTutorial || Storage.TutorialLevel >= 1))
             {
                 var toolAngle = Angle - ((float)Math.PI / 2.0f);
 

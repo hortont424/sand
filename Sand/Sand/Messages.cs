@@ -21,7 +21,8 @@ namespace Sand
         RemoveSand,
         UpdateSand,
         ChangeWinState,
-        UpdateScore
+        UpdateScore,
+        ChangeTutorialLevel
     }
 
     internal class ActivationInfo
@@ -582,6 +583,32 @@ namespace Sand
 
         #endregion
 
+        #region ChangeTutorialLevel Message
+
+        public static void SendChangeTutorialLevelMessage(Player player, byte id, bool immediate)
+        {
+            SendMessageHeader(MessageType.ChangeTutorialLevel, id);
+
+            Storage.PacketWriter.Write(Storage.TutorialLevel);
+
+            if (immediate)
+            {
+                SendOneOffMessage(player);
+            }
+        }
+
+        private static void ProcessChangeTutorialLevelMessage(Player player)
+        {
+            Storage.TutorialLevel = Storage.PacketReader.ReadInt32();
+        }
+
+        private static void DiscardChangeTutorialLevelMessage()
+        {
+            Storage.PacketReader.ReadInt32();
+        }
+
+        #endregion
+
         #region UpdateScore Message
 
         public static void SendUpdateScoreMessage(Player player, byte id, bool immediate)
@@ -704,6 +731,9 @@ namespace Sand
                             case MessageType.UpdateScore:
                                 DiscardUpdateScoreMessage();
                                 break;
+                            case MessageType.ChangeTutorialLevel:
+                                DiscardChangeTutorialLevelMessage();
+                                break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -747,6 +777,9 @@ namespace Sand
                             break;
                         case MessageType.UpdateScore:
                             ProcessUpdateScoreMessage(player);
+                            break;
+                        case MessageType.ChangeTutorialLevel:
+                            ProcessChangeTutorialLevelMessage(player);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -876,6 +909,9 @@ namespace Sand
                             break;
                         case MessageType.UpdateScore:
                             Console.WriteLine("server got a updatescore message, seems wrong.");
+                            break;
+                        case MessageType.ChangeTutorialLevel:
+                            Console.WriteLine("server got a changetutoriallevel message, seems wrong.");
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

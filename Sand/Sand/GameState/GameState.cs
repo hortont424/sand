@@ -12,7 +12,8 @@ namespace Sand.GameState
         Play,
         ChooseMap,
         Loading,
-        Win
+        Win,
+        Tutorial
     }
 
     public abstract class GameState

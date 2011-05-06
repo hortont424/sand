@@ -77,6 +77,7 @@ namespace Sand
             _gameStateInstances[States.Play] = new PlayState(this);
             _gameStateInstances[States.ChooseMap] = new ChooseMapState(this);
             _gameStateInstances[States.Win] = new WinState(this);
+            _gameStateInstances[States.Tutorial] = new TutorialState(this);
 
             Components.ComponentAdded += ComponentAdded;
             Components.ComponentRemoved += ComponentRemoved;
@@ -213,6 +214,8 @@ namespace Sand
                                           Storage.LoopMusic =
                                               Content.Load<SoundEffect>("Music/theme_loop").CreateInstance();
                                           Storage.LoopMusic.IsLooped = true;
+
+                                          Storage.AddSound("Tutorial", Content.Load<SoundEffect>("Sounds/tutorial"));
 
                                           DoneLoading++;
                                       };

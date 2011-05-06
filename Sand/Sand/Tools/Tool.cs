@@ -429,6 +429,19 @@ namespace Sand.Tools
         public bool ShouldEnable(KeyboardState newKeyState, MouseState newMouseState, KeyboardState oldKeyState,
                                  MouseState oldMouseState)
         {
+            var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+            
+            if (Slot == ToolSlot.Mobility && (!Storage.InTutorial || Storage.TutorialLevel != 3))
+                return false;
+            if ((Slot == ToolSlot.Utility || Slot == ToolSlot.Weapon) && (!Storage.InTutorial || Storage.TutorialLevel != 5))
+                return false;
+            if ((Slot == ToolSlot.Primary && localPlayer.Class == Class.Defense) && (!Storage.InTutorial || Storage.TutorialLevel != 7))
+                return false;
+            if ((Slot == ToolSlot.Primary && localPlayer.Class == Class.Support) && (!Storage.InTutorial || Storage.TutorialLevel != 9))
+                return false;
+            if ((Slot == ToolSlot.Primary && localPlayer.Class == Class.Offense) && (!Storage.InTutorial || Storage.TutorialLevel != 11))
+                return false;
+
             if(Key != Keys.None)
             {
                 if(oldKeyState.IsKeyUp(Key) && newKeyState.IsKeyDown(Key))

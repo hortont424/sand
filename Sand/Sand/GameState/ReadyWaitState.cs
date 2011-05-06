@@ -37,7 +37,7 @@ namespace Sand.GameState
         {
             Console.WriteLine("start game!");
 
-            Game.TransitionState(States.Play);
+            Game.TransitionState(Game.GameMap.Name == "tutorial" ? States.Tutorial : States.Play);
         }
 
         private void GameEnded(object sender, GameEndedEventArgs e)
