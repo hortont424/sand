@@ -2,6 +2,10 @@
 using Microsoft.Xna.Framework.Net;
 using Sand.GameState;
 using Sand.Tools;
+using Sand.Tools.Mobilities;
+using Sand.Tools.Primaries;
+using Sand.Tools.Utilities;
+using Sand.Tools.Weapons;
 
 // E28 boneless spare ribs white rice, wonton soup
 // E16 general tso's chicken beef fried rice, wonton soup
@@ -597,9 +601,59 @@ namespace Sand
             }
         }
 
-        private static void ProcessChangeTutorialLevelMessage(Player player)
+        private static bool _inited = false;
+
+        private static void ProcessChangeTutorialLevelMessage(Player uselessPlayer)
         {
             Storage.TutorialLevel = Storage.PacketReader.ReadInt32();
+            Storage.InTutorial = true;
+            Storage.Game.GameMap = Storage.Game.MapManager.TutorialMap;
+
+            if(Storage.TutorialLevel == 0 && !_inited)
+            {
+                _inited = true;
+
+                var player = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
+
+                if (player != null)
+                {
+                    player.Weapon = new Cannon(player);
+                    player.Utility = new Shield(player);
+                    player.Mobility = new BoostDrive(player);
+
+                    switch (player.Class)
+                    {
+                        case Class.None:
+                            break;
+                        case Class.Defense:
+                            player.PrimaryA = new Jet(player);
+                            player.PrimaryB = new SandCharge(player);
+
+                            Storage.Game.GameMap.RedSpawn.X = (player.Team == Team.Red) ? 100 : 1100;
+                            Storage.Game.GameMap.RedSpawn.Y = 400;
+                            break;
+                        case Class.Offense:
+                            player.PrimaryA = new Laser(player);
+                            player.PrimaryB = new FlameCharge(player);
+
+                            Storage.Game.GameMap.RedSpawn.X = (player.Team == Team.Red) ? 100 : 1100;
+                            Storage.Game.GameMap.RedSpawn.Y = 600;
+                            break;
+                        case Class.Support:
+                            player.PrimaryA = new Plow(player);
+                            player.PrimaryB = new PressureCharge(player);
+
+                            Storage.Game.GameMap.RedSpawn.X = (player.Team == Team.Red) ? 100 : 1100;
+                            Storage.Game.GameMap.RedSpawn.Y = 800;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    Storage.Game.GameMap.BlueSpawn.X = Storage.Game.GameMap.RedSpawn.X;
+                    Storage.Game.GameMap.BlueSpawn.Y = Storage.Game.GameMap.RedSpawn.Y;
+                }
+            }
         }
 
         private static void DiscardChangeTutorialLevelMessage()

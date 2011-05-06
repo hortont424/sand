@@ -99,6 +99,11 @@ namespace Sand
             _actionUserInfo = userInfo;
         }
 
+        public void UnsetAction()
+        {
+            _action = null;
+        }
+
         public void SetHoverAction(Action action, object userInfo)
         {
             _hoverAction = action;
@@ -192,7 +197,15 @@ namespace Sand
         {
             Color fillColor = _clicked ? _clickColor : (Hovered ? _highlightColor : BaseColor);
             Color borderColor = _borderColor;
+            Color textColor = Color.White;
             const int borderRadius = 5;
+
+            if (_action == null)
+            {
+                fillColor *= 0.2f;
+                borderColor *= 0.2f;
+                textColor *= 0.2f;
+            }
 
             _spriteBatch.Draw(Storage.Sprite("pixel"),
                               new Rectangle(Bounds.X - borderRadius, Bounds.Y - borderRadius,
@@ -210,7 +223,7 @@ namespace Sand
                 _spriteBatch.DrawString(Storage.Font("Calibri24"), _text,
                                         new Vector2(Bounds.X + (Bounds.Width / 2),
                                                     Bounds.Y + (Bounds.Height / 2) + 2),
-                                        Color.White, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
+                                        textColor, 0, textOrigin, 1.0f, SpriteEffects.None, 0.5f);
             }
 
             if(_sprite != null)

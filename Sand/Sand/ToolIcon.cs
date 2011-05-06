@@ -100,16 +100,20 @@ namespace Sand
         {
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
             
-            if (_tool.Slot == ToolSlot.Mobility && (!Storage.InTutorial || Storage.TutorialLevel != 3))
-                return;
-            if ((_tool.Slot == ToolSlot.Utility || _tool.Slot == ToolSlot.Weapon) && (!Storage.InTutorial || Storage.TutorialLevel != 5))
-                return;
-            if ((_tool.Slot == ToolSlot.Primary && localPlayer.Class == Class.Defense) && (!Storage.InTutorial || Storage.TutorialLevel != 7))
-                return;
-            if ((_tool.Slot == ToolSlot.Primary && localPlayer.Class == Class.Support) && (!Storage.InTutorial || Storage.TutorialLevel != 9))
-                return;
-            if ((_tool.Slot == ToolSlot.Primary && localPlayer.Class == Class.Offense) && (!Storage.InTutorial || Storage.TutorialLevel != 11))
-                return;
+            if(Storage.InTutorial)
+            {
+                if (_tool.Slot == ToolSlot.Mobility && (Storage.TutorialLevel != 3))
+                    return;
+                if ((_tool.Slot == ToolSlot.Utility || _tool.Slot == ToolSlot.Weapon) && (Storage.TutorialLevel != 5))
+                    return;
+                if ((_tool.Slot == ToolSlot.Primary && localPlayer.Class == Class.Defense) && (Storage.TutorialLevel != 7))
+                    return;
+                if ((_tool.Slot == ToolSlot.Primary && localPlayer.Class == Class.Support) && (Storage.TutorialLevel != 9))
+                    return;
+                if ((_tool.Slot == ToolSlot.Primary && localPlayer.Class == Class.Offense) && (Storage.TutorialLevel != 11))
+                    return;
+            }
+            
 
             if(_tool.Energy != _drainValue)
             {

@@ -341,6 +341,19 @@ namespace Sand.GameState
             {
                 Storage.RemainingTime = new TimeSpan(0, 0, 1, 0);
                 Storage.Phase2EndTime = Storage.CurrentTime.TotalGameTime + Storage.RemainingTime;
+
+                Storage.Scores[team]++;
+
+                if (localPlayer != null)
+                {
+                    Messages.SendUpdateScoreMessage(localPlayer, localPlayer.Gamer.Id, true);
+                }
+
+                if (Storage.Scores[team] == 6)
+                {
+                    Storage.NetworkSession.EndGame();
+                    return;
+                }
             }
 
             Cursor.Hide();
@@ -419,7 +432,7 @@ namespace Sand.GameState
                     Messages.SendUpdateScoreMessage(localPlayer, localPlayer.Gamer.Id, true);
                 }
 
-                if(Storage.Scores[team] == 3)
+                if(Storage.Scores[team] == 6)
                 {
                     Storage.NetworkSession.EndGame();
                     return;

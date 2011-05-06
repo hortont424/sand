@@ -57,7 +57,7 @@ namespace Sand.Tools.Primaries
 
             Sound.OneShot("FlameCharge");
 
-            const int flameChargeRadius = 75;
+            const int flameChargeRadius = 55;
 
             foreach(var pair in Storage.SandParticles.Particles)
             {

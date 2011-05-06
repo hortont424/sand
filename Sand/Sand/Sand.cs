@@ -229,6 +229,7 @@ namespace Sand
                                            Storage.AddSprite("rmouse", Content.Load<Texture2D>("Textures/rmouse"));
                                            Storage.AddSprite("wasd", Content.Load<Texture2D>("Textures/wasd"));
                                            Storage.AddSprite("shiftright", Content.Load<Texture2D>("Textures/shiftright"));
+                                           Storage.AddSprite("q", Content.Load<Texture2D>("Textures/q"));
 
                                            Storage.AddSprite("DefenseClass",
                                                              Content.Load<Texture2D>("Textures/Classes/defense"));

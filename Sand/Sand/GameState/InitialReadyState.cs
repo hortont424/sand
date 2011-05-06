@@ -22,8 +22,6 @@ namespace Sand.GameState
 
         public override void Enter(Dictionary<string, object> data)
         {
-            if(Storage.NetworkSession.IsHost)
-            {
                 Storage.IntroMusic.Play();
                 Storage.InMenuMusic = true;
                 Storage.AnimationController.Add(new Animation
@@ -38,7 +36,6 @@ namespace Sand.GameState
                                                                             }
                                                                         }
                                                 }, 1, true);
-            }
 
             _sandLogo = data["SandLogo"] as Billboard;
 

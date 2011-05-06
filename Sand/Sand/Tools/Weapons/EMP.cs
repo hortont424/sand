@@ -56,7 +56,7 @@ namespace Sand.Tools.Weapons
             Sound.OneShot("EMP");
 
             var shockPlayers = new List<Player>();
-            const int empDistance = 150 * 150;
+            const int empDistance = 100 * 100;
 
             foreach(var remoteGamer in Storage.NetworkSession.RemoteGamers)
             {

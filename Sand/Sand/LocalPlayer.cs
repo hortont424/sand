@@ -388,13 +388,13 @@ namespace Sand
             {
                 Stunned = true;
 
-                if(!miniature)
-                {
-                    Sound.OneShot("Shock");
-                }
-
                 if(!wasStunned)
                 {
+                    if (!miniature)
+                    {
+                        Sound.OneShot("Shock");
+                    }
+
                     StunTimeRemaining = new TimeSpan(0);
 
                     if(!miniature)

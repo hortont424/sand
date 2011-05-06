@@ -117,10 +117,12 @@ namespace Sand.GameState
                                            {
                                                Storage.ReadyToPlay = true;
                                                Game.Components.Remove(_countdownTimer);
+                                               
+                                               _tutorialSound.Play();
 
                                                if(Storage.NetworkSession.IsHost)
                                                {
-                                                   _tutorialSound.Play();
+                                                   
                                                    _tutorialStartTime = Storage.CurrentTime.TotalGameTime.Ticks;
                                                }
 
@@ -131,6 +133,9 @@ namespace Sand.GameState
         public override void Update()
         {
             Messages.Update();
+
+            if (_countdownTimer != null)
+                return;
 
             var localPlayer = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
@@ -158,6 +163,7 @@ namespace Sand.GameState
                                                  (Storage.TutorialLevel == 11 && currentTime >= 60 + 60 + 60 + 60 + 47)))
             {
                 Storage.TutorialLevel++;
+                Console.WriteLine("{0} {1}", Storage.TutorialLevel, currentTime);
                 Messages.SendChangeTutorialLevelMessage(localPlayer, localPlayer.Gamer.Id, true);
             }
 
@@ -175,9 +181,16 @@ namespace Sand.GameState
                     _keyBindingIcon.Texture = Storage.Sprite("shiftright");
                     break;
                 case 7:
+                    if (localPlayer.Class == Class.Defense)
+                        _keyBindingIcon.Texture = Storage.Sprite("q");
+                    break;
                 case 9:
+                    if (localPlayer.Class == Class.Support)
+                        _keyBindingIcon.Texture = Storage.Sprite("q");
+                    break;
                 case 11:
-                    _keyBindingIcon.Texture = Storage.Sprite("lmouse"); // and q
+                    if (localPlayer.Class == Class.Offense)
+                        _keyBindingIcon.Texture = Storage.Sprite("q");
                     break;
             }
 

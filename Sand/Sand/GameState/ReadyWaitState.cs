@@ -44,7 +44,38 @@ namespace Sand.GameState
         {
             Console.WriteLine("done game!");
 
-            Storage.Game.TransitionState(States.Win);
+            if(Storage.InTutorial)
+            {
+                foreach (var gamer in Storage.NetworkSession.AllGamers)
+                {
+                    Game.Components.Remove(gamer.Tag as Player);
+
+                    if (gamer.IsLocal)
+                    {
+                        gamer.Tag = new LocalPlayer(Game, gamer);
+                    }
+                    else
+                    {
+                        gamer.Tag = new RemotePlayer(Game, gamer);
+                    }
+                }
+
+                Storage.SandParticles.Particles.Clear();
+                Storage.AnimationController.Clear();
+
+                Storage.Game.Effect.CurrentTechnique = Storage.Game.Effect.Techniques["None"];
+
+                Storage.Scores[Team.Red] = Storage.Scores[Team.Blue] = 0;
+                Storage.InTutorial = false;
+                Storage.TutorialLevel = 0;
+
+                Storage.Game.TransitionState(States.Lobby);
+            }
+            else
+            {
+                Storage.Game.TransitionState(States.Win);
+            }
+            
         }
 
         public override void Update()
@@ -69,8 +100,6 @@ namespace Sand.GameState
         {
             var player = Storage.NetworkSession.LocalGamers[0].Tag as LocalPlayer;
 
-            if(Storage.NetworkSession.IsHost)
-            {
                 Storage.InMenuMusic = false;
 
                 if(Storage.LoopMusic.State == SoundState.Playing)
@@ -95,7 +124,6 @@ namespace Sand.GameState
                                                                             }
                                                     }, 500);
                 }
-            }
 
             if(player != null)
             {

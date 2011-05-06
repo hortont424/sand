@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Net;
+using Sand.Tools.Mobilities;
+using Sand.Tools.Primaries;
+using Sand.Tools.Utilities;
+using Sand.Tools.Weapons;
 
 namespace Sand.GameState
 {
@@ -12,6 +16,7 @@ namespace Sand.GameState
         private PlayerClassButton _redSupportButton, _redDefenseButton, _redOffenseButton;
         private PlayerClassButton _blueSupportButton, _blueDefenseButton, _blueOffenseButton;
         private ClassDescription[] _classDescriptions;
+        private Button _tutorialButton;
 
         public LobbyState(Sand game) : base(game)
         {
@@ -55,7 +60,9 @@ namespace Sand.GameState
             var logoSprite = Storage.Sprite("SandLogo");
             var sandLogoOrigin = new Vector2(Game.BaseScreenSize.X * 0.5f - (logoSprite.Width * 0.5f), 30);
 
-            _sandLogo = data.ContainsKey("SandLogo") ? data["SandLogo"] as Billboard : new Billboard(Game, sandLogoOrigin, logoSprite);
+            _sandLogo = data.ContainsKey("SandLogo")
+                            ? data["SandLogo"] as Billboard
+                            : new Billboard(Game, sandLogoOrigin, logoSprite);
 
             Storage.AnimationController.Add(new Animation(_sandLogo, "Y", sandLogoOrigin.Y), 750);
 
@@ -63,8 +70,7 @@ namespace Sand.GameState
             readyButtonRect.X = (int)Game.BaseScreenSize.X - readyButtonRect.Width - 50;
             readyButtonRect.Y = (int)Game.BaseScreenSize.Y - readyButtonRect.Height - 50;
             _readyButton = new Button(Game, readyButtonRect, "Ready", new Color(0.1f, 0.7f, 0.1f));
-            _readyButton.SetAction(
-                (a, userInfo) => Game.TransitionState(Storage.NetworkSession.IsHost ? States.ChooseMap : States.Loadout),
+            _readyButton.SetAction(ReadyButtonAction,
                 null);
 
             var playerClassOrigin = new Vector2((Game.BaseScreenSize.X / 2.0f) - 128,
@@ -159,16 +165,134 @@ namespace Sand.GameState
                                         Y = _redSupportButton.Button.Y
                                     };
 
+            _tutorialButton = new Button(Game, new Rectangle(50, readyButtonRect.Y, 200, 50), "Tutorial");
+            _tutorialButton.SetAction((a, b) => DoTutorial(), null);
+
             Game.Components.Add(_sandLogo);
             Game.Components.Add(_readyButton);
             Game.Components.Add(_classDescriptions[0]);
             Game.Components.Add(_classDescriptions[1]);
             Game.Components.Add(_classDescriptions[2]);
+
+            if(Storage.NetworkSession.IsHost)
+            {
+                Game.Components.Add(_tutorialButton);
+            }
+        }
+
+        private void ReadyButtonAction(object sender, object userinfo)
+        {
+            Game.TransitionState(Storage.InTutorial
+                                     ? States.ReadyWait
+                                     : (Storage.NetworkSession.IsHost ? States.ChooseMap : States.Loadout));
+        }
+
+        public void DoTutorial()
+        {
+            Storage.Game.GameMap = Storage.Game.MapManager.TutorialMap;
+
+            Storage.AnimationController.Add(new Animation
+                                            {
+                                                CompletedDelegate = () =>
+                                                                    {
+                                                                        var player =
+                                                                            Storage.NetworkSession.LocalGamers[0].Tag as
+                                                                            LocalPlayer;
+                                                                        Storage.InTutorial = true;
+                                                                        Storage.TutorialLevel = 0;
+                                                                        Messages.SendChangeTutorialLevelMessage(player, player.Gamer.Id, true);
+
+                                                                        if(player != null)
+                                                                        {
+                                                                            player.Weapon = new Cannon(player);
+                                                                            player.Utility = new Shield(player);
+                                                                            player.Mobility = new BoostDrive(player);
+
+                                                                            switch(player.Class)
+                                                                            {
+                                                                                case Class.None:
+                                                                                    break;
+                                                                                case Class.Defense:
+                                                                                    player.PrimaryA = new Jet(player);
+                                                                                    player.PrimaryB =
+                                                                                        new SandCharge(player);
+
+                                                                                    Storage.Game.GameMap.RedSpawn.X =
+                                                                                        (player.Team == Team.Red)
+                                                                                            ? 100
+                                                                                            : 1100;
+                                                                                    Storage.Game.GameMap.RedSpawn.Y =
+                                                                                        400;
+                                                                                    break;
+                                                                                case Class.Offense:
+                                                                                    player.PrimaryA = new Laser(player);
+                                                                                    player.PrimaryB =
+                                                                                        new FlameCharge(player);
+
+                                                                                    Storage.Game.GameMap.RedSpawn.X =
+                                                                                        (player.Team == Team.Red)
+                                                                                            ? 100
+                                                                                            : 1100;
+                                                                                    Storage.Game.GameMap.RedSpawn.Y =
+                                                                                        600;
+                                                                                    break;
+                                                                                case Class.Support:
+                                                                                    player.PrimaryA = new Plow(player);
+                                                                                    player.PrimaryB =
+                                                                                        new PressureCharge(player);
+
+                                                                                    Storage.Game.GameMap.RedSpawn.X =
+                                                                                        (player.Team == Team.Red)
+                                                                                            ? 100
+                                                                                            : 1100;
+                                                                                    Storage.Game.GameMap.RedSpawn.Y =
+                                                                                        800;
+                                                                                    break;
+                                                                                default:
+                                                                                    throw new ArgumentOutOfRangeException
+                                                                                        ();
+                                                                            }
+
+                                                                            Storage.Game.GameMap.BlueSpawn.X =
+                                                                                Storage.Game.GameMap.RedSpawn.X;
+                                                                            Storage.Game.GameMap.BlueSpawn.Y =
+                                                                                Storage.Game.GameMap.RedSpawn.Y;
+                                                                        }
+
+                                                                        Game.TransitionState(States.ReadyWait);
+                                                                    }
+                                            }, 500);
         }
 
         public override void Update()
         {
             Messages.Update();
+
+            if(Storage.NetworkSession.AllGamers.Count > 1)
+            {
+                _tutorialButton.SetAction(TutorialButtonAction, null);
+            }
+            else
+            {
+                _tutorialButton.UnsetAction();
+            }
+
+            if(!Storage.NetworkSession.IsHost)
+            {
+                if(Storage.NetworkSession.Host.IsReady || Storage.NetworkSession.AllGamers.Count == 1)
+                {
+                    _readyButton.SetAction(ReadyButtonAction, null);
+                }
+                else
+                {
+                    _readyButton.UnsetAction();
+                }
+            }
+        }
+
+        private void TutorialButtonAction(object sender, object userinfo)
+        {
+            DoTutorial();
         }
 
         public override Dictionary<string, object> Leave()
@@ -189,6 +313,11 @@ namespace Sand.GameState
             Game.Components.Remove(_blueDefenseButton);
             Game.Components.Remove(_blueOffenseButton);
             Game.Components.Remove(_blueSupportButton);
+
+            if (Storage.NetworkSession.IsHost)
+            {
+                Game.Components.Remove(_tutorialButton);
+            }
 
             var returns = new Dictionary<string, object>();
             returns["SandLogo"] = _sandLogo;
